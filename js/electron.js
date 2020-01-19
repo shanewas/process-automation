@@ -14,8 +14,10 @@ function generateMainWindow() {
   win = mainWindow.createWindow(
     isDev
       ? "http://localhost:3000"
-      : `file://${path.join(__dirname, "../build/index.html")}`
+      : `file://${path.join(__dirname, "../build/index.html")}`,
+    true
   );
+
   win.once("ready-to-show", function() {
     win.show();
   });

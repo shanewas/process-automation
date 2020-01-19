@@ -3,14 +3,15 @@ const path = require("path");
 const url = require("url");
 
 const { BrowserWindow } = electron;
-function createWindow(loadurl) {
+let window;
+function createWindow(loadurl, preload = false) {
   //create new window
   window = new BrowserWindow({
     width: 1400,
     height: 1200,
     title: "Aiw Core",
     webPreferences: {
-      preload: path.join(__dirname, "preload.js")
+      preload: preload ? path.join(__dirname, "preload.js") : null
     }
   });
   // window.loadURL(
