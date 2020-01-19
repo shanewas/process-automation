@@ -7,7 +7,7 @@
   "build": {
     "appId": "com.aiw_core"
   },
-  "main": "public/electron.js",
+  "main": "js/electron.js",
   "homepage": "./",
   "dependencies": {
     "@testing-library/jest-dom": "^4.2.4",
