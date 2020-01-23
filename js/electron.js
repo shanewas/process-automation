@@ -13,7 +13,7 @@ let win;
 function generateMainWindow() {
   win = mainWindow.createWindow(
     isDev
-      ? "http://localhost:3000"
+      ? "https://google.com"//"http://localhost:3000"
       : `file://${path.join(__dirname, "../build/index.html")}`,
     true
   );
