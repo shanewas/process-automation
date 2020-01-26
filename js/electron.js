@@ -9,11 +9,11 @@ const conf = require("./config");
 const { app, Menu } = electron;
 
 let win;
-
 function generateMainWindow() {
+  // let isDev = false;
   win = mainWindow.createWindow(
     isDev
-      ? "https://google.com"//"http://localhost:3000"
+      ? "http://localhost:3000" //"https://google.com" 
       : `file://${path.join(__dirname, "../build/index.html")}`,
     true
   );

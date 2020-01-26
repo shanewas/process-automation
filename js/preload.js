@@ -1,155 +1,162 @@
-const electron = require("electron");
-const path = require("path");
-const url = require("url");
-// const body = null;
-window.onload = function() {
-  var x = document.getElementsByTagName("BODY")[0];
-  x.id = "main";
-  // var body = document.getElementById("main");
-  const body = document.querySelector("body");
-  body.addEventListener(
-    "click",
-    e => {
-      if (e.shiftKey) {
-        e.preventDefault();
-        // getXPath(e);
-        console.log(xpath(e));
-      }
-    },
-    false
+document.onclick = function(event) {
+  if (event === undefined) event = window.event; // IE hack
+  var target = "target" in event ? event.target : event.srcElement; // another IE hack
+
+  var root =
+    document.compatMode === "CSS1Compat"
+      ? document.documentElement
+      : document.body;
+  var mxy = [event.clientX + root.scrollLeft, event.clientY + root.scrollTop];
+
+  var path = getPathTo(target);
+  var txy = getPageXY(target);
+  alert(
+    "Clicked element " +
+      path +
+      " offset " +
+      (mxy[0] - txy[0]) +
+      ", " +
+      (mxy[1] - txy[1])
   );
-  function xpath(el) {
-    if (typeof el == "string")
-      return document.evaluate(el, document, null, 0, null);
-    if (!el || el.nodeType != 1) return "";
-    if (el.id) return "//*[@id='" + el.id + "']";
-    var sames = [].filter.call(el.parentNode.children, function(x) {
-      return x.tagName == el.tagName;
-    });
-    return (
-      xpath(el.parentNode) +
-      "/" +
-      el.tagName.toLowerCase() +
-      (sames.length > 1 ? "[" + ([].indexOf.call(sames, el) + 1) + "]" : "")
-    );
-  }
-  function getXPaths(element) {
-    var xpath = "";
-    for (; element && element.nodeType == 1; element = element.parentNode) {
-      var id =
-        $(element.parentNode)
-          .children(element.tagName)
-          .index(element) + 1;
-      id > 1 ? (id = "[" + id + "]") : (id = "");
-      xpath = "/" + element.tagName.toLowerCase() + id + xpath;
-    }
-    console.log(xpath);
-    return xpath;
-  }
-  function getElementXPath(element) {
-    if (element && element.id) return '//*[@id="' + element.id + '"]';
-    else return getElementTreeXPath(element);
-  }
-  function getElementTreeXPath(element) {
-    var paths = []; // Use nodeName (instead of localName)
-    // so namespace prefix is included (if any).
-    for (
-      ;
-      element && element.nodeType == Node.ELEMENT_NODE;
-      element = element.parentNode
-    ) {
-      var index = 0;
-      var hasFollowingSiblings = false;
-      for (
-        var sibling = element.previousSibling;
-        sibling;
-        sibling = sibling.previousSibling
-      ) {
-        // Ignore document type declaration.
-        if (sibling.nodeType == Node.DOCUMENT_TYPE_NODE) continue;
-
-        if (sibling.nodeName == element.nodeName) ++index;
-      }
-
-      for (
-        var sibling = element.nextSibling;
-        sibling && !hasFollowingSiblings;
-        sibling = sibling.nextSibling
-      ) {
-        if (sibling.nodeName == element.nodeName) hasFollowingSiblings = true;
-      }
-
-      var tagName =
-        (element.prefix ? element.prefix + ":" : "") + element.localName;
-      var pathIndex =
-        index || hasFollowingSiblings ? "[" + (index + 1) + "]" : "";
-      paths.splice(0, 0, tagName + pathIndex);
-    }
-
-    return paths.length ? "/" + paths.join("/") : null;
-  }
-  // let div = document.createElement("div");
-  //*[@id="main"]/div/div[1]/div/h1
-  // div.className = "document";
-  // div.innerHTML = '<div onclick="addclick()"></div>';
-
-  // document.body.append(div);
-  //   document.body.style.backgroundColor = "red";
-  //   // console.log(x)
-  //   var seq = [];
 };
-function getXPath(element) {
-  var elm = element.path[0];
-  console.log(element.path);
-  console.log(elm.tagName);
-}
-var isHovered = false;
 
-// function keyDown(event) {
-//   if (!isHovered) return;
-//   var key = event.keyCode;
-//   if (key === 84) {
-//     console.log("we are hovered and pressing T!");
+function getPathTo(element) {
+  if (element.id !== "") return 'id("' + element.id + '")';
+  if (element === document.body) return element.tagName;
+
+  var ix = 0;
+  var siblings = element.parentNode.childNodes;
+  for (var i = 0; i < siblings.length; i++) {
+    var sibling = siblings[i];
+    if (sibling === element)
+      return (
+        getPathTo(element.parentNode) +
+        "/" +
+        element.tagName +
+        "[" +
+        (ix + 1) +
+        "]"
+      );
+    if (sibling.nodeType === 1 && sibling.tagName === element.tagName) ix++;
+  }
+}
+
+function getPageXY(element) {
+  var x = 0,
+    y = 0;
+  while (element) {
+    x += element.offsetLeft;
+    y += element.offsetTop;
+    element = element.offsetParent;
+  }
+  return [x, y];
+}
+// const electron = require("electron");
+// const path = require("path");
+// const url = require("url");
+// let $ = require("jquery");
+// window.$ = $;
+// if (typeof module === "object") {
+//   window.module = module;
+//   module = undefined;
+// }
+
+// if (window.module) module = window.module;
+
+// window.onload = function() {
+//   var x = document.getElementsByTagName("BODY")[0];
+//   x.id = "main";
+//   // var body = document.getElementById("main");
+//   const body = document.querySelector("body");
+//   body.addEventListener(
+//     "click",
+//     e => {
+//       if (e.shiftKey) {
+//         e.preventDefault();
+//         getXPath(e);
+//         // console.log(xpath(e));
+//       }
+//     },
+//     false
+//   );
+
+//   // function getXPath(element) {
+//   //   var elm = element.path[0];
+//   //   console.log(element.path);
+//   //   console.log(elm.tagName);
+//   // }
+// };
+// // $("#test").click(function() {
+// //   var value = getXPath(this);
+// //   alert(value);
+// // });
+
+// function getXPath(element) {
+//   var val = element.value;
+//   //alert("val="+val);
+//   var xpath = "";
+//   for (; element && element.nodeType == 1; element = element.parentNode) {
+//     //alert(element);
+//     var id =
+//       $(element.parentNode)
+//         .children(element.tagName)
+//         .index(element) + 1;
+//     id > 1 ? (id = "[" + id + "]") : (id = "");
+//     xpath = "/" + element.tagName.toLowerCase() + id + xpath;
 //   }
+//   return xpath;
 // }
 
-// function hoveredBox() {
-//   isHovered = true;
-// }
+// // var recorder = {
+// //   moveListener: function() {
+// //     var that = this;
 
-// document.addEventListener("keypress", keyDown);
-// document.getElementById("main").addEventListener("mouseenter", hoveredBox);
-// document.getElementById("main").addEventListener("mouseleave", function() {
-//   isHovered = false;
-// });
-function addclick() {
-  //   var target = event.target;
-  //   seq.push(target.id);
-  console.log("pushed");
-}
-// /html/bdoy / div / div[7] / span / center / div[1] / img;
-function callMe() {
-  var frame = $("iframe"),
-    contents = frame.contents(),
-    body = contents.find("body");
+// //     $(window).mousemove(function(e) {
+// //       if (that.state == 1) {
+// //         that.frames.push([e.clientX, e.clientY]);
+// //       }
+// //     });
+// //   },
 
-  var script2 = document.createElement("script");
-  script2.type = "text/javascript";
-  script2.text = " console.log('Potato')";
-  $(body).append(script2);
-}
+// //   record: function() {
+// //     var that = this;
+// //     that.frames = [];
+// //     that.state = 1;
+// //     that.startTime = new Date().getTime() / 1000;
 
-// function codegeneretor(xpaths, seq) {
-//   code = "";
-//   xpaths.forEach(function(item, index) {
-//     var line =
-//       seq[index] +
-//       '= driver.find_element_by_xpath("' +
-//       item +
-//       '")\n' +
-//       "element.click()\n";
+// //     $("button.r").text("recording..");
+// //     $("button.p").text("stop & play");
+// //   },
 
-//     code += line;
-//   });
-//   return code;
-// }
+// //   playback: function() {
+// //     var that = this;
+// //     that.state = 2;
+
+// //     $("button.r").text("record");
+// //     $("button.p").text("playing..");
+
+// //     that.endTime = new Date().getTime() / 1000;
+// //     that.time = (that.endTime - that.startTime) * 3;
+
+// //     $(that.frames).each(function(i, move) {
+// //       setTimeout(function() {
+// //         $("div.cursor").css({
+// //           left: move[0],
+// //           top: move[1]
+// //         });
+
+// //         if (i == that.frames.length - 1) {
+// //           $(".p").text("stop & play");
+// //         }
+// //       }, that.time * i);
+// //     });
+// //   }
+// // };
+
+// // recorder.state = 2; //1 = Recording | 2 = Stopped
+// // recorder.frames = [];
+
+// // /*
+// //  * Listen for the mouse movements
+// //  */
+// // recorder.moveListener();
