@@ -8,12 +8,17 @@ const conf = require("./config");
 
 const { app, Menu } = electron;
 
+require("electron-reload")(__dirname, {
+  electron: path.join(__dirname, "node_modules", ".bin", "electron")
+});
+
 let win;
+
 function generateMainWindow() {
   // let isDev = false;
   win = mainWindow.createWindow(
     isDev
-      ? "https://google.com" //"http://localhost:3000"  
+      ? "https://google.com" //"http://localhost:3000"
       : `file://${path.join(__dirname, "../build/index.html")}`,
     true
   );
