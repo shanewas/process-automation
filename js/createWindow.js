@@ -11,7 +11,7 @@ function createWindow(loadurl, preload = false) {
     height: 1200,
     title: "Aiw Core",
     webPreferences: {
-      nodeIntegration: false,
+      nodeIntegration: true,
       plugins: true,
       preload: preload ? path.join(__dirname, "preload.js") : null
     }

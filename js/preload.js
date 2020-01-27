@@ -5,6 +5,14 @@
 window.onload = function() {
   var x = document.getElementsByTagName("BODY")[0];
   x.id = "main";
+    // var xPathRes = document.evaluate(
+  //   '//*[@id="tsf"]/DIV[2]/DIV[1]/DIV[3]/CENTER[1]/INPUT[2]',
+  //   document,
+  //   null,
+  //   XPathResult.FIRST_ORDERED_NODE_TYPE,
+  //   null
+  // );
+  // xPathRes.singleNodeValue.click();
   // var body = document.getElementById("main");
   const body = document.querySelector("body");
   body.addEventListener(
@@ -40,6 +48,7 @@ function getXPath(event) {
   //     (mxy[1] - txy[1])
   // );
   console.log(path);
+  return path;
 }
 
 function getPathTo(element) {
