@@ -57,14 +57,14 @@ function getXPath(event) {
   if (event === undefined) event = window.event; // IE hack
   var target = "target" in event ? event.target : event.srcElement; // another IE hack
 
-  var root =
-    document.compatMode === "CSS1Compat"
-      ? document.documentElement
-      : document.body;
-  var mxy = [event.clientX + root.scrollLeft, event.clientY + root.scrollTop];
+  // var root =
+  //   document.compatMode === "CSS1Compat"
+  //     ? document.documentElement
+  //     : document.body;
+  // var mxy = [event.clientX + root.scrollLeft, event.clientY + root.scrollTop];
 
   var path = getPathTo(target);
-  var txy = getPageXY(target);
+  // var txy = getPageXY(target);
   // alert(
   //   "Clicked element " +
   //     path +
@@ -91,16 +91,16 @@ function getPathTo(element) {
   }
 }
 
-function getPageXY(element) {
-  var x = 0,
-    y = 0;
-  while (element) {
-    x += element.offsetLeft;
-    y += element.offsetTop;
-    element = element.offsetParent;
-  }
-  return [x, y];
-}
+// function getPageXY(element) {
+//   var x = 0,
+//     y = 0;
+//   while (element) {
+//     x += element.offsetLeft;
+//     y += element.offsetTop;
+//     element = element.offsetParent;
+//   }
+//   return [x, y];
+// }
 // function getXPath(element) {
 //   var elm = element.path[0];
 //   console.log(element.path);
