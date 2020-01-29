@@ -1,6 +1,4 @@
-const firebase = require("firebase");
-
-const xpathCollector = require("./modules/xpath_collector");
+const xpath = require('../modules/xpath')
 
 window.onload = function() {
   var mainBody = document.getElementsByTagName("BODY")[0];
@@ -14,5 +12,5 @@ window.onload = function() {
   // var body = document.getElementById("main");
   const body = document.querySelector("body");
 
-  xpathCollector.xpath(body);
+  xpath.xpath(body);
 };
