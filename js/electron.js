@@ -2,9 +2,9 @@ const electron = require("electron");
 const path = require("path");
 const isDev = require("electron-is-dev");
 
-let mainWindow = require("./createWindow");
-const menu = require("./menu");
-const conf = require("./config");
+let mainWindow = require("./electron/createWindow");
+const menu = require("./electron/menu");
+const conf = require("./electron/config");
 
 const { app, Menu } = electron;
 

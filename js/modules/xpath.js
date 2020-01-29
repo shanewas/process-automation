@@ -1,14 +1,6 @@
 const firebase = require("firebase");
 const firebaseConfig = require("../firebase/firebaseConfig");
 
-// var xPathRes = document.evaluate(
-//   '//*[@id="tsf"]/DIV[2]/DIV[1]/DIV[3]/CENTER[1]/INPUT[2]',
-//   document,
-//   null,
-//   XPathResult.FIRST_ORDERED_NODE_TYPE,
-//   null
-// );
-// xPathRes.singleNodeValue.click();
 firebase.initializeApp(firebaseConfig);
 function xpath(body) {
   var messageRef = firebase.database().ref("xpaths");
