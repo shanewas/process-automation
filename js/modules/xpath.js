@@ -32,7 +32,7 @@ function xpath(body) {
     if (e.ctrlKey) {
       e.preventDefault();
       messageRef.once("value").then(function(snapshot) {
-        var value = snapshot.val();
+        // var value = snapshot.val();
         var tagName;
         var xpath;
         snapshot.forEach(function(childSpanshot) {

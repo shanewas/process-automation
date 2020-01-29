@@ -2,7 +2,7 @@ const menu = require('./menu')
 
 //if mac add empty onject with menu
 function config(){
-    if (process.platform == 'darwin'){
+    if (process.platform === 'darwin'){
         menu.mainMenuTempate.unshift({})
     }
     
@@ -13,7 +13,7 @@ function config(){
             submenu: [
                 {
                     label: 'Toggle DevTools',
-                    accelerator: process.platform == 'darwin' ? 'Command+I' : 'Ctrl+I',
+                    accelerator: process.platform === 'darwin' ? 'Command+I' : 'Ctrl+I',
                     click(item, focusedWindow){
                         focusedWindow.toggleDevTools()
                     }
