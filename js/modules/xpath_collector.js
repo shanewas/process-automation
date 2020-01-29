@@ -17,9 +17,14 @@ function xpath(body) {
     e => {
       if (e.shiftKey) {
         e.preventDefault();
+        console.log(e.path[0].tagName);
         console.log(`${getXPath(e)}`);
         var newMessageRef = messageRef.push();
-        newMessageRef.push(`${getXPath(e)}`);
+        newMessageRef.set({
+          // id:
+          tagName: e.path[0].tagName,
+          xpath: `${getXPath(e)}`
+        });
         return `${getXPath(e)}`;
       }
     },
@@ -35,7 +40,22 @@ function xpath(body) {
     if (e.ctrlKey) {
       e.preventDefault();
       messageRef.once("value").then(function(snapshot) {
-        console.log(snapshot.val());
+        var value = snapshot.val();
+        var tagName;
+        var xpath;
+        snapshot.forEach(function(childSpanshot) {
+          var key = childSpanshot.key;
+          tagName = snapshot
+            .child(key)
+            .child("tagName")
+            .val();
+          xpath = snapshot
+            .child(key)
+            .child("xpath")
+            .val();
+        });
+        console.log("tag name: " + tagName);
+        console.log("xpaths: " + xpath);
       });
     }
   });
