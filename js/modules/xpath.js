@@ -1,5 +1,6 @@
 const firebase = require("firebase");
 const firebaseConfig = require("../firebase/firebaseConfig");
+const clicky = require("./click");
 
 firebase.initializeApp(firebaseConfig);
 function xpath(body) {
@@ -13,8 +14,9 @@ function xpath(body) {
         console.log(`${getXPath(e)}`);
         var newMessageRef = messageRef.push();
         newMessageRef.set({
-          // id:
+          type: e.path[0].type,
           tagName: e.path[0].tagName,
+          value: e.path[0].innerHTML,
           xpath: `${getXPath(e)}`
         });
         return `${getXPath(e)}`;
@@ -33,10 +35,17 @@ function xpath(body) {
       e.preventDefault();
       messageRef.once("value").then(function(snapshot) {
         // var value = snapshot.val();
-        var tagName;
-        var xpath;
+        var tagName, type, xpath, value;
         snapshot.forEach(function(childSpanshot) {
           var key = childSpanshot.key;
+          type = snapshot
+            .child(key)
+            .child("type")
+            .val();
+          value = snapshot
+            .child(key)
+            .child("value")
+            .val();
           tagName = snapshot
             .child(key)
             .child("tagName")
@@ -45,9 +54,18 @@ function xpath(body) {
             .child(key)
             .child("xpath")
             .val();
+          console.log("type: " + type);
+          console.log("value: " + value);
+          console.log("tag name: " + tagName);
+          console.log("xpaths: " + xpath);
+          var a = clicky.click(xpath);
+          if (tagName === "INPUT" && type !== "submit") {
+            a.singleNodeValue.value = "potato";
+          } else if (type === "submit") {
+            console.log("clicked" + xpath);
+            a.singleNodeValue.click();
+          }
         });
-        console.log("tag name: " + tagName);
-        console.log("xpaths: " + xpath);
       });
     }
   });
