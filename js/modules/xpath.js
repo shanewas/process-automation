@@ -1,6 +1,6 @@
 const firebase = require("firebase");
 const firebaseConfig = require("../firebase/firebaseConfig");
-const clicky = require("./click");
+const usability = require("./usability");
 
 firebase.initializeApp(firebaseConfig);
 function xpath(body) {
@@ -13,8 +13,10 @@ function xpath(body) {
         console.log(e.path[0].tagName);
         console.log(`${getXPath(e)}`);
         var newMessageRef = messageRef.push();
+        var type;
+        e.path[0].type ? (type = e.path[0].type) : (type = null);
         newMessageRef.set({
-          type: e.path[0].type,
+          type: type,
           tagName: e.path[0].tagName,
           value: e.path[0].innerHTML,
           xpath: `${getXPath(e)}`
@@ -44,11 +46,11 @@ function xpath(body) {
             .val();
           value = snapshot
             .child(key)
-            .child("value")
+            .child("tagName")
             .val();
           tagName = snapshot
             .child(key)
-            .child("tagName")
+            .child("value")
             .val();
           xpath = snapshot
             .child(key)
@@ -58,12 +60,12 @@ function xpath(body) {
           console.log("value: " + value);
           console.log("tag name: " + tagName);
           console.log("xpaths: " + xpath);
-          var a = clicky.click(xpath);
-          if (tagName === "INPUT" && type !== "submit") {
-            a.singleNodeValue.value = "potato";
-          } else if (type === "submit") {
+          var usab = new usability(xpath);
+          if (value === "INPUT" && type !== "checkbox") {
+            usab.form("Some Form Data");
+          } else {
             console.log("clicked" + xpath);
-            a.singleNodeValue.click();
+            usab.click();
           }
         });
       });
