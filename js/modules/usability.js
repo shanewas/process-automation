@@ -15,6 +15,28 @@ function usability(path) {
   this.path = path;
 }
 
+usability.prototype.clearPlaceholder = function clearPlaceholder(field) {
+  var placeholder = field.getAttribute("placeholder") || field.value;
+
+  if (clearPlaceholder.supported === undefined) {
+    clearPlaceholder.supported =
+      "placeholder" in document.createElement("input");
+  }
+
+  if (!clearPlaceholder.supported) {
+    field.value = field.value || placeholder;
+    field.onfocus = function() {
+      if (this.value === placeholder) {
+        this.value = "";
+      }
+    };
+    field.onblur = function() {
+      if (this.value === "") {
+        this.value = placeholder;
+      }
+    };
+  }
+};
 usability.prototype.click = function click() {
   var xPathRes = document.evaluate(
     this.path,
@@ -34,7 +56,11 @@ usability.prototype.form = function form(data = "No Fill Up Information") {
     XPathResult.FIRST_ORDERED_NODE_TYPE,
     null
   );
-  return (xPathRes.singleNodeValue.value = data);
+  
+
+  
+ console.log(xPathRes.singleNodeValue.shrink)
+  return (xPathRes.singleNodeValue.value=data);
 };
 
 module.exports = usability;

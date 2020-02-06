@@ -62,6 +62,7 @@ function xpath(body) {
           console.log("xpaths: " + xpath);
           var usab = new usability(xpath);
           if (value === "INPUT" && type !== "checkbox") {
+            // usab.clearPlaceholder()
             usab.form("Some Form Data");
           } else {
             console.log("clicked" + xpath);
