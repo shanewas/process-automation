@@ -18,7 +18,7 @@ function generateMainWindow() {
   // let isDev = false;
   win = mainWindow.createWindow(
     isDev
-      ? "https://material-ui.com/getting-started/templates/checkout/" //"http://localhost:3000"
+      ? "http://localhost:3000"
       : `file://${path.join(__dirname, "../build/index.html")}`,
     true
   );

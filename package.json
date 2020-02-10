@@ -10,9 +10,11 @@
   "main": "js/electron.js",
   "homepage": "./",
   "dependencies": {
+    "bootstrap": "^4.4.1",
     "electron": "^7.1.9",
     "firebase": "^7.7.0",
-    "react": "^16.12.0"
+    "react": "^16.12.0",
+    "react-bootstrap": "^1.0.0-beta.16"
   },
   "scripts": {
     "react-start": "react-scripts start",

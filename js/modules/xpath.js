@@ -61,9 +61,10 @@ function xpath(body) {
           console.log("tag name: " + tagName);
           console.log("xpaths: " + xpath);
           var usab = new usability(xpath);
-          if (value === "INPUT" && type !== "checkbox") {
-            // usab.clearPlaceholder()
+          if (value === "INPUT" && type !== "checkbox" && type !== "radio" && type !== "submit") {
             usab.form("Some Form Data");
+          } else if (value === "INPUT" && type === "radio") {
+            usab.radio();
           } else {
             console.log("clicked" + xpath);
             usab.click();

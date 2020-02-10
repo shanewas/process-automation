@@ -56,11 +56,18 @@ usability.prototype.form = function form(data = "No Fill Up Information") {
     XPathResult.FIRST_ORDERED_NODE_TYPE,
     null
   );
-  
+  return (xPathRes.singleNodeValue.value = data);
+};
 
-  
- console.log(xPathRes.singleNodeValue.shrink)
-  return (xPathRes.singleNodeValue.value=data);
+usability.prototype.radio = function radio() {
+  var xPathRes = document.evaluate(
+    this.path,
+    document,
+    null,
+    XPathResult.FIRST_ORDERED_NODE_TYPE,
+    null
+  );
+  return (xPathRes.singleNodeValue.checked = true);
 };
 
 module.exports = usability;
