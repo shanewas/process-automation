@@ -1,0 +1,72 @@
+{
+  "name": "aiw_core",
+  "description": "Aiw Core",
+  "author": "Shanewas Ahmed Nabil",
+  "version": "0.1.0",
+  "private": true,
+  "build": {
+    "appId": "com.aiw_core"
+  },
+  "main": "js/electron.js",
+  "homepage": "./",
+  "dependencies": {
+    "@types/react": "16.4.16",
+    "bootstrap": "^4.4.1",
+    "chart.js": "^2.7.2",
+    "classnames": "2.2.6",
+    "csv-parser": "^2.3.2",
+    "electron": "^7.1.9",
+    "firebase": "^7.7.0",
+    "history": "4.7.2",
+    "node-sass": "^4.13.1",
+    "papaparse": "^5.1.1",
+    "perfect-scrollbar": "1.4.0",
+    "prop-types": "^15.6.2",
+    "react": "^16.12.0",
+    "react-chartjs-2": "^2.7.4",
+    "react-dom": "^16.12.0",
+    "react-google-maps": "9.4.5",
+    "react-notification-alert": "0.0.8",
+    "react-router": "5.0.0",
+    "react-router-dom": "5.0.0",
+    "react-scripts": "3.3.0",
+    "reactstrap": "8.0.0"
+  },
+  "scripts": {
+    "react-start": "react-scripts start",
+    "react-build": "react-scripts build",
+    "react-test": "react-scripts test --env=jsdom",
+    "react-eject": "react-scripts eject",
+    "electron-build": "electron-builder",
+    "release": "yarn react-build && electron-builder --publish=always",
+    "build": "yarn react-build && yarn electron-build",
+    "start": "concurrently \"cross-env BROWSER=none yarn react-start\" \"wait-on http://localhost:3000 && electron .\""
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.4.0",
+    "@testing-library/user-event": "^7.2.1",
+    "concurrently": "^5.0.2",
+    "cross-env": "^6.0.3",
+    "electron-builder": "^22.2.0",
+    "electron-is-dev": "^1.1.0",
+    "electron-rebuild": "^1.9.0",
+    "electron-reload": "^1.5.0",
+    "wait-on": "^4.0.0"
+  }
+}
