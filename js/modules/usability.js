@@ -15,28 +15,6 @@ function usability(path) {
   this.path = path;
 }
 
-usability.prototype.clearPlaceholder = function clearPlaceholder(field) {
-  var placeholder = field.getAttribute("placeholder") || field.value;
-
-  if (clearPlaceholder.supported === undefined) {
-    clearPlaceholder.supported =
-      "placeholder" in document.createElement("input");
-  }
-
-  if (!clearPlaceholder.supported) {
-    field.value = field.value || placeholder;
-    field.onfocus = function() {
-      if (this.value === placeholder) {
-        this.value = "";
-      }
-    };
-    field.onblur = function() {
-      if (this.value === "") {
-        this.value = placeholder;
-      }
-    };
-  }
-};
 usability.prototype.click = function click() {
   var xPathRes = document.evaluate(
     this.path,
@@ -69,5 +47,22 @@ usability.prototype.radio = function radio() {
   );
   return (xPathRes.singleNodeValue.checked = true);
 };
-
+usability.prototype.dropDown = function dropDown(data = "0") {
+  var xPathRes = document.evaluate(
+    this.path,
+    document,
+    null,
+    XPathResult.FIRST_ORDERED_NODE_TYPE,
+    null
+  );
+  setSelectedValue(xPathRes.singleNodeValue, data);
+};
+function setSelectedValue(selectObj, valueToSet) {
+  for (var i = 0; i < selectObj.options.length; i++) {
+    if (selectObj.options[i].text === valueToSet) {
+      selectObj.options[i].selected = true;
+      return;
+    }
+  }
+}
 module.exports = usability;

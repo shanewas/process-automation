@@ -1,6 +1,9 @@
 const firebase = require("firebase");
+const path = require("path");
 const firebaseConfig = require("../firebase/firebaseConfig");
 const usability = require("./usability");
+
+const CSV = require("../dataControl/CSV");
 
 firebase.initializeApp(firebaseConfig);
 function xpath(body) {
@@ -61,10 +64,23 @@ function xpath(body) {
           console.log("tag name: " + tagName);
           console.log("xpaths: " + xpath);
           var usab = new usability(xpath);
-          if (value === "INPUT" && type !== "checkbox" && type !== "radio" && type !== "submit") {
-            usab.form("Some Form Data");
+          var csv = new CSV(
+            `${path.join(__dirname, "../../resources/MOCK_DATA.csv")}`
+          );
+
+          // var csv = new Csv(xpath);
+          if (
+            value === "INPUT" &&
+            type !== "checkbox" &&
+            type !== "radio" &&
+            type !== "submit"
+          ) {
+            // csv();
+            // usab.form(row);
           } else if (value === "INPUT" && type === "radio") {
             usab.radio();
+          } else if ((value = "SELECT")) {
+            usab.dropDown("Work 1");
           } else {
             console.log("clicked" + xpath);
             usab.click();
