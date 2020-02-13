@@ -3,8 +3,6 @@ const path = require("path");
 const firebaseConfig = require("../firebase/firebaseConfig");
 const usability = require("./usability");
 
-const CSV = require("../dataControl/CSV");
-
 firebase.initializeApp(firebaseConfig);
 function xpath(body) {
   var messageRef = firebase.database().ref("xpaths");
@@ -64,10 +62,26 @@ function xpath(body) {
           console.log("tag name: " + tagName);
           console.log("xpaths: " + xpath);
           var usab = new usability(xpath);
-          var csv = new CSV(
+          usab.read_csv(
             `${path.join(__dirname, "../../resources/MOCK_DATA.csv")}`
           );
-
+          (function() {
+            var executed = false;
+            return function() {
+              if (!executed) {
+                executed = true;
+                // do something
+              }
+            };
+          })();
+          // console.log(Object.values(usab.value)[500].first_name);
+          // usab.value.forEach(fillUp);
+          // usab.value.forEach(myFunction);
+          // function myFunction(item, index) {
+          // console.log(item);
+          // console.log(item.first_name);
+          // }
+          // console.log(usab.value);
           // var csv = new Csv(xpath);
           if (
             value === "INPUT" &&
@@ -76,7 +90,25 @@ function xpath(body) {
             type !== "submit"
           ) {
             // csv();
-            // usab.form(row);
+            // let i;
+            // for (i = 0; i < 4; i++) {
+            //   console.log(
+            //     usab.form(Object.values(usab.value)[i][usab.valueToFillUp()])
+            //   );
+            // }
+            (function myLoop(i) {
+              setTimeout(function() {
+                // console.log(
+                usab.form(Object.values(usab.value)[i][usab.valueToFillUp()]);
+                console.log(usab.value.length);
+                // );
+                if (--i) myLoop(i); //  decrement i and call myLoop again if i > 0
+              }, 150);
+            })(10); //usab.value.length
+            // console.log(
+            //   usab.form(Object.values(usab.value)[50][usab.valueToFillUp()])
+            // );
+            // usab.form(Object.values(usab.value)[50].first_name);
           } else if (value === "INPUT" && type === "radio") {
             usab.radio();
           } else if ((value = "SELECT")) {
