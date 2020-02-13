@@ -6,6 +6,7 @@
 .pnp.js
 firebaseConfig.js
 .env
+MOCK_DATA.csv
 # package.json
 
 # testing
