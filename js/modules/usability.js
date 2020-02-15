@@ -22,7 +22,7 @@ usability.prototype.valueToFillUp = function valueToFillUp() {
   const keys = Object.keys(this.value[0]);
   // console.log(this.value[50].first_name);
   // console.log(keys[0]);
-  return keys[0];
+  return keys;
 };
 //clicking on the element of the event
 usability.prototype.click = function click() {

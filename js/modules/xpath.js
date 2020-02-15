@@ -2,7 +2,7 @@ const firebase = require("firebase");
 const path = require("path");
 const firebaseConfig = require("../firebase/firebaseConfig");
 const usability = require("./usability");
-
+let executed = false;
 firebase.initializeApp(firebaseConfig);
 function xpath(body) {
   var messageRef = firebase.database().ref("xpaths");
@@ -36,8 +36,10 @@ function xpath(body) {
   body.addEventListener("click", e => {
     if (e.ctrlKey) {
       e.preventDefault();
-      messageRef.once("value").then(function(snapshot) {
+      messageRef.once("value").then(async function(snapshot) {
         // var value = snapshot.val();
+        let j = 0;
+        let keys = null;
         var tagName, type, xpath, value;
         snapshot.forEach(function(childSpanshot) {
           var key = childSpanshot.key;
@@ -62,18 +64,15 @@ function xpath(body) {
           console.log("tag name: " + tagName);
           console.log("xpaths: " + xpath);
           var usab = new usability(xpath);
-          usab.read_csv(
-            `${path.join(__dirname, "../../resources/MOCK_DATA.csv")}`
-          );
-          (function() {
-            var executed = false;
-            return function() {
-              if (!executed) {
-                executed = true;
-                // do something
-              }
-            };
-          })();
+          if (!executed) {
+            executed = true;
+            usab.read_csv(
+              `${path.join(__dirname, "../../resources/MOCK_DATA.csv")}`
+            );
+            // keys = usab.valueToFillUp();
+            //sajdjkahgsdfhadasghdas NOT WORKING
+            console.log(usab.valueToFillUp());
+          }
           // console.log(Object.values(usab.value)[500].first_name);
           // usab.value.forEach(fillUp);
           // usab.value.forEach(myFunction);
@@ -96,11 +95,14 @@ function xpath(body) {
             //     usab.form(Object.values(usab.value)[i][usab.valueToFillUp()])
             //   );
             // }
+            j++;
             (function myLoop(i) {
               setTimeout(function() {
                 // console.log(
-                usab.form(Object.values(usab.value)[i][usab.valueToFillUp()]);
-                console.log(usab.value.length);
+                console.log(j);
+                // console.log(keys);
+                // usab.form(Object.values(usab.value)[i][keys[0]]);
+
                 // );
                 if (--i) myLoop(i); //  decrement i and call myLoop again if i > 0
               }, 150);
