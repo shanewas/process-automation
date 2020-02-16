@@ -3,6 +3,7 @@ const path = require("path");
 const firebaseConfig = require("../firebase/firebaseConfig");
 const usability = require("./usability");
 let executed = false;
+
 firebase.initializeApp(firebaseConfig);
 function xpath(body) {
   var messageRef = firebase.database().ref("xpaths");
@@ -36,10 +37,8 @@ function xpath(body) {
   body.addEventListener("click", e => {
     if (e.ctrlKey) {
       e.preventDefault();
-      messageRef.once("value").then(async function(snapshot) {
-        // var value = snapshot.val();
+      messageRef.once("value").then(function(snapshot) {
         let j = 0;
-        let keys = null;
         var tagName, type, xpath, value;
         snapshot.forEach(function(childSpanshot) {
           var key = childSpanshot.key;
@@ -63,16 +62,16 @@ function xpath(body) {
           console.log("value: " + value);
           console.log("tag name: " + tagName);
           console.log("xpaths: " + xpath);
-          var usab = new usability(xpath);
-          if (!executed) {
-            executed = true;
-            usab.read_csv(
-              `${path.join(__dirname, "../../resources/MOCK_DATA.csv")}`
-            );
-            // keys = usab.valueToFillUp();
-            //sajdjkahgsdfhadasghdas NOT WORKING
-            console.log(usab.valueToFillUp());
-          }
+
+          // if (!executed) {
+          //   executed = true;
+          //   usab.read_csv(
+          //     `${path.join(__dirname, "../../resources/MOCK_DATA.csv")}`
+          //   );
+          //   // keys = usab.valueToFillUp();
+          //   //sajdjkahgsdfhadasghdas NOT WORKING
+          //   console.log(usab.valueToFillUp());
+          // }
           // console.log(Object.values(usab.value)[500].first_name);
           // usab.value.forEach(fillUp);
           // usab.value.forEach(myFunction);
@@ -80,7 +79,6 @@ function xpath(body) {
           // console.log(item);
           // console.log(item.first_name);
           // }
-          // console.log(usab.value);
           // var csv = new Csv(xpath);
           if (
             value === "INPUT" &&
@@ -88,25 +86,23 @@ function xpath(body) {
             type !== "radio" &&
             type !== "submit"
           ) {
-            // csv();
-            // let i;
-            // for (i = 0; i < 4; i++) {
-            //   console.log(
-            //     usab.form(Object.values(usab.value)[i][usab.valueToFillUp()])
-            //   );
-            // }
-            j++;
+            let usab = new usability(xpath);
+            usab.read_csv(
+              `${path.join(__dirname, "../../resources/MOCK_DATA.csv")}`
+            );
+            // const count = usab.valueArr.length;
             (function myLoop(i) {
-              setTimeout(function() {
-                // console.log(
-                console.log(j);
-                // console.log(keys);
-                // usab.form(Object.values(usab.value)[i][keys[0]]);
-
-                // );
+              setTimeout(async function() {
+                if (j >= snapshot.numChildren()) {
+                  j = 0;
+                }
+                // console.log(count);
+                usab.form(
+                  Object.values(usab.valueArr)[i][await usab.formFillUP(j++)]
+                );
                 if (--i) myLoop(i); //  decrement i and call myLoop again if i > 0
-              }, 150);
-            })(10); //usab.value.length
+              }, 50);
+            })(1000); //usab.value.length
             // console.log(
             //   usab.form(Object.values(usab.value)[50][usab.valueToFillUp()])
             // );

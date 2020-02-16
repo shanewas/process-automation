@@ -3,23 +3,21 @@ const csv = require("csv-parser");
 
 function usability(path) {
   this.path = path;
-  this.value = [];
+  this.valueArr = [];
 }
-//store csv value to use
-usability.prototype.value = this.value;
 //reading the csv file and storing in value array
 usability.prototype.read_csv = function read_csv(csv_data) {
   fs.createReadStream(csv_data, { bufferSize: 64 * 1024 })
     .pipe(csv())
     .on("data", row => {
-      this.value.push(row);
+      this.valueArr.push(row);
     })
     .on("end", () => {
       console.log("CSV file successfully processed");
     });
 };
 usability.prototype.valueToFillUp = function valueToFillUp() {
-  const keys = Object.keys(this.value[0]);
+  const keys = Object.keys(this.valueArr[0]);
   // console.log(this.value[50].first_name);
   // console.log(keys[0]);
   return keys;
@@ -57,6 +55,12 @@ usability.prototype.radio = function radio() {
     null
   );
   return (xPathRes.singleNodeValue.checked = true);
+};
+usability.prototype.formFillUP = function formFillUP(j) {
+  // for (let j = 0; j < snapshot.numChildren(); j++) {
+  // if (j < snapshot.numChildren()) {
+  return this.valueToFillUp()[j];
+  // }
 };
 //sending data to dropdown value
 usability.prototype.dropDown = function dropDown(data = "0") {
