@@ -18,7 +18,7 @@ function generateMainWindow() {
   // let isDev = false;
   win = mainWindow.createWindow(
     isDev
-      ? "https://www.jotform.com/build/200410696959462"
+      ? "https://form.jotform.com/200410696959462"
       : `file://${path.join(__dirname, "../build/index.html")}`,
     true
   );
