@@ -80,41 +80,53 @@ function xpath(body) {
           // console.log(item.first_name);
           // }
           // var csv = new Csv(xpath);
-          if (
-            value === "INPUT" &&
-            type !== "checkbox" &&
-            type !== "radio" &&
-            type !== "submit"
-          ) {
-            let usab = new usability(xpath);
-            usab.read_csv(
-              `${path.join(__dirname, "../../resources/MOCK_DATA.csv")}`
-            );
-            // const count = usab.valueArr.length;
-            (function myLoop(i) {
-              setTimeout(async function() {
-                if (j >= snapshot.numChildren()) {
-                  j = 0;
-                }
-                // console.log(count);
+          let usab = new usability(xpath);
+          usab.read_csv(
+            `${path.join(__dirname, "../../resources/MOCK_DATA.csv")}`
+          );
+          (function myLoop(i) {
+            setTimeout(async function() {
+              if (j >= snapshot.numChildren()) {
+                j = 0;
+              }
+              // console.log(
+              //   Object.values(usab.valueArr)[i][await usab.formFillUP(j++)]
+              // );
+              if (
+                value === "INPUT" &&
+                type !== "checkbox" &&
+                type !== "radio" &&
+                type !== "submit"
+              ) {
+                // console.log(
+                //   Object.values(usab.valueArr)[i][await usab.formFillUP(j++)]
+                // );
+                // const count = usab.valueArr.length;
+                //usab.value.length
                 usab.form(
                   Object.values(usab.valueArr)[i][await usab.formFillUP(j++)]
                 );
-                if (--i) myLoop(i); //  decrement i and call myLoop again if i > 0
-              }, 50);
-            })(1000); //usab.value.length
-            // console.log(
-            //   usab.form(Object.values(usab.value)[50][usab.valueToFillUp()])
-            // );
-            // usab.form(Object.values(usab.value)[50].first_name);
-          } else if (value === "INPUT" && type === "radio") {
-            usab.radio();
-          } else if ((value = "SELECT")) {
-            usab.dropDown("Work 1");
-          } else {
-            console.log("clicked" + xpath);
-            usab.click();
-          }
+                // console.log(
+                //   usab.form(Object.values(usab.value)[50][usab.valueToFillUp()])
+                // );
+                // usab.form(Object.values(usab.value)[50].first_name);
+              } else if (value === "INPUT" && type === "radio") {
+                usab.radio();
+              } else if ((value = "SELECT")) {
+                usab.dropDown(
+                  Object.values(usab.valueArr)[i][await usab.formFillUP(j++)]
+                );
+                // Object.values(usab.valueArr)[i][await usab.formFillUP(j++)]
+              } else {
+                console.log("clicked" + xpath);
+                usab.click();
+              }
+              // usab.form(
+              //   Object.values(usab.valueArr)[i][await usab.formFillUP(j++)]
+              // );
+              if (--i) myLoop(i); //  decrement i and call myLoop again if i > 0
+            }, 50);
+          })(20);
         });
       });
     }
