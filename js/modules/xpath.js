@@ -1,12 +1,12 @@
-const firebase = require("firebase");
+// const firebase = require("firebase");
 const path = require("path");
-const firebaseConfig = require("../firebase/firebaseConfig");
+// const firebaseConfig = require("../firebase/firebaseConfig");
 const usability = require("./usability");
 let executed = false;
 
-firebase.initializeApp(firebaseConfig);
+// firebase.initializeApp(firebaseConfig);
 function xpath(body) {
-  var messageRef = firebase.database().ref("xpaths");
+  // var messageRef = firebase.database().ref("xpaths");
   body.addEventListener(
     "click",
     e => {
@@ -14,15 +14,15 @@ function xpath(body) {
         e.preventDefault();
         console.log(e.path[0].tagName);
         console.log(`${getXPath(e)}`);
-        var newMessageRef = messageRef.push();
+        // var newMessageRef = messageRef.push();
         var type;
         e.path[0].type ? (type = e.path[0].type) : (type = null);
-        newMessageRef.set({
-          type: type,
-          tagName: e.path[0].tagName,
-          value: e.path[0].innerHTML,
-          xpath: `${getXPath(e)}`
-        });
+        // newMessageRef.set({
+        //   type: type,
+        //   tagName: e.path[0].tagName,
+        //   value: e.path[0].innerHTML,
+        //   xpath: `${getXPath(e)}`
+        // });
         return `${getXPath(e)}`;
       }
     },
@@ -31,106 +31,106 @@ function xpath(body) {
   body.addEventListener("click", e => {
     if (e.altKey) {
       e.preventDefault();
-      messageRef.remove();
+      // messageRef.remove();
     }
   });
-  body.addEventListener("click", e => {
-    if (e.ctrlKey) {
-      e.preventDefault();
-      messageRef.once("value").then(function(snapshot) {
-        let j = 0;
-        var tagName, type, xpath, value;
-        snapshot.forEach(function(childSpanshot) {
-          var key = childSpanshot.key;
-          type = snapshot
-            .child(key)
-            .child("type")
-            .val();
-          value = snapshot
-            .child(key)
-            .child("tagName")
-            .val();
-          tagName = snapshot
-            .child(key)
-            .child("value")
-            .val();
-          xpath = snapshot
-            .child(key)
-            .child("xpath")
-            .val();
-          console.log("type: " + type);
-          console.log("value: " + value);
-          console.log("tag name: " + tagName);
-          console.log("xpaths: " + xpath);
+  // body.addEventListener("click", e => {
+  //   if (e.ctrlKey) {
+  //     e.preventDefault();
+  //     messageRef.once("value").then(function(snapshot) {
+  //       let j = 0;
+  //       var tagName, type, xpath, value;
+  //       snapshot.forEach(function(childSpanshot) {
+  //         var key = childSpanshot.key;
+  //         type = snapshot
+  //           .child(key)
+  //           .child("type")
+  //           .val();
+  //         value = snapshot
+  //           .child(key)
+  //           .child("tagName")
+  //           .val();
+  //         tagName = snapshot
+  //           .child(key)
+  //           .child("value")
+  //           .val();
+  //         xpath = snapshot
+  //           .child(key)
+  //           .child("xpath")
+  //           .val();
+  //         console.log("type: " + type);
+  //         console.log("value: " + value);
+  //         console.log("tag name: " + tagName);
+  //         console.log("xpaths: " + xpath);
 
-          // if (!executed) {
-          //   executed = true;
-          //   usab.read_csv(
-          //     `${path.join(__dirname, "../../resources/MOCK_DATA.csv")}`
-          //   );
-          //   // keys = usab.valueToFillUp();
-          //   //sajdjkahgsdfhadasghdas NOT WORKING
-          //   console.log(usab.valueToFillUp());
-          // }
-          // console.log(Object.values(usab.value)[500].first_name);
-          // usab.value.forEach(fillUp);
-          // usab.value.forEach(myFunction);
-          // function myFunction(item, index) {
-          // console.log(item);
-          // console.log(item.first_name);
-          // }
-          // var csv = new Csv(xpath);
-          let usab = new usability(xpath);
-          usab.read_csv(
-            `${path.join(__dirname, "../../resources/MOCK_DATA.csv")}`
-          );
-          (function myLoop(i) {
-            setTimeout(async function() {
-              if (j >= snapshot.numChildren()) {
-                j = 0;
-              }
-              // console.log(
-              //   Object.values(usab.valueArr)[i][await usab.formFillUP(j++)]
-              // );
-              if (
-                value === "INPUT" &&
-                type !== "checkbox" &&
-                type !== "radio" &&
-                type !== "submit"
-              ) {
-                // console.log(
-                //   Object.values(usab.valueArr)[i][await usab.formFillUP(j++)]
-                // );
-                // const count = usab.valueArr.length;
-                //usab.value.length
-                usab.form(
-                  Object.values(usab.valueArr)[i][await usab.formFillUP(j++)]
-                );
-                // console.log(
-                //   usab.form(Object.values(usab.value)[50][usab.valueToFillUp()])
-                // );
-                // usab.form(Object.values(usab.value)[50].first_name);
-              } else if (value === "INPUT" && type === "radio") {
-                usab.radio();
-              } else if ((value = "SELECT")) {
-                usab.dropDown(
-                  Object.values(usab.valueArr)[i][await usab.formFillUP(j++)]
-                );
-                // Object.values(usab.valueArr)[i][await usab.formFillUP(j++)]
-              } else {
-                console.log("clicked" + xpath);
-                usab.click();
-              }
-              // usab.form(
-              //   Object.values(usab.valueArr)[i][await usab.formFillUP(j++)]
-              // );
-              if (--i) myLoop(i); //  decrement i and call myLoop again if i > 0
-            }, 50);
-          })(20);
-        });
-      });
-    }
-  });
+  //         // if (!executed) {
+  //         //   executed = true;
+  //         //   usab.read_csv(
+  //         //     `${path.join(__dirname, "../../resources/MOCK_DATA.csv")}`
+  //         //   );
+  //         //   // keys = usab.valueToFillUp();
+  //         //   //sajdjkahgsdfhadasghdas NOT WORKING
+  //         //   console.log(usab.valueToFillUp());
+  //         // }
+  //         // console.log(Object.values(usab.value)[500].first_name);
+  //         // usab.value.forEach(fillUp);
+  //         // usab.value.forEach(myFunction);
+  //         // function myFunction(item, index) {
+  //         // console.log(item);
+  //         // console.log(item.first_name);
+  //         // }
+  //         // var csv = new Csv(xpath);
+  //         let usab = new usability(xpath);
+  //         usab.read_csv(
+  //           `${path.join(__dirname, "../../resources/MOCK_DATA.csv")}`
+  //         );
+  //         (function myLoop(i) {
+  //           setTimeout(async function() {
+  //             if (j >= snapshot.numChildren()) {
+  //               j = 0;
+  //             }
+  //             // console.log(
+  //             //   Object.values(usab.valueArr)[i][await usab.formFillUP(j++)]
+  //             // );
+  //             if (
+  //               value === "INPUT" &&
+  //               type !== "checkbox" &&
+  //               type !== "radio" &&
+  //               type !== "submit"
+  //             ) {
+  //               // console.log(
+  //               //   Object.values(usab.valueArr)[i][await usab.formFillUP(j++)]
+  //               // );
+  //               // const count = usab.valueArr.length;
+  //               //usab.value.length
+  //               usab.form(
+  //                 Object.values(usab.valueArr)[i][await usab.formFillUP(j++)]
+  //               );
+  //               // console.log(
+  //               //   usab.form(Object.values(usab.value)[50][usab.valueToFillUp()])
+  //               // );
+  //               // usab.form(Object.values(usab.value)[50].first_name);
+  //             } else if (value === "INPUT" && type === "radio") {
+  //               usab.radio();
+  //             } else if ((value = "SELECT")) {
+  //               usab.dropDown(
+  //                 Object.values(usab.valueArr)[i][await usab.formFillUP(j++)]
+  //               );
+  //               // Object.values(usab.valueArr)[i][await usab.formFillUP(j++)]
+  //             } else {
+  //               console.log("clicked" + xpath);
+  //               usab.click();
+  //             }
+  //             // usab.form(
+  //             //   Object.values(usab.valueArr)[i][await usab.formFillUP(j++)]
+  //             // );
+  //             if (--i) myLoop(i); //  decrement i and call myLoop again if i > 0
+  //           }, 50);
+  //         })(20);
+  //       });
+  //     });
+  //   }
+  // });
 }
 
 function getXPath(event) {
@@ -171,20 +171,4 @@ function getPathTo(element) {
   }
 }
 
-// function getPageXY(element) {
-//   var x = 0,
-//     y = 0;
-//   while (element) {
-//     x += element.offsetLeft;
-//     y += element.offsetTop;
-//     element = element.offsetParent;
-//   }
-//   return [x, y];
-// }
-// function getXPath(element) {
-//   var elm = element.path[0];
-//   console.log(element.path);
-//   console.log(elm.tagName);
-// }
-// };
 module.exports = { xpath };

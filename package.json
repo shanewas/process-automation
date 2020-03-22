@@ -24,19 +24,17 @@
     "electron": "^8.1.1",
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
-    "react-scripts": "3.4.0",
-    "@testing-library/jest-dom": "^4.2.4",
-    "@testing-library/react": "^9.3.2",
-    "@testing-library/user-event": "^7.1.2"
+    "react-scripts": "3.4.0"
   },
   "devDependencies": {
-    "firebase": "^7.11.0",
     "concurrently": "^5.1.0",
     "cross-env": "^7.0.2",
+    "csv-parser": "^2.3.2",
     "electron-builder": "^22.4.1",
     "electron-is-dev": "^1.1.0",
     "electron-rebuild": "^1.10.1",
     "electron-reload": "^1.5.0",
+    "firebase": "^7.11.0",
     "wait-on": "^4.0.1"
   },
   "scripts": {
