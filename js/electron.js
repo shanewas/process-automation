@@ -18,7 +18,7 @@ function generateMainWindow() {
   // let isDev = false;
   win = window.createWindow(
     isDev
-      ? 'http://localhost:3000'
+      ? 'http://localhost:4000'
       : `file://${path.join(__dirname, '../build/index.html')}`,
     true
   )
