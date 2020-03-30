@@ -20,3 +20,8 @@ ref: https://medium.com/@topspinj/how-to-git-rebase-into-a-forked-repo-c9f05e821
 
 #git tutorial:
 https://www.youtube.com/watch?v=SWYqp7iY_Tc
+
+#Yarn on Ubuntu
+curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+sudo apt update && sudo apt install yarn
