@@ -11,7 +11,8 @@ function createWindow(loadurl, preload = false) {
 		minWidth: 300,
 		frame: true,
 		show: false,
-		title: "Aiw Core",
+		title: "AIW Core",
+		icon: path.join(__dirname, '../../logo.png'),
 		webPreferences: {
 			webSecurity: false,
 			nodeIntegration: true,
