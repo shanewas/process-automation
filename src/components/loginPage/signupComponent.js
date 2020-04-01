@@ -1,10 +1,15 @@
 import React, { Component } from "react";
 import {Link} from "react-router-dom"
+import NavBar from "../navBar/NavBar";
+
 
 export default class SignUp extends Component {
     render() {
         return (
-<form>
+            <div className="auth-wrapper">
+            <div className="auth-inner">
+            <NavBar></NavBar>
+            <form>
                 <h3>Sign Up</h3>
 
                 <div className="form-group">
@@ -32,6 +37,10 @@ export default class SignUp extends Component {
                     Already registered <Link  to={"/sign-in"}>sign in?</Link>
                 </p>
             </form>
+
+            </div>
+            </div>
+            
         );
     }
 }
