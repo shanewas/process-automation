@@ -6,9 +6,10 @@ import NavBar from "../navBar/NavBar";
 export default class SignUp extends Component {
     render() {
         return (
-            <div className="auth-wrapper">
+            <div className="auth-wrapper" style={{marginTop:'25vh'}}>
             <div className="auth-inner">
             <NavBar></NavBar>
+            
             <form>
                 <h3>Sign Up</h3>
 

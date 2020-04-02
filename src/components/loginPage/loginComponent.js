@@ -39,7 +39,8 @@ export default class Login extends Component {
             return(<Redirect to='/list'/>)
         }
         return (
-            <div className="auth-wrapper">
+            
+            <div className="auth-wrapper" style={{marginTop:'30vh'}}>
             <div className="auth-inner">
             <NavBar></NavBar>
             <form onSubmit={this.submitform}>

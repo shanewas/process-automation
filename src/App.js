@@ -8,11 +8,10 @@ import SignUp from "./components/loginPage/signupComponent";
 import BotListPage from './components/botListPage/BotListPage';
 
 
-
 function App() {
   return (<Router>
     <div className="App">
-          
+        
           <Switch>
             <Route exact path='/' component={Login} />
             <Route path="/sign-in" component={Login} />
