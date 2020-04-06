@@ -37,7 +37,7 @@
   },
   "scripts": {
     "react-start": "npm start --prefix frontend",
-    "react-build": "npm start --prefix build",
+    "react-build": "npm build --prefix frontend",
     "react-test": "react-scripts test --env=jsdom",
     "react-eject": "react-scripts eject",
     "backend-start": "cd backend && node server.js",
