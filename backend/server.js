@@ -3,9 +3,9 @@ const path = require("path");
 const cors = require("cors");
 
 const core = express();
-core.use(cors());
 const fs = require("fs");
 
+core.use(cors());
 core.get("/api/bots", (req, res) => {
 	let rawdata = fs.readFileSync(
 		`${path.join(__dirname, "dataControl/botlist.json")}`
