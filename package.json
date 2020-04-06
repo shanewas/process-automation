@@ -36,6 +36,7 @@
     "wait-on": "^4.0.1"
   },
   "scripts": {
+    "frontend-install": "cd frontend && npm install",
     "react-start": "npm start --prefix frontend",
     "react-build": "npm build --prefix frontend",
     "react-test": "react-scripts test --env=jsdom",
