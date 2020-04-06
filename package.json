@@ -23,16 +23,16 @@
   "dependencies": {
     "cors": "^2.8.5",
     "csv-parser": "^2.3.2",
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "electron-is-dev": "^1.2.0",
+    "electron-reload": "^1.5.0"
   },
   "devDependencies": {
     "concurrently": "^5.1.0",
     "cross-env": "^7.0.2",
     "electron": "^8.2.0",
     "electron-builder": "^22.4.1",
-    "electron-is-dev": "^1.2.0",
     "electron-rebuild": "^1.10.1",
-    "electron-reload": "^1.5.0",
     "wait-on": "^4.0.1"
   },
   "scripts": {
