@@ -21,6 +21,7 @@
   ],
   "peerDependencies": {},
   "dependencies": {
+    "cors": "^2.8.5",
     "csv-parser": "^2.3.2",
     "express": "^4.17.1"
   },
@@ -36,7 +37,7 @@
   },
   "scripts": {
     "react-start": "cd frontend && npm start",
-    "react-build": "react-scripts build",
+    "react-build": "cd frontend && npm build",
     "react-test": "react-scripts test --env=jsdom",
     "react-eject": "react-scripts eject",
     "backend-start": "cd backend && node server.js",

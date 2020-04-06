@@ -8,9 +8,9 @@ import SignUp from "./components/loginPage/signupComponent";
 import BotListPage from "./components/botListPage/BotListPage";
 
 function App() {
-	// fetch("http://localhost:9000/api/bots").then((response) => {
-	// 	console.log(response);
-	// });
+	fetch("/api/bots").then((response) => {
+		console.log(response);
+	});
 	return (
 		<Router>
 			<div className='App'>

@@ -1,8 +1,9 @@
 const express = require("express");
 const path = require("path");
+const cors = require("cors");
 
 const core = express();
-
+core.use(cors());
 const fs = require("fs");
 
 core.get("/api/bots", (req, res) => {
