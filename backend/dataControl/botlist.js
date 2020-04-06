@@ -15,6 +15,38 @@ const addBot = function (botName, runTime, category) {
 	saveBots(bots);
 };
 
+// Delete Bot Function
+const removeBot = function (botName) {
+	const bots = loadBots();
+	const botsToKeep = bots.filter(function (bot) {
+		return bot.botName != botName;
+	});
+
+	saveBots(botsToKeep);
+}
+
+// Edit Bot Function
+const editBot = function (botName, runTime, category) {
+	const bots = loadBots();
+	bots.forEach(function (bot) { 
+		if (bot.botName === botName) {
+			bot.botName = botName;
+			bot.runTime = runTime;
+			bot.category = category;
+		}
+	});
+
+	saveBots(bots);
+}
+
+// List all Bots Function
+const listAllBots = function () {
+	const bots = loadBots();
+	bots.forEach(function (bot) {
+		console.log(bot.botName);
+	});
+}
+
 // Fetch BotList Function
 const loadBots = function () {
 	try {
@@ -34,7 +66,15 @@ const saveBots = function (bots) {
 
 module.exports = {
 	addBot: addBot,
+	removeBot: removeBot,
+	editBot: editBot,
+	listAllBots:listAllBots
 };
 
-addBot("potato", 1, "potao");
+// addBot("carrot", 1, "filler");
 console.log("asdadsf");
+
+// removeBot('banana');
+// console.log(loadBots());
+// listAllBots();
+// editBot('tomato',2,'filler');
