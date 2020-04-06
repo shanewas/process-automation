@@ -12,7 +12,7 @@
     "type": "git",
     "url": "git+https://github.com/shanewas/aiwcore.git"
   },
-  "main": "js/electron.js",
+  "main": "core/electron.js",
   "homepage": "./",
   "keywords": [
     "RPA",
@@ -21,55 +21,29 @@
   ],
   "peerDependencies": {},
   "dependencies": {
-    "@material-ui/core": "^4.9.8",
-    "@material-ui/icons": "^4.9.1",
-    "electron": "^8.1.1",
-    "material-table": "^1.57.2",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1",
-    "react-scripts": "3.4.1"
+    "csv-parser": "^2.3.2",
+    "express": "^4.17.1"
   },
   "devDependencies": {
-    "font-awesome": "^4.7.0",
-    "google-maps-react": "^2.0.2",
-    "node-sass": "^4.13.1",
-    "prop-types": "^15.7.2",
-    "react-bootstrap": "^1.0.0-beta.17",
-    "react-full-screen": "^0.2.4",
-    "react-loadable": "^5.5.0",
-    "react-nvd3": "^0.5.7",
-    "react-perfect-scrollbar": "^1.5.8",
-    "react-redux": "^7.2.0",
-    "react-reveal": "^1.2.2",
-    "react-router-dom": "^5.1.2",
-    "react-window-size": "^1.2.2",
-    "redux": "^4.0.5",
-    "@fortawesome/fontawesome-free": "^5.12.1",
-    "@fortawesome/fontawesome-svg-core": "^1.2.27",
-    "@fortawesome/free-solid-svg-icons": "^5.12.1",
-    "animate.css": "^3.7.2",
-    "bootstrap": "^4.4.1",
     "concurrently": "^5.1.0",
     "cross-env": "^7.0.2",
-    "csv-parser": "^2.3.2",
+    "electron": "^8.2.0",
     "electron-builder": "^22.4.1",
-    "electron-is-dev": "^1.1.0",
+    "electron-is-dev": "^1.2.0",
     "electron-rebuild": "^1.10.1",
     "electron-reload": "^1.5.0",
-    "jquery": "^3.4.1",
-    "popper.js": "^1.16.1",
-    "react-to-print": "^2.6.3",
     "wait-on": "^4.0.1"
   },
   "scripts": {
-    "react-start": "react-scripts start",
+    "react-start": "cd frontend && npm start",
     "react-build": "react-scripts build",
     "react-test": "react-scripts test --env=jsdom",
     "react-eject": "react-scripts eject",
+    "backend-start": "cd backend && node server.js",
     "electron-build": "electron-builder",
     "release": "yarn react-build && electron-builder --publish=always",
     "build": "yarn react-build && yarn electron-build",
-    "start": "concurrently \"cross-env BROWSER=none yarn react-start\" \"wait-on http://localhost:4000 && electron .\""
+    "start": "concurrently \"cross-env BROWSER=none yarn backend-start\" \"cross-env BROWSER=none yarn react-start\" \"wait-on http://localhost:4000 && electron .\""
   },
   "eslintConfig": {
     "extends": "react-app"
