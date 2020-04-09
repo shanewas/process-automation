@@ -1,31 +1,30 @@
 {
-  "name": "aiw-core",
-  "description": "Aiw Core",
-  "author": "Shanewas Ahmed Nabil",
-  "license": "MIT",
+  "name": "frontend",
   "version": "0.1.0",
   "private": true,
-  "build": {
-    "appId": "com.aiw_core"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/shanewas/aiwcore.git"
-  },
   "dependencies": {
-    "@fortawesome/fontawesome-free": "^5.13.0",
-    "@material-ui/core": "^4.9.9",
-    "@material-ui/icons": "^4.9.1",
-    "@testing-library/jest-dom": "^5.3.0",
-    "@testing-library/react": "^10.0.2",
-    "@testing-library/user-event": "^10.0.1",
-    "bootstrap": "^4.4.1",
-    "material-table": "^1.57.2",
-    "react": "^16.13.1",
-    "react-bootstrap": "^1.0.0",
-    "react-dom": "^16.13.1",
+    "@giantmachines/redux-websocket": "^1.1.6",
+    "axios": "^0.19.0",
+    "axios-oauth-client": "^1.2.1",
+    "axios-token-interceptor": "^0.2.0",
+    "bootstrap-sass": "^3.4.1",
+    "file-system": "^2.2.2",
+    "font-awesome": "^4.7.0",
+    "js-base64": "^2.5.1",
+    "js-cookie": "^2.2.1",
+    "js-file-download": "^0.4.9",
+    "node-forge": "^0.9.1",
+    "react": "^16.12.0",
+    "react-bootstrap-sweetalert": "^5.1.8",
+    "react-bs-datatable": "^2.0.2",
+    "react-dom": "^16.12.0",
+    "react-redux": "^7.1.3",
     "react-router-dom": "^5.1.2",
-    "react-scripts": "3.4.1"
+    "react-scripts": "^3.3.0",
+    "recharts": "^2.0.0-beta.1",
+    "redux": "^4.0.4",
+    "redux-cookies-middleware": "^0.2.1",
+    "redux-thunk": "^2.3.0"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -33,7 +32,6 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
-  "proxy": "http://localhost:9000",
   "eslintConfig": {
     "extends": "react-app"
   },
@@ -49,5 +47,9 @@
       "last 1 safari version"
     ]
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "babel-preset-env": "^1.7.0",
+    "morris.js": "^0.5.0",
+    "raphael": "^2.3.0"
+  }
 }
