@@ -23,9 +23,11 @@
   "dependencies": {
     "cors": "^2.8.5",
     "csv-parser": "^2.3.2",
-    "express": "^4.17.1",
     "electron-is-dev": "^1.2.0",
-    "electron-reload": "^1.5.0"
+    "electron-reload": "^1.5.0",
+    "express": "^4.17.1",
+    "jquery": "^3.4.1",
+    "react-slimscroll": "0.0.2"
   },
   "devDependencies": {
     "concurrently": "^5.1.0",

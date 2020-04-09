@@ -1,5 +1,7 @@
 import React from 'react';
 import MaterialTable from 'material-table';
+import PlayCircleFilledIcon from '@material-ui/icons/PlayCircleFilled';
+import RowInfo from './RowInfo';
 export default function BotTable() {
   const [state, setState] = React.useState({
     columns: [
@@ -15,7 +17,22 @@ export default function BotTable() {
 
   return (
     <MaterialTable
-      style={{height:"60vh"}}
+      detailPanel={rowData => {
+        return (
+          <RowInfo data={rowData}/>
+        )
+      }}
+      actions={[
+        {
+          icon: () => <PlayCircleFilledIcon />,
+          tooltip: 'Starts the Bot',
+          onClick: (event, rowData) => {
+            console.log(rowData)
+          }
+        }
+      ]}
+      onRowClick={(event, rowData, togglePanel) => togglePanel()}
+      style={{height:"70vh"}}
       title="Bot Tables"
       columns={state.columns}
       data={state.data}
