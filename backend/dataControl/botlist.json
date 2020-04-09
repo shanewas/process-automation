@@ -1,1 +1,21 @@
-[{"botName":"tomato","runTime":2,"category":"filler"},{"botName":"potato","runTime":1,"category":"filler"},{"botName":"papaya","runTime":1,"category":"input"},{"botName":"carrot","runTime":1,"category":"filler"}]
+[{
+    "id": 1,
+    "botName": "tomato",
+    "runTime": 2,
+    "category": "filler"
+}, {
+    "id": 2,
+    "botName": "potato",
+    "runTime": 1,
+    "category": "filler"
+}, {
+    "id": 3,
+    "botName": "papaya",
+    "runTime": 1,
+    "category": "input"
+}, {
+    "id": 4,
+    "botName": "carrot",
+    "runTime": 1,
+    "category": "filler"
+}]
