@@ -4,20 +4,31 @@ import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 
 import BotTable from './BotTable';
+import BotLog from './BotLog';
+import NavBar from '../navBar/Navbar'
 
 export default class BotListPage extends Component {
     render() {
         return (
-            <div style={{padding:"0 10vh"}}>
-               
+
+            <div>
+               <NavBar></NavBar>
                 <Card style={{marginTop:'7vh'}}>
                 <Card.Body><h1>Titile Would Go there</h1></Card.Body>
                 </Card>
 
-                <div style={{marginTop:'5vh'}}>
-                <BotTable/>
-          
-                </div>
+                <Row>
+                    <Col xs={12} md={12} lg={9} xl={9}>
+
+                        <BotTable />
+
+                    </Col>
+                    <Col  xs={12} md={12} lg={3} xl={3}>
+                       
+                        <BotLog/>
+
+                    </Col>
+                </Row>
                    
             </div>
         )
