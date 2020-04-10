@@ -5,13 +5,14 @@ import Col from 'react-bootstrap/Col'
 
 import BotTable from './BotTable';
 import BotLog from './BotLog';
-
+import NavBar from '../navBar/Navbar'
 
 export default class BotListPage extends Component {
     render() {
         return (
-            <div style={{padding:"0 10vh"}}>
-               
+
+            <div>
+               <NavBar></NavBar>
                 <Card style={{marginTop:'7vh'}}>
                 <Card.Body><h1>Titile Would Go there</h1></Card.Body>
                 </Card>
