@@ -6,8 +6,7 @@ import {
   Route
 } from 'react-router-dom'
 import login from './components/loginPage/Login'
-// import Navbar from './components/navBar/NavBar'
-import BotListPage from './components/botListPage/BotListPage'
+// import BotDetails from './pages/bots/BotDetails'
 
 function App() {
 	
@@ -16,7 +15,6 @@ function App() {
 			<div className='App'>
 				<Switch>
 					<Route exact path='/' component={login} />
-					<Route exact path='/list' component={BotListPage} />
 				</Switch>
 			</div>
 		</Router>
