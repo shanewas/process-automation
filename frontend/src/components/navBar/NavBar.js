@@ -1,11 +1,5 @@
 import React, { Component } from 'react'
-import '../../assets/css/icons.css'
-import '../../assets/css/style.css'
-import '../../assets/css/bootstrap.min.css'
-import "bootstrap"
-import usflag from '../../assets/images/flags/us_flag.jpg'
-import user from '../../assets/images/users/user-1.jpg'
-import logo from  '../../img/logo.png'
+import logo from '../../images/logo.png'
 
 
 
@@ -27,22 +21,7 @@ export default class NavBar extends Component {
             </div>
             <nav className="navbar-custom">
             <ul className="navbar-right list-inline float-right mb-0">
-                {/* language*/}
-                <li className="dropdown notification-list list-inline-item d-none d-md-inline-block">
-                <a className="nav-link dropdown-toggle arrow-none waves-effect" data-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
-                    <img src={usflag} className="mr-2" height={12} /> English <span className="mdi mdi-chevron-down" />
-                </a>
-                <div className="dropdown-menu dropdown-menu-right dropdown-menu-animated language-switch">
-                    <a className="dropdown-item" href="#"><img src={usflag} height={16} /><span> French </span></a>
-                    <a className="dropdown-item" href="#"><img src={usflag} height={16} /><span> Spanish </span></a>
-                    <a className="dropdown-item" href="#"><img src={usflag} height={16} /><span> Russian </span></a>
-                    <a className="dropdown-item" href="#"><img src={usflag} height={16} /><span> German </span></a>
-                    <a className="dropdown-item" href="#"><img src={usflag} height={16} /><span> Italian </span></a>
-                </div>
-                </li>
 
-
-                {/* notification */}
                 <li className="dropdown notification-list list-inline-item">
                 <a className="nav-link dropdown-toggle arrow-none waves-effect" data-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
                     <i className="mdi mdi-bell-outline noti-icon" />
@@ -88,7 +67,7 @@ export default class NavBar extends Component {
                 </li>
                 <li className="dropdown notification-list list-inline-item">
                 <a className="nav-link dropdown-toggle arrow-none waves-effect" data-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
-                    <img src={user} alt="user" className="rounded-circle" style={{width:"30px"}} />
+                    <img src="" alt="user" className="rounded-circle" style={{width:"30px"}} />
                 </a>
                 <div className="dropdown-menu dropdown-menu-right profile-dropdown ">
                     <a className="dropdown-item" href="#"><i className="mdi mdi-account-circle" /> Profile</a>
@@ -118,7 +97,7 @@ export default class NavBar extends Component {
             </ul>
             </nav>
         </div>
-        {/* Top Bar End */}
+
         </div>
 
         )
