@@ -1,5 +1,5 @@
 import React from 'react';
-
+import './electronScript' 
 import {
   BrowserRouter as Router,
   Switch,
