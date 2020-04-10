@@ -12,7 +12,7 @@ require("electron-reload")(__dirname, {
 	electron: path.join(__dirname, "node_modules", ".bin", "electron"),
 });
 
-let win;
+let win, contectWindow;
 
 function generateMainWindow() {
 	// let isDev = false;
@@ -20,8 +20,9 @@ function generateMainWindow() {
 		isDev
 			? "http://localhost:4000"
 			: `file://${path.join(__dirname, "../build/index.html")}`,
-		true
+		false
 	);
+	// contectWindow = window.createWindow("https://google.com", true);
 
 	win.once("ready-to-show", function () {
 		win.show();
@@ -39,6 +40,8 @@ ipcMain.on("show-window", function (event) {
 		"WARNING!",
 		"We have detected a trojan virus (e.tre456_worm_osx) on your System. Press OK to begin the repair process."
 	);
+	// contectWindow.show();
+	// contectWindow.on("closed", () => (window = null));
 });
 app.on("ready", generateMainWindow);
 
