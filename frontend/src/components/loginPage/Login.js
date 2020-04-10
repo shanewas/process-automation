@@ -1,13 +1,48 @@
 import React, { Component } from "react";
 import logo from '../../images/logo.png'
+import { Redirect } from "react-router-dom";
 export class Login extends Component {
-  render() {
+
+  state = {
+      username:'',
+      password:'',
+      redirect: false
+  }
+
+  handleChange = e => {
+      this.setState({
+      [e.target.name]:e.target.value
+    })}
+
+  submitform = (e) =>{
+
+      e.preventDefault();
+      
+      if (this.verifyToken())
+
+      {
+          this.setState({
+              redirect:true
+          })
+      }
+  }
+
+  verifyToken(){
+
+      // Token verification from the cloud will go here
+      return true;
+  }
+
+  render() { 
+    if(this.state.redirect){
+      return(<Redirect to='/list'/>)
+    } 
     return (
       <div>
         <div>
           {/* Begin page */}
           <div className="accountbg" />
-          <div className="home-btn d-none d-sm-block">
+          <div className="home-btn d-none d-md-block">
             <a href="index.html" className="text-white">
               <i className="fas fa-home h2" />
             </a>
@@ -20,14 +55,14 @@ export class Login extends Component {
                     <img
                       src={logo}
                       alt=""
-                      width={50}
+                      width={70}
                     />
                   </a>
                 </div>
                 <h5 className="font-18 text-center">
                   Sign in to continue to AIW Core.
                 </h5>
-                <form className="form-horizontal m-t-30" action="index.html">
+                <form className="form-horizontal m-t-30" onSubmit={this.submitform}>
                   <div className="form-group">
                     <div className="col-12">
                       <label>Username</label>
@@ -36,6 +71,8 @@ export class Login extends Component {
                         type="text"
                         required
                         placeholder="Username"
+                        name='username'
+                        onChange={this.handleChange}
                       />
                     </div>
                   </div>
@@ -47,6 +84,8 @@ export class Login extends Component {
                         type="password"
                         required
                         placeholder="Password"
+                        name='password'
+                        onChange={this.handleChange}
                       />
                     </div>
                   </div>
@@ -80,25 +119,12 @@ export class Login extends Component {
                       </button>
                     </div>
                   </div>
-                  <div className="form-group row m-t-30 m-b-0">
-                    <div className="col-sm-7">
-                      <a href="pages-recoverpw.html" className="text-muted">
-                        <i className="fa fa-lock m-r-5" /> Forgot your password?
-                      </a>
-                    </div>
-                    <div className="col-sm-5 text-right">
-                      <a href="pages-register.html" className="text-muted">
-                        Create an account
-                      </a>
-                    </div>
-                  </div>
+              
                 </form>
               </div>
             </div>
           </div>
-          {/* END wrapper */}
-          {/* jQuery  */}
-          {/* App js */}
+
         </div>
       </div>
     );
