@@ -1,42 +1,40 @@
 import React, { Component } from "react";
-import logo from '../../images/logo.png'
+
+import logo from "../../images/logo.png";
 import { Redirect } from "react-router-dom";
+
 export class Login extends Component {
-
   state = {
-      username:'',
-      password:'',
-      redirect: false
-  }
+    username: "",
+    password: "",
+    redirect: false,
+  };
 
-  handleChange = e => {
+  handleChange = (e) => {
+    this.setState({
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  submitform = (e) => {
+    e.preventDefault();
+
+    if (this.verifyToken()) {
       this.setState({
-      [e.target.name]:e.target.value
-    })}
+        redirect: true,
+      });
+    }
+  };
 
-  submitform = (e) =>{
-
-      e.preventDefault();
-      
-      if (this.verifyToken())
-
-      {
-          this.setState({
-              redirect:true
-          })
-      }
+  verifyToken() {
+    // Token verification from the cloud will go here
+    return true;
   }
 
-  verifyToken(){
-
-      // Token verification from the cloud will go here
-      return true;
-  }
-
-  render() { 
-    if(this.state.redirect){
-      return(<Redirect to='/list'/>)
-    } 
+  render() {
+    if (this.state.redirect) {
+      return <Redirect to="/list" />;
+    }
     return (
       <div>
         <div>
@@ -52,17 +50,16 @@ export class Login extends Component {
               <div className="card-body">
                 <div className="text-center m-t-0 m-b-15">
                   <a href="index.html" className="logo logo-admin">
-                    <img
-                      src={logo}
-                      alt=""
-                      width={70}
-                    />
+                    <img src={logo} alt="" width={70} />
                   </a>
                 </div>
                 <h5 className="font-18 text-center">
                   Sign in to continue to AIW Core.
                 </h5>
-                <form className="form-horizontal m-t-30" onSubmit={this.submitform}>
+                <form
+                  className="form-horizontal m-t-30"
+                  onSubmit={this.submitform}
+                >
                   <div className="form-group">
                     <div className="col-12">
                       <label>Username</label>
@@ -71,7 +68,7 @@ export class Login extends Component {
                         type="text"
                         required
                         placeholder="Username"
-                        name='username'
+                        name="username"
                         onChange={this.handleChange}
                       />
                     </div>
@@ -84,7 +81,7 @@ export class Login extends Component {
                         type="password"
                         required
                         placeholder="Password"
-                        name='password'
+                        name="password"
                         onChange={this.handleChange}
                       />
                     </div>
@@ -120,12 +117,10 @@ export class Login extends Component {
                       </button>
                     </div>
                   </div>
-              
                 </form>
               </div>
             </div>
           </div>
-
         </div>
       </div>
     );
