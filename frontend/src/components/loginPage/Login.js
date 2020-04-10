@@ -114,6 +114,7 @@ export class Login extends Component {
                       <button
                         className="btn btn-primary btn-block btn-lg waves-effect waves-light"
                         type="submit"
+                        id="test"
                       >
                         Log In
                       </button>
