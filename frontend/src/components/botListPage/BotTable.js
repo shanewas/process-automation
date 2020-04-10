@@ -12,6 +12,9 @@ export default class BotTable extends Component {
     ]
 }
 
+addbot = () =>{
+  console.log("added")
+}
 render(){
 
   return (
@@ -20,7 +23,9 @@ render(){
   <div className="col-xl-12">
     <div className="card">
       <div className="card-body">
-        <h4 className="mt-0 header-title mb-4">Bot List</h4>
+        <h4 className="mt-0 header-title mb-4">Bot List
+        <span onClick={this.addbot} className="float-right"><i className="fas fa-plus"></i></span>
+        </h4>
         <div className="table-responsive">
           <table className="table table-hover">
             <thead>
