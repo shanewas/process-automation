@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import logo from '../../images/logo.png'
+import logo from "../../images/logo.png";
 export class Login extends Component {
   render() {
     return (
@@ -17,11 +17,7 @@ export class Login extends Component {
               <div className="card-body">
                 <div className="text-center m-t-0 m-b-15">
                   <a href="index.html" className="logo logo-admin">
-                    <img
-                      src={logo}
-                      alt=""
-                      width={50}
-                    />
+                    <img src={logo} alt="" width={50} />
                   </a>
                 </div>
                 <h5 className="font-18 text-center">
