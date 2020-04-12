@@ -6,7 +6,11 @@ const addBot = function (botName, runTime, category) {
 	// fetching stored bots from json file
 	const bots = loadBots();
 
+	const id = bots.length + 1;
+	console.log('Successfully added bot number: '+id);
+
 	bots.push({
+		id: id,
 		botName: botName,
 		runTime: runTime,
 		category: category,
@@ -81,7 +85,7 @@ module.exports = {
 	fetchBot: fetchBot
 };
 
-// addBot("carrot", 1, "filler");
+addBot("coconut", 3, "input");
 // console.log(fetchBot('carrot'));
 
 // removeBot('banana');

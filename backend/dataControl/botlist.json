@@ -1,21 +1,56 @@
-[{
-    "id": 1,
-    "botName": "tomato",
-    "runTime": 2,
-    "category": "filler"
-}, {
-    "id": 2,
-    "botName": "potato",
-    "runTime": 1,
-    "category": "filler"
-}, {
-    "id": 3,
-    "botName": "papaya",
-    "runTime": 1,
-    "category": "input"
-}, {
-    "id": 4,
-    "botName": "carrot",
-    "runTime": 1,
-    "category": "filler"
-}]
+[
+    {
+        "id": 1,
+        "botName": "tomato",
+        "runTime": 2,
+        "category": "filler"
+    },
+    {
+        "id": 2,
+        "botName": "potato",
+        "runTime": 1,
+        "category": "filler"
+    },
+    {
+        "id": 3,
+        "botName": "papaya",
+        "runTime": 1,
+        "category": "input"
+    },
+    {
+        "id": 4,
+        "botName": "carrot",
+        "runTime": 1,
+        "category": "filler"
+    },
+    {
+        "id": 5,
+        "botName": "orange",
+        "runTime": 2,
+        "category": "input"
+    },
+    {
+        "id": 6,
+        "botName": "grape",
+        "runTime": 4,
+        "category": "scrapper"
+    },
+    {
+        "id": 7,
+        "botName": "mango",
+        "runTime": 1,
+        "category": "input"
+    },
+    {
+        "id": 8,
+        "botName": "banana",
+        "runTime": 1,
+        "category": "scrapper"
+    },
+    {
+        "id": 9,
+        "botName": "coconut",
+        "runTime": 3,
+        "category": "input"
+    }
+]
