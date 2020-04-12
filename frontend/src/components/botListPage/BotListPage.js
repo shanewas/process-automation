@@ -10,9 +10,10 @@ import Navbarup from "../navBar/Navbarup";
 export default class BotListPage extends Component {
   render() {
     return (
-      <div>
+     <div>
         <Navbarup></Navbarup>
-        <Card style={{ marginTop: "7vh" }}>
+        <div style={{margin:"13vh 10vh"}}>
+        <Card>
           <Card.Body>
             <h1>Titile Would Go there</h1>
           </Card.Body>
@@ -26,6 +27,7 @@ export default class BotListPage extends Component {
             <BotLog />
           </Col>
         </Row>
+      </div>
       </div>
     );
   }

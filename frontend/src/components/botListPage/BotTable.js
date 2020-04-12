@@ -19,7 +19,7 @@ render(){
 
   return (
     
-    <div className="row" style={{height:'100vh'}}>
+    <div className="row">
   <div className="col-xl-12">
     <div className="card">
       <div className="card-body">
