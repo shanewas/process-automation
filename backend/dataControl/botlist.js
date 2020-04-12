@@ -47,6 +47,15 @@ const listAllBots = function () {
 	});
 }
 
+const fetchBot = (id) => {
+	const bots = loadBots();
+	if (id <= bots.length) {
+		const botToFetch = bots.find((bot) => bot.id === Number(id));
+		return botToFetch;
+	} else
+		return botToFetch = '';
+}
+
 // Fetch BotList Function
 const loadBots = function () {
 	try {
@@ -68,11 +77,12 @@ module.exports = {
 	addBot: addBot,
 	removeBot: removeBot,
 	editBot: editBot,
-	listAllBots:listAllBots
+	listAllBots: listAllBots,
+	fetchBot: fetchBot
 };
 
 // addBot("carrot", 1, "filler");
-console.log("asdadsf");
+// console.log(fetchBot('carrot'));
 
 // removeBot('banana');
 // console.log(loadBots());
