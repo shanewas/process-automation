@@ -1,19 +1,22 @@
 const fs = require("fs");
 const path = require("path");
+const moment = require('moment');
 
 // Add Bot Function
 const addBot = function (botName, runTime, category) {
 	// fetching stored bots from json file
 	const bots = loadBots();
-
+	const currentDateTime = getCurrentTime();
 	const id = bots.length + 1;
 	console.log('Successfully added bot number: '+id);
-
+   
 	bots.push({
 		id: id,
 		botName: botName,
 		runTime: runTime,
 		category: category,
+		status: 'disabled',
+		lastActive: currentDateTime
 	});
 
 	saveBots(bots);
@@ -77,6 +80,14 @@ const saveBots = function (bots) {
 	fs.writeFileSync(`${path.join(__dirname, "botlist.json")}`, dataJSON);
 };
 
+// getting current time and date in local format
+const getCurrentTime = () => {
+	let date = moment().format('MMMM Do YYYY');
+	let time = moment().format('h:mm:ss a');
+	let currentDateTime = date + " at " + time;
+	return currentDateTime;
+}
+
 module.exports = {
 	addBot: addBot,
 	removeBot: removeBot,
@@ -85,7 +96,7 @@ module.exports = {
 	fetchBot: fetchBot
 };
 
-addBot("coconut", 3, "input");
+// addBot("mandarin", 1, "filler");
 // console.log(fetchBot('carrot'));
 
 // removeBot('banana');
