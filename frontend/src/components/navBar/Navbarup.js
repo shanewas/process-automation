@@ -1,6 +1,7 @@
 //akash115
 import React, { Component } from "react";
 import logo from "../../images/logo.png";
+import { Link } from "react-router-dom";
 
 export default class Navbar extends Component {
   render() {
@@ -21,73 +22,9 @@ export default class Navbar extends Component {
           <nav className="navbar-custom">
             <ul className="navbar-right list-inline float-right mb-0">
               <li className="dropdown notification-list list-inline-item d-none d-md-inline-block">
-                <a
-                  className="nav-link dropdown-toggle arrow-none waves-effect"
-                  data-toggle="dropdown"
-                  href="#"
-                  role="button"
-                  aria-haspopup="false"
-                  aria-expanded="false"
-                >
-                  <img
-                    src="assets/images/flags/us_flag.jpg"
-                    className="mr-2"
-                    alt=""
-                    height={12}
-                  />{" "}
-                  English <span className="mdi mdi-chevron-down" />
-                </a>
-                <div className="dropdown-menu dropdown-menu-right dropdown-menu-animated language-switch">
-                  <a className="dropdown-item" href="#">
-                    <img
-                      src="assets/images/flags/french_flag.jpg"
-                      alt=""
-                      height={16}
-                    />
-                    <span> French </span>
-                  </a>
-                  <a className="dropdown-item" href="#">
-                    <img
-                      src="assets/images/flags/spain_flag.jpg"
-                      alt=""
-                      height={16}
-                    />
-                    <span> Spanish </span>
-                  </a>
-                  <a className="dropdown-item" href="#">
-                    <img
-                      src="assets/images/flags/russia_flag.jpg"
-                      alt=""
-                      height={16}
-                    />
-                    <span> Russian </span>
-                  </a>
-                  <a className="dropdown-item" href="#">
-                    <img
-                      src="assets/images/flags/germany_flag.jpg"
-                      alt=""
-                      height={16}
-                    />
-                    <span> German </span>
-                  </a>
-                  <a className="dropdown-item" href="#">
-                    <img
-                      src="assets/images/flags/italy_flag.jpg"
-                      alt=""
-                      height={16}
-                    />
-                    <span> Italian </span>
-                  </a>
-                </div>
-              </li>
-              <li className="dropdown notification-list list-inline-item d-none d-md-inline-block">
-                <a
-                  className="nav-link waves-effect"
-                  href="#"
-                  id="btn-fullscreen"
-                >
-                  <i className="mdi mdi-arrow-expand-all noti-icon" />
-                </a>
+                <Link className="nav-link waves-effect" to="/build">
+                  <i className="fas fa-lg fa-lightbulb mr-2"></i>Create New
+                </Link>
               </li>
               <li className="dropdown notification-list list-inline-item">
                 <a
