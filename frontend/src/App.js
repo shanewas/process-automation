@@ -1,5 +1,5 @@
 import React from "react";
-// import "./electronScript";
+import "./electronScript";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import login from "./components/loginPage/Login";
 // import Navbar from './components/navBar/NavBar'
