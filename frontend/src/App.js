@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import login from "./components/loginPage/Login";
 // import Navbar from './components/navBar/NavBar'
 import BotListPage from "./components/botListPage/BotListPage";
-import BotBuildPage from './components/botEditPage/BotBuildPage'
+import BotBuildPage from "./components/botEditPage/BotBuildPage";
 
 function App() {
   return (
