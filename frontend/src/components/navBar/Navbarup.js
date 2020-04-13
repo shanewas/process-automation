@@ -2,7 +2,6 @@
 import React, { Component } from "react";
 import logo from "../../images/logo.png";
 import { Link } from "react-router-dom";
-
 export default class Navbar extends Component {
   render() {
     return (
@@ -30,7 +29,7 @@ export default class Navbar extends Component {
                 <a
                   className="nav-link dropdown-toggle arrow-none waves-effect"
                   data-toggle="dropdown"
-                  href="#"
+                  href="/#"
                   role="button"
                   aria-haspopup="false"
                   aria-expanded="false"
@@ -43,10 +42,7 @@ export default class Navbar extends Component {
                 <div className="dropdown-menu dropdown-menu-right dropdown-menu-animated dropdown-menu-lg px-1">
                   <h6 className="dropdown-item-text">Notifications</h6>
                   <div className="slimscroll notification-item-list">
-                    <a
-                      href="javascript:void(0);"
-                      className="dropdown-item notify-item active"
-                    >
+                    <a href="/#" className="dropdown-item notify-item active">
                       <div className="notify-icon bg-success">
                         <i className="mdi mdi-cart-outline" />
                       </div>
@@ -57,10 +53,7 @@ export default class Navbar extends Component {
                         </span>
                       </p>
                     </a>
-                    <a
-                      href="javascript:void(0);"
-                      className="dropdown-item notify-item"
-                    >
+                    <a href="/#" className="dropdown-item notify-item">
                       <div className="notify-icon bg-danger">
                         <i className="mdi mdi-message-text-outline" />
                       </div>
@@ -71,10 +64,7 @@ export default class Navbar extends Component {
                         </span>
                       </p>
                     </a>
-                    <a
-                      href="javascript:void(0);"
-                      className="dropdown-item notify-item"
-                    >
+                    <a href="/#" className="dropdown-item notify-item">
                       <div className="notify-icon bg-info">
                         <i className="mdi mdi-filter-outline" />
                       </div>
@@ -85,10 +75,7 @@ export default class Navbar extends Component {
                         </span>
                       </p>
                     </a>
-                    <a
-                      href="javascript:void(0);"
-                      className="dropdown-item notify-item"
-                    >
+                    <a href="/#" className="dropdown-item notify-item">
                       <div className="notify-icon bg-success">
                         <i className="mdi mdi-message-text-outline" />
                       </div>
@@ -99,10 +86,7 @@ export default class Navbar extends Component {
                         </span>
                       </p>
                     </a>
-                    <a
-                      href="javascript:void(0);"
-                      className="dropdown-item notify-item"
-                    >
+                    <a href="/#" className="dropdown-item notify-item">
                       <div className="notify-icon bg-warning">
                         <i className="mdi mdi-cart-outline" />
                       </div>
@@ -115,7 +99,7 @@ export default class Navbar extends Component {
                     </a>
                   </div>
                   <a
-                    href="javascript:void(0);"
+                    href="/#"
                     className="dropdown-item text-center notify-all text-primary"
                   >
                     View all <i className="fi-arrow-right" />
@@ -127,7 +111,7 @@ export default class Navbar extends Component {
                   <a
                     className="dropdown-toggle nav-link arrow-none nav-user"
                     data-toggle="dropdown"
-                    href="#"
+                    href="/#"
                     role="button"
                     aria-haspopup="false"
                     aria-expanded="false"
@@ -139,23 +123,23 @@ export default class Navbar extends Component {
                     />
                   </a>
                   <div className="dropdown-menu dropdown-menu-right profile-dropdown ">
-                    <a className="dropdown-item" href="#">
+                    <a className="dropdown-item" href="/#">
                       <i className="mdi mdi-account-circle" /> Profile
                     </a>
-                    <a className="dropdown-item" href="#">
+                    <a className="dropdown-item" href="/#">
                       <i className="mdi mdi-wallet" /> Wallet
                     </a>
-                    <a className="dropdown-item d-block" href="#">
+                    <a className="dropdown-item d-block" href="/#">
                       <span className="badge badge-success float-right">
                         11
                       </span>
                       <i className="mdi mdi-settings" /> Settings
                     </a>
-                    <a className="dropdown-item" href="#">
+                    <a className="dropdown-item" href="/#">
                       <i className="mdi mdi-lock-open-outline" /> Lock screen
                     </a>
                     <div className="dropdown-divider" />
-                    <a className="dropdown-item text-danger" href="#">
+                    <a className="dropdown-item text-danger" href="/#">
                       <i className="mdi mdi-power text-danger" /> Logout
                     </a>
                   </div>
