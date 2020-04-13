@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import Navbarup from "../navBar/Navbarup";
 import SidebarLeft from "../navBar/SidebarLeft";
-import SearchBar from "../navBar/SearchBar";
+import SearchBar from "./SearchBar";
 export default class BotBuildPage extends Component {
   render() {
     return (
