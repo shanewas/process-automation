@@ -1,25 +1,55 @@
 import React, { Component } from 'react';
+import * as electron from "../../electronScript"
+import AddBotModal from './AddBotModal'
+
 export default class BotTable extends Component {
 
+
   state = {
-    botList:[
-      ['name','status','type','last',],
-      ['name','status','type','last',],
-      ['name','status','type','last',],
-      ['name','status','type','last',],
-      ['name','status','type','last',],
-      ['name','status','type','last',],
-    ]
+    botList:[],
+    addmodalShow:false
 }
 
 addbot = () =>{
-  console.log("added")
+  this.setState({addmodalShow:true})
 }
-render(){
 
+badgemaker =(status) =>
+{
+  switch (status) {
+    case "running":   return "badge badge-warning";
+    case "active": return "badge badge-success";
+    case "disabled":  return "badge badge-danger";
+    default :return "badge badge-success"
+  }
+}
+
+
+componentDidMount(){
+  fetch('/api/bots')
+  .then((response) => {
+    return response.json();
+  })
+  .then((data) => {
+    this.setState({
+      botList:data
+    })
+  });
+}
+
+editHandle = () => {
+  electron.ipcRenderer.send(electron.editBotChannel);
+}
+
+
+render(){
   return (
     
     <div className="row">
+      <AddBotModal
+      show={this.state.addmodalShow}
+      onHide={() => this.setState({addmodalShow:false})}
+      />
   <div className="col-xl-12">
     <div className="card">
       <div className="card-body">
@@ -33,6 +63,7 @@ render(){
                 <th scope="col">Name</th>
                 <th scope="col">Status</th>
                 <th scope="col">Bot Type</th>
+                <th scope="col">Run Time</th>
                 <th scope="col">Last Active</th>
                 <th scope="col">Functions</th>
 
@@ -40,17 +71,20 @@ render(){
               </tr>
             </thead>
             <tbody>
-            {this.state.botList.map((bot,index) =>{
+            {this.state.botList.map((bot) =>{
               return(
-                <tr key={index}>
-                <td>{bot[0]}</td>
-                <td><span className="badge badge-warning">{bot[1]}</span></td>
-                <td>{bot[2]}</td>
-                <td>{bot[3]}</td>
+                <tr key={bot.id}>
+                <td>{bot.botName}</td>
+                <td>
+                  <span className={this.badgemaker(bot.status)}>{bot.status}</span>
+                </td>
+                <td>{bot.category}</td>
+                <td>{bot.runTime}</td>
+                <td>{bot.lastActive}</td>
                 <td>
                   <div>
                     <div className="btn btn-primary mr-2 btn-sm">
-                      <div>
+                      <div onClick={this.editHandle}>
                       <i className="far fa-edit"></i> Edit
                       </div></div>
                     <div className="btn btn-danger mr-2 btn-sm"><div>

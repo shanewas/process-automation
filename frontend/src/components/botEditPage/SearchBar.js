@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+import * as electron from "../../electronScript"
+
 
 export default class SearchBar extends Component {
   handleChange = (e) => {
@@ -10,6 +12,7 @@ export default class SearchBar extends Component {
   handleSubmit = (e) => {
     e.preventDefault();
     console.log("form submitted", this.state);
+    electron.ipcRenderer.send(electron.SearchLinkChannel,this.state.text);
   };
   state = {
     text: "",
