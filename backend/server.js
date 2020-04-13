@@ -28,7 +28,7 @@ router.use(function (req, res, next) {
 // check if its 0 else go to next router.
 router.use("/bots/:id", (req,res,next) => {
 	if(req.params.id < 1) {
-	  res.json({"message" : "You must pass a valid bot ID"});    
+	  res.json({"message" : "You must pass ID other than 0"});    
 	}
 	else next();
 });
@@ -52,7 +52,7 @@ router.get("/bots/:id", (req,res) => {
 });
 
 //api - adding a new bot
-router.post("/bots/add-bot", (req, res) => {
+router.post("/bots", (req, res) => {
 	let bot = req.body;
 
 	//extracting bot info
