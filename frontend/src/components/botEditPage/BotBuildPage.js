@@ -8,7 +8,7 @@ export default class BotBuildPage extends Component {
       <div>
         <Navbarup></Navbarup>
         <SidebarLeft></SidebarLeft>
-        <div style={{ margin: "13vh 50vh" }}>
+        <div style={{ margin: "13vh 10vh" }}>
           <SearchBar />
         </div>
       </div>
