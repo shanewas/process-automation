@@ -86,5 +86,29 @@
         "category": "filler",
         "status": "disabled",
         "lastActive": "April 12th 2020 at 6:53:40 pm"
+    },
+    {
+        "id": 12,
+        "botName": "guava",
+        "runTime": 2,
+        "category": "filler",
+        "status": "disabled",
+        "lastActive": "April 13th 2020 at 2:37:17 pm"
+    },
+    {
+        "id": 13,
+        "botName": "cherry",
+        "runTime": 3,
+        "category": "scrapper",
+        "status": "disabled",
+        "lastActive": "April 13th 2020 at 2:40:04 pm"
+    },
+    {
+        "id": 14,
+        "botName": "pineapple",
+        "runTime": 1,
+        "category": "input",
+        "status": "disabled",
+        "lastActive": "April 13th 2020 at 2:43:27 pm"
     }
 ]
