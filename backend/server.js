@@ -63,6 +63,17 @@ router.post("/bots/add-bot", (req, res) => {
 	res.send('New Bot Added!');
 });
 
+//api - removing a bot
+router.post("/bots/remove-bot", (req, res) => {
+	let bot = req.body;
+
+	//extracting bot id 
+	let botId = bot.id;
+	console.log(botId);
+	botlist.removeBot(botId);
+	res.send('Bot removed Successfully!');
+});
+
 // REGISTER OUR ROUTES -------------------------------
 // all of our routes will be prefixed with /api
 core.use("/api", router);
