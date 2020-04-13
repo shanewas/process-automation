@@ -20,17 +20,17 @@ export default class SearchBar extends Component {
 
   render() {
     return (
-      <div className="col-sm-12 col-md-6">
-        <div id="datatable_filter" className="dataTables_filter">
-          <label>
-            <input
-              type="text"
-              onChange={this.handleChange}
-              className="form-control"
-              placeholder="Search..."
-            />
-            <button>Submit</button>
-          </label>
+      <div>
+        <div className="searchBox">
+          <input
+            className="searchInput"
+            type="text"
+            name
+            placeholder="Search..."
+          />
+          <button className="searchButton" href="/#">
+            <i className="material-icons">search</i>
+          </button>
         </div>
       </div>
     );
