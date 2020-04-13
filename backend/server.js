@@ -51,6 +51,18 @@ router.get("/bots/:id", (req,res) => {
 		res.json({ "message": "You must pass a valid bot ID " });
 });
 
+//api - adding a new bot
+router.post("/bots", (req, res) => {
+	let bot = req.body;
+
+	//extracting bot info
+	let botName = bot.botName;
+	let runTime = bot.runTime;
+	let category = bot.category;
+	botlist.addBot(botName, runTime, category);
+	res.send('New Bot Added!');
+});
+
 // REGISTER OUR ROUTES -------------------------------
 // all of our routes will be prefixed with /api
 core.use("/api", router);

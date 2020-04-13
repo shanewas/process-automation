@@ -49,9 +49,10 @@ const editBot = function (botName, runTime, category) {
 // List all Bots Function
 const listAllBots = function () {
 	const bots = loadBots();
-	bots.forEach(function (bot) {
-		console.log(bot.botName);
-	});
+	// bots.forEach(function (bot) {
+	// 	console.log(bot.botName);
+	// });
+	return bots;
 }
 
 const fetchBot = (id) => {
