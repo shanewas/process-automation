@@ -3,7 +3,7 @@
         "id": 2,
         "botName": "potato",
         "runTime": 1,
-        "category": "filler",
+        "category": "input",
         "status": "running",
         "lastActive": "April 10th 2020 at 10:00:01 am"
     },
@@ -20,13 +20,13 @@
         "botName": "orange",
         "runTime": 2,
         "category": "input",
-        "status": "disabled",
+        "status": "active",
         "lastActive": "April 11th 2020 at 9:20:11 pm"
     },
     {
         "id": 6,
         "botName": "grape",
-        "runTime": 4,
+        "runTime": "1",
         "category": "scrapper",
         "status": "active",
         "lastActive": "April 12th 2020 at 3:03:11 am"
@@ -57,19 +57,11 @@
     },
     {
         "id": 11,
-        "botName": "walnut",
+        "botName": "banana",
         "runTime": 1,
         "category": "filler",
         "status": "disabled",
         "lastActive": "April 13th 2020 at 9:57:31 pm"
-    },
-    {
-        "id": 12,
-        "botName": "cashew",
-        "runTime": 1,
-        "category": "filler",
-        "status": "disabled",
-        "lastActive": "April 13th 2020 at 9:58:31 pm"
     },
     {
         "id": 13,
@@ -83,14 +75,14 @@
         "id": 14,
         "botName": "tomato",
         "runTime": 1,
-        "category": "filler",
+        "category": "input",
         "status": "disabled",
         "lastActive": "April 13th 2020 at 10:00:52 pm"
     },
     {
         "id": 15,
         "botName": "kiwi",
-        "runTime": 5,
+        "runTime": 3,
         "category": "input",
         "status": "disabled",
         "lastActive": "April 14th 2020 at 2:57:12 am"
