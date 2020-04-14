@@ -33,13 +33,14 @@ const removeBot = function (id) {
 }
 
 // Edit Bot Function
-const editBot = function (botName, runTime, category) {
+const editBot = function (botInfo) {
 	const bots = loadBots();
 	bots.forEach(function (bot) { 
-		if (bot.botName === botName) {
-			bot.botName = botName;
-			bot.runTime = runTime;
-			bot.category = category;
+		if (bot.id === botInfo.id) {
+			bot.botName = botInfo.botName;
+			bot.runTime = botInfo.runTime;
+			bot.category = botInfo.category;
+			bot.status = botInfo.status;
 		}
 	});
 
@@ -55,10 +56,12 @@ const listAllBots = function () {
 	return bots;
 }
 
+// Fetch single bot
 const fetchBot = (id) => {
 	const bots = loadBots();
-	if (id <= bots.length) {
-		const botToFetch = bots.find((bot) => bot.id === Number(id));
+	if (0 < id <= bots[bots.length-1].id) {
+		const botToFetch = bots.find((bot) => bot.id === parseInt(id));
+		console.log(botToFetch);
 		return botToFetch;
 	} else
 		return botToFetch = '';
@@ -94,7 +97,8 @@ module.exports = {
 	removeBot: removeBot,
 	editBot: editBot,
 	listAllBots: listAllBots,
-	fetchBot: fetchBot
+	fetchBot: fetchBot,
+	getCurrentTime:getCurrentTime
 };
 
 // addBot("mandarin", 1, "filler");
