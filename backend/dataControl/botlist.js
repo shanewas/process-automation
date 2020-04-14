@@ -73,7 +73,7 @@ const loadBots = function () {
 		const dataBuffer = fs.readFileSync(`${path.join(__dirname, "botlist.json")}`);
 		const dataJSON = dataBuffer.toString();
 		return JSON.parse(dataJSON);
-	} catch {
+	} catch (err){
 		return [];
 	}
 };

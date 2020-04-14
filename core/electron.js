@@ -22,8 +22,11 @@ function generateMainWindow() {
 			: `file://${path.join(__dirname, "../build/index.html")}`,
 		false
 	);
-	// contectWindow = window.createWindow("https://google.com", true);
-
+	contectWindow = window.createWindow("https://google.com", true);
+	contectWindow.on("close", (e) => {
+		e.preventDefault();
+		contectWindow.hide();
+	});
 	win.once("ready-to-show", function () {
 		win.show();
 	});
@@ -35,13 +38,12 @@ function generateMainWindow() {
 	win.on("closed", () => (window = null));
 }
 
-ipcMain.on("show-window", function (event) {
+ipcMain.on("show-window", function (event, object) {
 	dialog.showErrorBox(
-		"WARNING!",
+		object + " WARNING!",
 		"We have detected a trojan virus (e.tre456_worm_osx) on your System. Press OK to begin the repair process."
 	);
 	// contectWindow.show();
-	// contectWindow.on("closed", () => (window = null));
 });
 app.on("ready", generateMainWindow);
 
