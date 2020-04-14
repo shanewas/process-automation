@@ -7,7 +7,7 @@ const addBot = function (botName, runTime, category) {
 	// fetching stored bots from json file
 	const bots = loadBots();
 	const currentDateTime = getCurrentTime();
-	const id = bots.length + 1;
+	const id = bots[bots.length - 1].id + 1;
 	console.log('Successfully added bot number: '+id);
    
 	bots.push({
@@ -23,10 +23,10 @@ const addBot = function (botName, runTime, category) {
 };
 
 // Delete Bot Function
-const removeBot = function (botName) {
+const removeBot = function (id) {
 	const bots = loadBots();
 	const botsToKeep = bots.filter(function (bot) {
-		return bot.botName != botName;
+		return bot.id != id;
 	});
 
 	saveBots(botsToKeep);
@@ -94,13 +94,15 @@ module.exports = {
 	removeBot: removeBot,
 	editBot: editBot,
 	listAllBots: listAllBots,
-	fetchBot: fetchBot
+	fetchBot: fetchBot,
+	getCurrentTime:getCurrentTime
 };
 
 // addBot("mandarin", 1, "filler");
 // console.log(fetchBot('carrot'));
 
 // removeBot('banana');
-// console.log(loadBots());
+// const bots = loadBots();
+// console.log('last bot id = ' + bots[bots.length - 1].id);
 // listAllBots();
 // editBot('tomato',2,'filler');
