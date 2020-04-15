@@ -17,7 +17,7 @@ export default class SearchBar extends Component {
   handleSubmit = (e) => {
     e.preventDefault();
     console.log("form submitted", this.state);
-    electron.ipcRenderer.send(electron.SearchLinkChannel,this.state.link);
+    electron.send(electron.SearchLinkChannel,this.state.link);
   };
  
 
