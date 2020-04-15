@@ -1,9 +1,10 @@
 name: auto-label
-on: [pull_request]
+on:
+  pull_request
 
 jobs:
-  label:
-    runs-on: ubuntu-latest
+  auto-label:
+    runs-on: windows-latest
     steps:
     - uses: actions/labeler@v2
       with:
