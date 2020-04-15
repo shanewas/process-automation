@@ -30,6 +30,12 @@ export function send(teleport, content) {
 	ipcRenderer.send(teleport, content);
 }
 
+export function receive(teleport) {
+	ipcRenderer.on(teleport, function (e, content) {
+		console.log(content);
+	});
+}
+
 // function tests() {
 // 	return 2;
 // }
