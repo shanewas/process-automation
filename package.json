@@ -28,10 +28,7 @@
     "electron-reload": "^1.5.0",
     "express": "^4.17.1",
     "jquery": "^3.4.1",
-    "moment": "^2.24.0",
-    "postman": "^0.2.0",
-    "react-slimscroll": "0.0.2",
-    "whatwg-fetch": "^3.0.0"
+    "moment": "^2.24.0"
   },
   "devDependencies": {
     "concurrently": "^5.1.0",
