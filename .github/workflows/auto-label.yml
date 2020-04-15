@@ -1,4 +1,4 @@
-name: Labeler
+name: auto-label
 on: [pull_request]
 
 jobs:
@@ -11,8 +11,5 @@ jobs:
         UI: frontend/**/*
         BACKEND: backend/**/*
         ROOT_CHECK: ./*
-        package_update: 
-          package.json
-          frontend/package.json
         README: ./*.md
         repo-token: "${{ secrets.GITHUB_TOKEN }}"
