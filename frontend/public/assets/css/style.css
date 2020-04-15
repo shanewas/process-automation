@@ -3867,7 +3867,7 @@ table.focus-on tbody tr.focused td {
     top: 10%;
     left: 60%;
     transform:  translate(-50%,50%);
-    background: #2f3640;
+    background: #222437;
     height: 50px;
     border-radius: 40px;
     padding: 10px;
@@ -3884,17 +3884,28 @@ table.focus-on tbody tr.focused td {
   color : #2f3640;
 }
 
+.searchBox:checked > .searchInput {
+  width: 500px;
+  padding: 0 6px;
+}
+
+.searchBox:checked > .searchButton {
+background: white;
+color : #2f3640;
+}
+
 .searchButton {
     color: white;
     float: right;
-    width: 40px;
-    height: 40px;
+    width: 60px;
+    height: 60px;
     border-radius: 50%;
-    background: #1a1c2a;
+    background: #30419b;
     display: flex;
     justify-content: center;
     align-items: center;
     transition: 0.4s;
+
 }
 
 .searchInput {
@@ -3911,9 +3922,38 @@ table.focus-on tbody tr.focused td {
 
 }
 
+.searchInput:not(:placeholder-shown) {
+
+    width: 500px;
+    padding: 0 6px;
+
+}
+
 @media screen and (max-width: 620px) {
 .searchBox:hover > .searchInput {
     width: 150px;
     padding: 0 6px;
 }
 }
+
+
+.mainbutton:hover i {
+  -webkit-transform: scale(1.2);
+          transform: scale(1.2);
+
+  -webkit-transition: transform .3s ease-in-out;
+  -moz-transition:transform .3s ease-in-out;
+  -ms-transition:transform .3s ease-in-out;
+}
+
+
+.mainbutton:hover span {
+  color: #30419b;
+
+  -webkit-transition: color .3s;
+  -moz-transition:    color .3s;
+  -ms-transition:     color .3s;
+  -o-transition:      color .3s;
+  transition:         color .3s;
+}
+
