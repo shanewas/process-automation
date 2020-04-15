@@ -55,12 +55,16 @@ router.get("/bots/:id", (req,res) => {
 router.post("/bots/add-bot", (req, res) => {
 	let bot = req.body;
 
-	//extracting bot info
-	let botName = bot.botName;
-	let runTime = bot.runTime;
-	let category = bot.category;
-	botlist.addBot(botName, runTime, category);
-	res.send('New Bot Added!');
+	if ('botName' in bot && 'runTime' in bot && 'category' in bot) {
+		//extracting bot info
+		let botName = bot.botName;
+		let runTime = bot.runTime;
+		let category = bot.category;
+		botlist.addBot(botName, runTime, category);
+		res.send('New Bot Added!');
+	}
+	else 
+		res.send('Unable to add new bot, you must provide all 3 of these informations - bot name, run time & bot category!!');
 });
 
 //api - removing a bot
