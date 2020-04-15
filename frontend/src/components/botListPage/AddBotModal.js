@@ -1,7 +1,21 @@
 import React from "react";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
+
 export default function AddBotModal(props) {
+  fetch("http://localhost:9000/api/bots/add-bot", {
+    method: "post",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      botName: "hazlenut",
+      runTime: 1,
+      category: "input",
+    }),
+  });
+
   return (
     <Modal
       {...props}
