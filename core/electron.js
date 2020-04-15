@@ -5,14 +5,13 @@ const isDev = require("electron-is-dev");
 let window = require("./electron/createWindow");
 const menu = require("./electron/menu");
 const conf = require("./electron/config");
+let { win, contectWindow } = require("./electron/windowList");
 
-const { app, Menu, dialog, ipcMain } = electron;
+const { app, Menu, ipcMain } = electron;
 
 require("electron-reload")(__dirname, {
 	electron: path.join(__dirname, "node_modules", ".bin", "electron"),
 });
-
-let win, contectWindow;
 
 function generateMainWindow() {
 	// let isDev = false;
@@ -44,13 +43,14 @@ ipcMain.on("search-link", function (event, object) {
 	} else {
 		contectWindow.loadURL(`https://${object}`);
 	}
-	dialog.showErrorBox(
-		" WARNING!",
-		`loaded ${object} !! We have detected a trojan virus (e.tre456_worm_osx) on your System. Press OK to begin the repair process.`
-	);
 	contectWindow.show();
-	console.log(object);
 });
+
+ipcMain.on("xpath", function (e, args) {
+	console.log(args);
+	win.webContents.send("search-link", args);
+});
+
 app.on("ready", generateMainWindow);
 
 app.on("window-all-closed", () => {
