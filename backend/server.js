@@ -48,7 +48,7 @@ router.get("/bots/:id", (req,res) => {
 	if (botInfo !== '')
 		res.json(botlist.fetchBot(req.params.id));
 	else
-		res.json({ "message": "You must pass a valid bot ID " });
+		res.json({ "message": "You must pass a valid bot ID" });
 });
 
 //api - adding a new bot
@@ -66,12 +66,39 @@ router.post("/bots/add-bot", (req, res) => {
 //api - removing a bot
 router.post("/bots/remove-bot", (req, res) => {
 	let bot = req.body;
-
 	//extracting bot id 
 	let botId = bot.id;
-	console.log(botId);
-	botlist.removeBot(botId);
-	res.send('Bot removed Successfully!');
+	if (!botId)
+		res.send('You must pass a valid bot ID');
+	else {
+		console.log(botId);
+		const bots = botlist.listAllBots();
+		let botToRemove = bots.find((bot) => bot.id === parseInt(botId));
+
+		if (!botToRemove)
+			res.send('No bot found!');
+		else {
+			botlist.removeBot(botId);
+			res.send('Bot removed Successfully!');
+		}
+	}
+});
+
+//api - edit/updating a bot
+router.put("/bots/update-bot/:id", (req, res) => {
+	const botInfo = botlist.fetchBot(req.params.id);
+	let botUpdate = req.body;
+	if (botInfo !== '' && Object.keys(botUpdate).length > 0) {
+		let updatedFields = Object.keys(botUpdate);		
+		updatedFields.forEach((field) => {
+			botInfo[field] = botUpdate[field];
+		});
+			
+		botlist.editBot(botInfo);	
+		res.json('Bot updated Successfully!');
+	}
+	else
+		res.json({ "message": "Bot update Failed!" });
 });
 
 // REGISTER OUR ROUTES -------------------------------
