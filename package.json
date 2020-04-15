@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/shanewas/aiwcore.git"
+    "url": "git+https://github.com/ferntechsolutions/aiwcore.git"
   },
   "main": "core/electron.js",
   "homepage": "./",
