@@ -33,7 +33,7 @@ export default class SearchBar extends Component {
             placeholder="Search..."
           />
           <button className="searchButton">
-            <i className="large material-icons">search </i>
+            <i className="large material-icons">search</i>
           </button>
           </form>
         </div>
