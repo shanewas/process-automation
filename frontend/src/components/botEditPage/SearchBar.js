@@ -3,36 +3,40 @@ import * as electron from "../../electronScript"
 
 
 export default class SearchBar extends Component {
+
+  state = {
+    link: "",
+  };
+
   handleChange = (e) => {
     this.setState({
-      text: e.target.value,
+      link: e.target.value,
     });
   };
 
   handleSubmit = (e) => {
     e.preventDefault();
     console.log("form submitted", this.state);
-    electron.ipcRenderer.send(electron.SearchLinkChannel,this.state.text);
+    electron.send(electron.SearchLinkChannel,this.state.link);
   };
-  state = {
-    text: "",
-  };
+ 
 
   render() {
     return (
       <div>
-        <div className="searchBox">
+
+          <form onSubmit={this.handleSubmit} className="searchBox">
           <input
+            onChange={this.handleChange}
             className="searchInput"
             type="text"
-            name
             placeholder="Search..."
           />
-          <button className="searchButton" href="/#">
-            <i className="material-icons">search</i>
+          <button className="searchButton">
+            <i className="large material-icons">search</i>
           </button>
+          </form>
         </div>
-      </div>
     );
   }
 }

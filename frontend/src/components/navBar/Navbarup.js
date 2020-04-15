@@ -13,9 +13,6 @@ export default class Navbar extends Component {
               <span className="logo-light">
                 <i className="font-18 text-center" /> AIW Core
               </span>
-              <span className="logo-sm">
-                <i className="mdi mdi-camera-control" />
-              </span>
             </Link>
           </div>
           <nav className="navbar-custom">

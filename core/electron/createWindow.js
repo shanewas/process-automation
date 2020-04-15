@@ -12,13 +12,13 @@ function createWindow(loadurl, preload = false) {
 		frame: true,
 		show: false,
 		title: "AIW Core",
-		icon: path.join(__dirname, '../../logo.png'),
+		icon: path.join(__dirname, "../../logo.png"),
 		webPreferences: {
 			webSecurity: false,
 			nodeIntegration: true,
 			plugins: true,
-			preload: preload ? path.join(__dirname, "preload.js") : null
-		}
+			preload: preload ? path.join(__dirname, "preload.js") : null,
+		},
 	});
 	// window.loadURL(
 	//   url.format({
@@ -28,8 +28,12 @@ function createWindow(loadurl, preload = false) {
 	//   })
 	// );
 
-	window.loadURL(loadurl);
-	return window;
+	if (loadurl == "none") {
+		return window;
+	} else {
+		window.loadURL(loadurl);
+		return window;
+	}
 }
 
 module.exports = { createWindow };

@@ -1,17 +1,32 @@
 import React, { Component } from 'react';
-import * as electron from "../../electronScript"
 import AddBotModal from './AddBotModal'
+import DeleteBotModal from './DeleteBotModal';
+import moment from 'moment'
+
 
 export default class BotTable extends Component {
 
 
   state = {
     botList:[],
-    addmodalShow:false
+    addmodalShow:false,
+    editmodalShow:false,
+    deletemodalShow:false,
+    startmodalShow:false,
+    deletebotselect:null
 }
 
 addbot = () =>{
   this.setState({addmodalShow:true})
+}
+deletebot = (bot) =>{
+  this.setState({deletemodalShow:true,deletebotselect:bot})
+}
+editbot = () =>{
+  this.setState({editmodalShow:true})
+}
+startbot = () =>{
+  this.setState({startmodalShow:true})
 }
 
 badgemaker =(status) =>
@@ -37,9 +52,9 @@ componentDidMount(){
   });
 }
 
-editHandle = () => {
-  electron.ipcRenderer.send(electron.editBotChannel);
-}
+// editHandle = () => {
+//   electron.ipcRenderer.send(electron.editBotChannel);
+// }
 
 
 render(){
@@ -50,6 +65,11 @@ render(){
       show={this.state.addmodalShow}
       onHide={() => this.setState({addmodalShow:false})}
       />
+      <DeleteBotModal
+      bot={this.state.deletebotselect}
+      show={this.state.deletemodalShow}
+      onHide={() => this.setState({deletemodalShow:false})}
+      />
   <div className="col-xl-12">
     <div className="card">
       <div className="card-body">
@@ -57,7 +77,7 @@ render(){
         <span onClick={this.addbot} className="float-right"><i className="fas fa-plus"></i></span>
         </h4>
         <div className="table-responsive">
-          <table className="table table-hover">
+          <table className="table table-hover" >
             <thead>
               <tr>
                 <th scope="col">Name</th>
@@ -80,17 +100,20 @@ render(){
                 </td>
                 <td>{bot.category}</td>
                 <td>{bot.runTime}</td>
-                <td>{bot.lastActive}</td>
+                {/* MMMM Do YYYY at H:mm:ss a */}
+                <td>{moment(bot.lastActive,"MMMM Do YYYY at H:mm:ss a").fromNow()}</td>
                 <td>
                   <div>
                     <div className="btn btn-primary mr-2 btn-sm">
-                      <div onClick={this.editHandle}>
+                      <div onClick={this.editbot}>
                       <i className="far fa-edit"></i> Edit
                       </div></div>
-                    <div className="btn btn-danger mr-2 btn-sm"><div>
+                    <div className="btn btn-danger mr-2 btn-sm">
+                      <div onClick={()=>this.deletebot(bot)}>
                       <i className="far fa-trash-alt"></i> Delete
                       </div></div>
-                      <div className="btn btn-success mr-2 btn-sm"><div>
+                      <div className="btn btn-success mr-2 btn-sm">
+                        <div onClick={this.startbot}>
                       <i className="fas fa-running"></i> Start
                       </div></div>
                   </div>
