@@ -171,4 +171,4 @@ function getPathTo(element) {
   }
 }
 
-module.exports = { xpath };
+module.exports = { xpath, getXPath };

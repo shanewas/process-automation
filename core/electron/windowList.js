@@ -1,0 +1,2 @@
+let win;
+let contectWindow;

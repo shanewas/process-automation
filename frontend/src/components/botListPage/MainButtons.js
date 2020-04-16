@@ -34,24 +34,24 @@ export default class MainButtons extends Component {
                 </Col>
                 <Col xs={12} md={6} lg={3} xl={3}>
                 <Card  className="p-3">
-                <div className="mini-stat-icon mainbutton">
-                    <i className="mdi mdi-account-card-details-outline bg-primary text-white mr-4 "></i>
+                <div className="mini-stat-icon mainbutton text-center">
+                    <i className="mdi mdi-account-card-details-outline bg-primary text-white mb-2 "></i>
                     <h2 style={{margin:"0px"}}>License</h2>
                 </div>
                 </Card>
                 </Col>
                 <Col xs={12} md={6} lg={3} xl={3}>
                 <Card  className="p-3">
-                <div className="mini-stat-icon mainbutton">
-                    <i className="mdi mdi-database-plus bg-primary text-white mr-4 "></i>
+                <div className="mini-stat-icon mainbutton text-center">
+                    <i className="mdi mdi-database-plus bg-primary text-white mb-2"></i>
                     <h2 style={{margin:"0px"}}>Database</h2>
                 </div>
                 </Card>
                 </Col>
                 <Col xs={12} md={6} lg={3} xl={3}>
                 <Card  className="p-3">
-                <div className="mini-stat-icon mainbutton">
-                    <i className="mdi mdi-information bg-primary text-white mr-4 "></i>
+                <div className="mini-stat-icon mainbutton text-center">
+                    <i className="mdi mdi-information bg-primary text-white mb-2"></i>
                     <h2 style={{margin:"0px"}}>About</h2>
                 </div>
                 </Card>

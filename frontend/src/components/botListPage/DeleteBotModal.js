@@ -5,7 +5,17 @@ import redcross from '../../images/red-cross.png'
 export default function DeleteBotModal(props) {
 
   const deletebot = e => { 
-    console.log("deleted")
+    fetch("http://localhost:9000/api/bots/remove-bot", {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id: e.target.id,
+        }),
+      });
+      props.onHide();
+      window.location.reload();
   }
 
     return (
@@ -25,7 +35,7 @@ export default function DeleteBotModal(props) {
           <span style={{color:"red",marginLeft:"10px"}}>{ props.bot!=null ?  props.bot.botName: null}</span> ?</h4>
           </Modal.Body>
           <Modal.Footer>
-            <Button className="btn btn-danger" onClick={deletebot}>Yes</Button>
+            <Button className="btn btn-danger" id={ props.bot!=null ?  props.bot.id: null} onClick={deletebot}>Yes</Button>
             <Button className="btn" onClick={props.onHide}>No</Button>
           </Modal.Footer>
         </Modal>

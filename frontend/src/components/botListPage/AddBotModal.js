@@ -13,7 +13,6 @@ export default function AddBotModal(props) {
       fetch("http://localhost:9000/api/bots/add-bot", {
         method: "post",
         headers: {
-          Accept: "application/json",
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
@@ -22,7 +21,9 @@ export default function AddBotModal(props) {
           category: category,
         }),
       });
-      props.onHide()
+      props.onHide();
+      window.location.reload();
+
   }
   
 
