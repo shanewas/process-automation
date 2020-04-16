@@ -3947,7 +3947,7 @@ color : #2f3640;
 }
 
 
-.mainbutton:hover span {
+.mainbutton:hover h2 {
   color: #30419b;
 
   -webkit-transition: color .3s;

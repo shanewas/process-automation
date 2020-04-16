@@ -1,1 +1,90 @@
-[{"id":2,"botName":"potato","runTime":1,"category":"input","status":"running","lastActive":"April 10th 2020 at 10:00:01 am"},{"id":4,"botName":"carrot","runTime":1,"category":"filler","status":"disabled","lastActive":"April 11th 2020 at 7:33:21 pm"},{"id":5,"botName":"orange","runTime":2,"category":"input","status":"active","lastActive":"April 11th 2020 at 9:20:11 pm"},{"id":6,"botName":"grape","runTime":"1","category":"scrapper","status":"active","lastActive":"April 12th 2020 at 3:03:11 am"},{"id":7,"botName":"mango","runTime":1,"category":"input","status":"disabled","lastActive":"April 12th 2020 at 1:18:54 pm"},{"id":9,"botName":"coconut","runTime":3,"category":"input","status":"disabled","lastActive":"April 12th 2020 at 6:18:11 pm"},{"id":10,"botName":"blueberry","runTime":2,"category":"scrapper","status":"disabled","lastActive":"April 12th 2020 at 6:52:06 pm"},{"id":11,"botName":"banana","runTime":1,"category":"filler","status":"disabled","lastActive":"April 13th 2020 at 9:57:31 pm"},{"id":13,"botName":"almond","runTime":1,"category":"scrapper","status":"disabled","lastActive":"April 13th 2020 at 9:59:22 pm"},{"id":14,"botName":"tomato","runTime":1,"category":"input","status":"disabled","lastActive":"April 13th 2020 at 10:00:52 pm"},{"id":15,"botName":"kiwi","runTime":3,"category":"input","status":"disabled","lastActive":"April 14th 2020 at 2:57:12 am"},{"id":101,"botName":"hazlenut","runTime":1,"category":"input","status":"disabled","lastActive":"April 15th 2020 at 9:17:48 pm"},{"id":102,"botName":"pomelo","runTime":1,"category":"scrapper","status":"disabled","lastActive":"April 15th 2020 at 9:46:11 pm"},{"id":103,"botName":"kiwano","runTime":1,"category":"input","status":"disabled","lastActive":"April 15th 2020 at 9:48:12 pm"},{"id":104,"botName":"starfruit","runTime":3,"category":"filler","status":"disabled","lastActive":"April 15th 2020 at 9:52:06 pm"},{"id":105,"botName":"olive","runTime":1,"category":"filler","status":"disabled","lastActive":"April 15th 2020 at 9:52:42 pm"},{"id":106,"botName":"hazlenut","runTime":1,"category":"input","status":"disabled","lastActive":"April 15th 2020 at 9:59:04 pm"},{"id":107,"botName":"hazlenut","runTime":1,"category":"input","status":"disabled","lastActive":"April 15th 2020 at 9:59:04 pm"}]
+[
+  {
+    "id": 2,
+    "botName": "potato",
+    "runTime": 1,
+    "category": "input",
+    "status": "running",
+    "lastActive": "April 10th 2020 at 10:00:01 am"
+  },
+  {
+    "id": 4,
+    "botName": "carrot",
+    "runTime": 1,
+    "category": "filler",
+    "status": "disabled",
+    "lastActive": "April 11th 2020 at 7:33:21 pm"
+  },
+  {
+    "id": 5,
+    "botName": "orange",
+    "runTime": 2,
+    "category": "input",
+    "status": "active",
+    "lastActive": "April 11th 2020 at 9:20:11 pm"
+  },
+  {
+    "id": 6,
+    "botName": "grape",
+    "runTime": "1",
+    "category": "scrapper",
+    "status": "active",
+    "lastActive": "April 12th 2020 at 3:03:11 am"
+  },
+  {
+    "id": 7,
+    "botName": "mango",
+    "runTime": 1,
+    "category": "input",
+    "status": "disabled",
+    "lastActive": "April 12th 2020 at 1:18:54 pm"
+  },
+  {
+    "id": 9,
+    "botName": "coconut",
+    "runTime": 3,
+    "category": "input",
+    "status": "disabled",
+    "lastActive": "April 12th 2020 at 6:18:11 pm"
+  },
+  {
+    "id": 10,
+    "botName": "blueberry",
+    "runTime": 2,
+    "category": "scrapper",
+    "status": "disabled",
+    "lastActive": "April 12th 2020 at 6:52:06 pm"
+  },
+  {
+    "id": 11,
+    "botName": "banana",
+    "runTime": 1,
+    "category": "filler",
+    "status": "disabled",
+    "lastActive": "April 13th 2020 at 9:57:31 pm"
+  },
+  {
+    "id": 12,
+    "botName": "dakslndl",
+    "runTime": 1,
+    "category": "knsflkndl",
+    "status": "disabled",
+    "lastActive": "April 15th 2020 at 7:54:27 pm"
+  },
+  {
+    "id": 13,
+    "botName": "Nadib Hussain",
+    "runTime": 1,
+    "category": "Nadib Hussain",
+    "status": "disabled",
+    "lastActive": "April 16th 2020 at 3:47:37 pm"
+  },
+  {
+    "id": 18,
+    "botName": "askldnlk",
+    "runTime": 1,
+    "category": "slkndflsd",
+    "status": "disabled",
+    "lastActive": "April 16th 2020 at 4:09:24 pm"
+  }
+]

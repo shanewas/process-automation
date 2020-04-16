@@ -1,20 +1,31 @@
-import React from "react";
+import React , { useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 
 export default function AddBotModal(props) {
-  fetch("http://localhost:9000/api/bots/add-bot", {
-    method: "post",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      botName: "hazlenut",
-      runTime: 1,
-      category: "input",
-    }),
-  });
+
+
+  const [name, setName] = useState("");
+  const [category, setCategory] = useState("");
+  
+  const handleSubmit = (evt) => {
+      evt.preventDefault();
+      fetch("http://localhost:9000/api/bots/add-bot", {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          botName: name,
+          runTime: 1,
+          category: category,
+        }),
+      });
+      props.onHide();
+      window.location.reload();
+
+  }
+  
 
   return (
     <Modal
@@ -29,28 +40,27 @@ export default function AddBotModal(props) {
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <form>
-          <label htmlFor="defaultFormRegisterNameEx" className="grey-text">
+        <form onSubmit={handleSubmit}>
+          <label className="grey-text">
             Bot Name
           </label>
           <input
             type="text"
-            id="defaultFormRegisterNameEx"
             className="form-control"
+            onChange={e => setName(e.target.value)}
           />
-          <label htmlFor="defaultFormRegisterNameEx" className="grey-text">
+          <label className="grey-text">
             Bot Category
           </label>
           <input
             type="text"
-            id="defaultFormRegisterNameEx"
             className="form-control"
+            onChange={e => setCategory(e.target.value)}
           />
+        <Button className="mt-4" type="submit" >Submit</Button>
         </form>
       </Modal.Body>
-      <Modal.Footer>
-        <Button onClick={props.onHide}>Submit</Button>
-      </Modal.Footer>
+
     </Modal>
   );
 }

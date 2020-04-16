@@ -10,110 +10,52 @@ export default class SidebarLeft extends Component {
               <li className="menu-title">Functions</li>
               <li>
                 <a href="index.html" className="waves-effect">
-                  <i className="icon-accelerator" />
-                  <span className="badge badge-success badge-pill float-right">
-                    9+
-                  </span>{" "}
-                  <span> Dashboard </span>
+                  <i className="fas fa-mouse-pointer fa-2x mr-2" />
+                  <span> Click  </span>
                 </a>
               </li>
               <li>
-                <a href="/#" className="waves-effect">
-                  <i className="icon-mail-open" />
-                  <span>
-                    {" "}
-                    Email{" "}
-                    <span className="float-right menu-arrow">
-                      <i className="mdi mdi-chevron-right" />
-                    </span>{" "}
-                  </span>
-                </a>
-                <ul className="submenu">
-                  <li>
-                    <a href="email-inbox.html">Inbox</a>
-                  </li>
-                  <li>
-                    <a href="email-read.html">Email Read</a>
-                  </li>
-                  <li>
-                    <a href="email-compose.html">Email Compose</a>
-                  </li>
-                </ul>
-              </li>
-              <li>
-                <a href="calendar.html" className="waves-effect">
-                  <i className="icon-calendar" />
-                  <span> Calendar </span>
+                <a href="index.html" className="waves-effect">
+                  <i className="fas fa-clipboard fa-2x mr-2" />
+                  <span> Load Data  </span>
                 </a>
               </li>
-              <li>
-                <a href="/#" className="waves-effect">
-                  <i className="icon-paper-sheet" />
-                  <span>
-                    {" "}
-                    Pages{" "}
-                    <span className="float-right menu-arrow">
-                      <i className="mdi mdi-chevron-right" />
-                    </span>{" "}
-                  </span>
-                </a>
-                <ul className="submenu">
-                  <li>
-                    <a href="pages-pricing.html">Pricing</a>
-                  </li>
-                  <li>
-                    <a href="pages-invoice.html">Invoice</a>
-                  </li>
-                  <li>
-                    <a href="pages-timeline.html">Timeline</a>
-                  </li>
-                </ul>
-              </li>
-              <li className="menu-title">Components</li>
-              <li>
-                <a href="/#" className="waves-effect">
-                  <i className="icon-pencil-ruler" />{" "}
-                  <span>
-                    {" "}
-                    UI Elements{" "}
-                    <span className="float-right menu-arrow">
-                      <i className="mdi mdi-chevron-right" />
-                    </span>{" "}
-                  </span>{" "}
-                </a>
-                <ul className="submenu">
-                  <li>
-                    <a href="ui-alerts.html">Alerts</a>
-                  </li>
-                  <li>
-                    <a href="ui-badge.html">Badge</a>
-                  </li>
 
-                  <li>
-                    <a href="ui-navs.html">Navs</a>
-                  </li>
-                </ul>
+              <li>
+                <a href="index.html" className="waves-effect">
+                  <i className="fas fa-question fa-2x mr-2" />
+                  <span> If condition  </span>
+                </a>
+              </li>
+
+              <li>
+                <a href="index.html" className="waves-effect">
+                  <i className="fas fa-redo-alt fa-2x mr-2" />
+                  <span> Loop  </span>
+                </a>
+              </li>
+              
+              <li className="menu-title">Actions</li>
+
+              <li>
+                <a href="index.html" className="waves-effect">
+                  <i className="fas fa-calendar-check fa-2x mr-2" />
+                  <span> Test Bot  </span>
+                </a>
               </li>
               <li>
-                <a href="/#" className="waves-effect">
-                  <i className="icon-diamond" />{" "}
-                  <span>
-                    {" "}
-                    Advanced UI{" "}
-                    <span className="float-right menu-arrow">
-                      <i className="mdi mdi-chevron-right" />
-                    </span>{" "}
-                  </span>{" "}
+                <a href="index.html" className="waves-effect">
+                  <i className="fas fa-code fa-2x mr-2" />
+                  <span> Compile Bot  </span>
                 </a>
-                <ul className="submenu">
-                  <li>
-                    <a href="advanced-alertify.html">Alertify</a>
-                  </li>
-                  <li>
-                    <a href="advanced-rating.html">Rating</a>
-                  </li>
-                </ul>
               </li>
+              <li>
+                <a href="index.html" className="waves-effect">
+                  <i className="fas fa-rocket fa-2x mr-2" />
+                  <span> Run Bot  </span>
+                </a>
+              </li>
+             
             </ul>
           </div>
           <div className="clearfix" />

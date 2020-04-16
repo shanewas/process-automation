@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import AddBotModal from './AddBotModal'
 import DeleteBotModal from './DeleteBotModal';
 import moment from 'moment'
 
@@ -9,16 +8,13 @@ export default class BotTable extends Component {
 
   state = {
     botList:[],
-    addmodalShow:false,
     editmodalShow:false,
     deletemodalShow:false,
     startmodalShow:false,
     deletebotselect:null
 }
 
-addbot = () =>{
-  this.setState({addmodalShow:true})
-}
+
 deletebot = (bot) =>{
   this.setState({deletemodalShow:true,deletebotselect:bot})
 }
@@ -61,10 +57,7 @@ render(){
   return (
     
     <div className="row">
-      <AddBotModal
-      show={this.state.addmodalShow}
-      onHide={() => this.setState({addmodalShow:false})}
-      />
+    
       <DeleteBotModal
       bot={this.state.deletebotselect}
       show={this.state.deletemodalShow}
@@ -74,7 +67,6 @@ render(){
     <div className="card">
       <div className="card-body">
         <h4 className="mt-0 header-title mb-4">Bot List
-        <span onClick={this.addbot} className="float-right"><i className="fas fa-plus"></i></span>
         </h4>
         <div className="table-responsive">
           <table className="table table-hover" >

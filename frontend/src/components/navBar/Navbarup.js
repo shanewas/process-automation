@@ -17,6 +17,13 @@ export default class Navbar extends Component {
           </div>
           <nav className="navbar-custom">
             <ul className="navbar-right list-inline float-right mb-0">
+
+            <li className="dropdown notification-list list-inline-item d-none d-md-inline-block">
+                <Link className="nav-link waves-effect" to="/list">
+                <i className="fas fa-home h2 pt-3" />
+                </Link>
+              </li>
+            
             <li className="dropdown notification-list list-inline-item">
                 <a
                   className="nav-link dropdown-toggle arrow-none waves-effect"
@@ -98,6 +105,7 @@ export default class Navbar extends Component {
                   </a>
                 </div>
               </li>
+             
               <li className="dropdown notification-list list-inline-item d-none d-md-inline-block">
                 <Link className="nav-link waves-effect" to="/build">
                   <i className="fas fa-lg fa-lightbulb mr-2"></i>Create New

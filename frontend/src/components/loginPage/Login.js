@@ -40,11 +40,7 @@ export class Login extends Component {
         <div>
           {/* Begin page */}
           <div className="accountbg" />
-          <div className="home-btn d-none d-md-block">
-            <a href="index.html" className="text-white">
-              <i className="fas fa-home h2" />
-            </a>
-          </div>
+
           <div className="wrapper-page">
             <div className="card card-pages shadow-none">
               <div className="card-body">
