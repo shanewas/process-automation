@@ -1,19 +1,113 @@
 {
   "name": "aiw-core",
   "description": "Aiw Core",
-  "author": "Shanewas Ahmed Nabil",
+  "author": {
+    "name": "Ferntech Solutions Ltd.",
+    "email": "shanewas@ferntechsolutions.com",
+    "url": "https://ferntechsolutions.com"
+  },
+  "contributors": [
+    {
+      "name": "Shanewas Ahmed Nabil",
+      "email": "shanewasahmed@gmail.com",
+      "url": "https://github.com/shanewas"
+    },
+    {
+      "name": "Tanzeer Ahmed Hossain",
+      "url": "https://github.com/redviper2017"
+    },
+    {
+      "name": "Nadib Hussain",
+      "url": "https://github.com/NadibHussain"
+    },
+    {
+      "name": "Omar Hasan",
+      "url": "https://github.com/omar115"
+    }
+  ],
   "license": "MIT",
   "version": "0.1.0",
   "private": true,
   "build": {
-    "appId": "com.aiw_core"
+    "productName": "AIW Core",
+    "appId": "com.ferntechsolutions.aiw_core",
+    "files": [
+      "dist/",
+      "node_modules/",
+      "frontend/build",
+      "frontend/node_modules/",
+      "frontend/public",
+      "frontend/package.json",
+      "backend/",
+      "core/",
+      "package.json"
+    ],
+    "dmg": {
+      "contents": [
+        {
+          "x": 130,
+          "y": 220
+        },
+        {
+          "x": 410,
+          "y": 220,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
+    },
+    "win": {
+      "target": [
+        "nsis",
+        "msi"
+      ]
+    },
+    "linux": {
+      "target": [
+        "deb",
+        "rpm",
+        "AppImage"
+      ],
+      "category": "Development"
+    },
+    "directories": {
+      "buildResources": "resources",
+      "output": "release"
+    },
+    "publish": {
+      "provider": "github",
+      "owner": "ferntechsolutions",
+      "repo": "aiwcore",
+      "private": true
+    }
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/shanewas/aiwcore.git"
+    "url": "git+https://github.com/ferntechsolutions/aiwcore.git"
   },
   "main": "core/electron.js",
   "homepage": "./",
+  "jest": {
+    "API_URL": "http://localhost:9000",
+    "moduleNameMapper": {
+      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/internals/mocks/fileMock.js",
+      "\\.(css|less|sass|scss)$": "identity-obj-proxy"
+    },
+    "moduleFileExtensions": [
+      "js",
+      "jsx",
+      "ts",
+      "tsx",
+      "json"
+    ],
+    "moduleDirectories": [
+      "node_modules",
+      "frontend/node_modules"
+    ],
+    "setupFiles": [
+      "./internals/scripts/CheckBuildsExist.js"
+    ]
+  },
   "keywords": [
     "RPA",
     "Automation",
