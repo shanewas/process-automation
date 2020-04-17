@@ -1,5 +1,5 @@
-const electron = window.require("electron");
-const { ipcRenderer } = electron;
+export const electron = window.require("electron");
+export const { ipcRenderer } = electron;
 
 export const editBotChannel = "edit-bot";
 export const addBotChannel = "add-bot";
@@ -32,7 +32,7 @@ export function send(teleport, content) {
 
 export function receive(teleport) {
 	ipcRenderer.on(teleport, function (e, content) {
-		console.log(content);
+		return content;
 	});
 }
 

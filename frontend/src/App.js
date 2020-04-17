@@ -5,6 +5,7 @@ import login from "./components/loginPage/Login";
 // import Navbar from './components/navBar/NavBar'
 import BotListPage from "./components/botListPage/BotListPage";
 import BotBuildPage from "./components/botEditPage/BotBuildPage";
+import DataSetPage from './components/DataSetPage/DatasetPage'
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <Route exact path="/" component={login} />
           <Route exact path="/list" component={BotListPage} />
           <Route exact path="/build" component={BotBuildPage} />
+          <Route exact path="/dataset" component={DataSetPage} />
         </Switch>
       </div>
     </Router>
