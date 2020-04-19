@@ -14,16 +14,13 @@ export default class SearchBar extends Component {
 
 	handleSubmit = (e) => {
 		e.preventDefault();
-		console.log("form submitted", this.state);
 		electron.send(electron.SearchLinkChannel, this.state.link);
 	};
 
-	test = (e) => {
-		electron.receive(electron.SearchLinkChannel);
-	};
+
+	
 
 	render() {
-		this.test();
 		return (
 			<div>
 				<form onSubmit={this.handleSubmit} className='searchBox'>
