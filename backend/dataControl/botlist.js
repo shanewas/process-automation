@@ -1,22 +1,38 @@
 const fs = require("fs");
 const path = require("path");
 const moment = require('moment');
+const DataStore = require('nedb');
+
+let botsList = new DataStore({ filename: `${path.join(__dirname, "../data/bots.db")}`, autoload: true });
 
 // Add Bot Function
 const addBot = function (botName, runTime, category) {
 	// fetching stored bots from json file
 	const bots = loadBots();
 	const currentDateTime = getCurrentTime();
-	const id = bots[bots.length - 1].id + 1;
-	console.log('Successfully added bot number: '+id);
+	// const id = bots[bots.length - 1].id + 1;
+	// console.log('Successfully added bot number: '+id);
    
 	bots.push({
-		id: id,
+		// id: id,
 		botName: botName,
 		runTime: runTime,
 		category: category,
 		status: 'disabled',
 		lastActive: currentDateTime
+	});
+
+	// inserting new bot in db
+	let bot = {
+		// id: id,
+		botName: botName,
+		runTime: runTime,
+		category: category,
+		status: 'disabled',
+		lastActive: currentDateTime
+	}
+	botsList.insert(bot, (err, doc) => {
+		console.log('Inserted bot named: ', doc.botName, 'with ID', doc._id);
 	});
 
 	saveBots(bots);

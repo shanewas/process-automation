@@ -156,19 +156,26 @@
         "lastActive": "April 15th 2020 at 9:59:04 pm"
     },
     {
-        "id": 107,
-        "botName": "hazlenut",
-        "runTime": 1,
-        "category": "input",
-        "status": "disabled",
-        "lastActive": "April 15th 2020 at 9:59:04 pm"
-    },
-    {
         "id": 108,
         "botName": "domion",
         "runTime": 1,
         "category": "filler",
         "status": "disabled",
         "lastActive": "April 16th 2020 at 11:36:29 am"
+    },
+    {
+        "id": 109,
+        "botName": "mullberry",
+        "runTime": 3,
+        "category": "input",
+        "status": "disabled",
+        "lastActive": "April 19th 2020 at 4:44:50 pm"
+    },
+    {
+        "botName": "peach",
+        "runTime": 1,
+        "category": "filler",
+        "status": "disabled",
+        "lastActive": "April 19th 2020 at 4:59:46 pm"
     }
 ]
