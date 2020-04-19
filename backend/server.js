@@ -105,6 +105,27 @@ router.put("/bots/update-bot/:id", (req, res) => {
 		res.json({ "message": "Bot update Failed!" });
 });
 
+//api - bot process sequence update
+router.put("/bots/update-bot-process/:id", (req, res) => {
+	const botProcess = req.body["processSequence"];
+	const botInfo = botlist.fetchBot(req.params.id);
+	let key = "processSequence";
+	
+	if (key in botInfo) {
+		console.log('this bot is already associated with a process');
+		botInfo[key].push(botProcess);
+		
+		botlist.editBot(botInfo);
+		console.log(botInfo);
+	} else {
+		botInfo[key] = botProcess;
+		console.log('bot id before edit =' + botInfo.id);
+
+		botlist.editBot(botInfo);
+		console.log(botInfo);
+	}
+})
+
 // REGISTER OUR ROUTES -------------------------------
 // all of our routes will be prefixed with /api
 core.use("/api", router);

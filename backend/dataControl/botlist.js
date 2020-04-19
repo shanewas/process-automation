@@ -35,12 +35,35 @@ const removeBot = function (id) {
 // Edit Bot Function
 const editBot = function (botInfo) {
 	const bots = loadBots();
+
+	console.log('bot id in edit ='+botInfo.id);
+	bots.forEach(function (bot) { 
+		if (bot.id === botInfo.id) {
+			// bot.botName = botInfo.botName;
+			// bot.runTime = botInfo.runTime;
+			// bot.category = botInfo.category;
+			// bot.status = botInfo.status;
+			let updatedField = Object.keys(botInfo);
+			console.log('updated fields = ' + updatedField);
+			updatedField.forEach((field) => {
+				bot[field] = botInfo[field];					
+			});
+		}
+	});
+
+	saveBots(bots);
+}
+
+// Edit bot process
+const editBotProcess = function (botInfo) {
+	const bots = loadBots();
 	bots.forEach(function (bot) { 
 		if (bot.id === botInfo.id) {
 			bot.botName = botInfo.botName;
 			bot.runTime = botInfo.runTime;
 			bot.category = botInfo.category;
 			bot.status = botInfo.status;
+			bot.processSequence = botInfo.processSequence;
 		}
 	});
 
@@ -98,7 +121,8 @@ module.exports = {
 	editBot: editBot,
 	listAllBots: listAllBots,
 	fetchBot: fetchBot,
-	getCurrentTime:getCurrentTime
+	getCurrentTime: getCurrentTime,
+	editBotProcess: editBotProcess
 };
 
 // addBot("mandarin", 1, "filler");
