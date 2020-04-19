@@ -5,6 +5,7 @@ import SearchBar from "./SearchBar";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Card from "react-bootstrap/Card"
+import Flowchart from "./Flowchart";
 export default class BotBuildPage extends Component {
   render() {
     return (
@@ -18,9 +19,7 @@ export default class BotBuildPage extends Component {
           </Row>
           <Row style={{marginTop:"25vh",marginLeft:"30vh",marginRight:"5vh"}}>
           <Col xs={12} md={12} lg={9} xl={9} >
-          <Card style={{height:"70vh"}}>
-          <h2 className="text-center">No FlowChart has been created</h2>
-          </Card>
+          <Flowchart></Flowchart>
           
           </Col>
           <Col xs={12} md={12} lg={3} xl={3} >
