@@ -18,6 +18,7 @@
 *.xcodeproj
 /.idea/
 /dist/
+/release/
 /external_binaries/
 /out/
 /vendor/.gclient
