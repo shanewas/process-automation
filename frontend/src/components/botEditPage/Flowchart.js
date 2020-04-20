@@ -17,6 +17,11 @@ export default class Flowchart extends Component {
             
         });
 
+        electron.ipcRenderer.on("test", function (e, content) {
+			console.log("logging from",content)
+            
+        });
+
 
 
     }
@@ -26,7 +31,7 @@ export default class Flowchart extends Component {
         {
             return (
                 <div>
-                    <Card style={{height:"70vh"}}>
+                    <Card style={{height:"70vh",paddingTop:"20vh"}}>
     
     
                     <h2 className="text-center">No FlowChart has been created</h2>
