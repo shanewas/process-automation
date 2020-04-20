@@ -71,20 +71,13 @@ router.post("/bots/add-bot", (req, res) => {
 router.post("/bots/remove-bot", (req, res) => {
 	let bot = req.body;
 	//extracting bot id 
-	let botId = bot.id;
-	if (!botId)
-		res.send('You must pass a valid bot ID');
+	let botName = bot.name;
+	if (!botName)
+		res.send('You must pass a valid bot name');
 	else {
-		console.log(botId);
-		const bots = botlist.listAllBots();
-		let botToRemove = bots.find((bot) => bot.id === parseInt(botId));
-
-		if (!botToRemove)
-			res.send('No bot found!');
-		else {
-			botlist.removeBot(botId);
-			res.send('Bot removed Successfully!');
-		}
+		console.log(botName);
+		res.send('Bot removed Successfully!');
+		botlist.removeBot(botName);		
 	}
 });
 

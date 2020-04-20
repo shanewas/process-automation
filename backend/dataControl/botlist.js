@@ -2,26 +2,13 @@ const fs = require("fs");
 const path = require("path");
 const moment = require('moment');
 const DataStore = require('nedb');
+const async = require('async');
 
 let botsList = new DataStore({ filename: `${path.join(__dirname, "../data/bots.db")}`, autoload: true });
 
 // Add Bot Function
 const addBot = function (botName, runTime, category) {
-	// fetching stored bots from json file
-	const bots = loadBots();
 	const currentDateTime = getCurrentTime();
-	// const id = bots[bots.length - 1].id + 1;
-	// console.log('Successfully added bot number: '+id);
-   
-	bots.push({
-		// id: id,
-		botName: botName,
-		runTime: runTime,
-		category: category,
-		status: 'disabled',
-		lastActive: currentDateTime
-	});
-
 	// inserting new bot in db
 	let bot = {
 		// id: id,
@@ -34,18 +21,15 @@ const addBot = function (botName, runTime, category) {
 	botsList.insert(bot, (err, doc) => {
 		console.log('Inserted bot named: ', doc.botName, 'with ID', doc._id);
 	});
-
-	saveBots(bots);
 };
 
 // Delete Bot Function
-const removeBot = function (id) {
-	const bots = loadBots();
-	const botsToKeep = bots.filter(function (bot) {
-		return bot.id != id;
+const removeBot = function (botName) {
+	botsList.remove({ botName: botName}, (err, doc) =>{
+		console.log('Deleted', doc, 'bot(s)');
 	});
 
-	saveBots(botsToKeep);
+	// saveBots(botsToKeep);
 }
 
 // Edit Bot Function
@@ -72,7 +56,7 @@ const editBot = function (botInfo) {
 
 // Edit bot process
 const editBotProcess = function (botInfo) {
-	const bots = loadBots();
+	const bots = botsList;
 	bots.forEach(function (bot) { 
 		if (bot.id === botInfo.id) {
 			bot.botName = botInfo.botName;
@@ -87,13 +71,12 @@ const editBotProcess = function (botInfo) {
 }
 
 // List all Bots Function
-const listAllBots = function () {
-	const bots = loadBots();
-	// bots.forEach(function (bot) {
-	// 	console.log(bot.botName);
-	// });
-	return bots;
-}
+// const listAllBots = function () {
+// 		botsList.find({}, (err, doc) => {
+// 			console.log(doc.length);
+// 		});
+	
+// }
 
 // Fetch single bot
 const fetchBot = (id) => {
@@ -135,7 +118,7 @@ module.exports = {
 	addBot: addBot,
 	removeBot: removeBot,
 	editBot: editBot,
-	listAllBots: listAllBots,
+	// listAllBots: listAllBots,
 	fetchBot: fetchBot,
 	getCurrentTime: getCurrentTime,
 	editBotProcess: editBotProcess
@@ -147,5 +130,5 @@ module.exports = {
 // removeBot('banana');
 // const bots = loadBots();
 // console.log('last bot id = ' + bots[bots.length - 1].id);
-// listAllBots();
 // editBot('tomato',2,'filler');
+// listAllBots();

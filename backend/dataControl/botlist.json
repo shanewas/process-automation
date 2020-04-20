@@ -177,5 +177,33 @@
         "category": "filler",
         "status": "disabled",
         "lastActive": "April 19th 2020 at 4:59:46 pm"
+    },
+    {
+        "botName": "kiwi",
+        "runTime": 3,
+        "category": "input",
+        "status": "disabled",
+        "lastActive": "April 19th 2020 at 5:22:56 pm"
+    },
+    {
+        "botName": "hazlenut",
+        "runTime": 5,
+        "category": "scrapper",
+        "status": "disabled",
+        "lastActive": "April 19th 2020 at 5:25:26 pm"
+    },
+    {
+        "botName": "blueberry",
+        "runTime": 2,
+        "category": "scrapper",
+        "status": "disabled",
+        "lastActive": "April 19th 2020 at 5:44:51 pm"
+    },
+    {
+        "botName": "pomelo",
+        "runTime": 1,
+        "category": "input",
+        "status": "disabled",
+        "lastActive": "April 19th 2020 at 5:45:32 pm"
     }
 ]
