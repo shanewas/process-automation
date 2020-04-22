@@ -142,6 +142,7 @@
   ],
   "peerDependencies": {},
   "dependencies": {
+    "async": "^3.2.0",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "csv-parser": "^2.3.2",
@@ -149,8 +150,14 @@
     "electron-is-dev": "^1.2.0",
     "electron-reload": "^1.5.0",
     "express": "^4.17.1",
+<<<<<<< HEAD
     "jquery": "^3.5.0",
     "moment": "^2.24.0"
+=======
+    "jquery": "^3.4.1",
+    "moment": "^2.24.0",
+    "nedb": "^1.8.0"
+>>>>>>> dev
   },
   "devDependencies": {
     "@electron-forge/cli": "6.0.0-beta.50",
