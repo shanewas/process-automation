@@ -24,9 +24,17 @@ const addBot = function (botName, runTime, category) {
 };
 
 // Delete Bot Function
-const removeBot = function (botName) {
-	botsList.remove({ botName: botName}, (err, doc) =>{
-		console.log('Deleted', doc, 'bot(s)');
+const removeBot = function (botName,res) {
+	botsList.remove({ botName: botName }, (err, doc) => {
+		if (err)
+			res.send('Unable to remove bot, please try again!');
+		else {
+			if (doc > 0) {				
+				let resMsg = `Bot: '${botName}' has been removed successfully!`;
+				res.send(resMsg);
+			} else 
+				res.send('Unable to remove bot, please pass a valid bot name!');			
+		}		
 	});
 
 	// saveBots(botsToKeep);
@@ -71,12 +79,14 @@ const editBotProcess = function (botInfo) {
 }
 
 // List all Bots Function
-// const listAllBots = function () {
-// 		botsList.find({}, (err, doc) => {
-// 			console.log(doc.length);
-// 		});
-	
-// }
+const listAllBots = function (res) {
+	let bots = null;
+	// Finding all bots
+	botsList.find({ }, function (err, docs) {
+		console.log(docs);
+		res.send(docs);
+	});
+}
 
 // Fetch single bot
 const fetchBot = (id) => {
@@ -118,7 +128,7 @@ module.exports = {
 	addBot: addBot,
 	removeBot: removeBot,
 	editBot: editBot,
-	// listAllBots: listAllBots,
+	listAllBots: listAllBots,
 	fetchBot: fetchBot,
 	getCurrentTime: getCurrentTime,
 	editBotProcess: editBotProcess

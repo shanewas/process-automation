@@ -4,6 +4,9 @@ const cors = require("cors");
 const fs = require("fs");
 const core = express();
 
+const DataStore = require('nedb');
+let botsList = new DataStore({ filename: `${path.join(__dirname, "../data/bots.db")}`, autoload: true });
+
 //import botlist.js from backend/dataControl
 const botlist = require('./dataControl/botlist.js');
 
@@ -34,16 +37,11 @@ router.use("/bots/:id", (req,res,next) => {
 });
 
 router.get("/bots", (req, res) => {
-	let rawdata = fs.readFileSync(
-		`${path.join(__dirname, "dataControl/botlist.json")}`
-	);
-	let botlist = JSON.parse(rawdata);
-
-	res.json(botlist);
+	botlist.listAllBots(res);	
 });
 
 //api - fetching informations of a single bot
-router.get("/bots/:id", (req,res) => {
+router.get("/bots/:name", (req,res) => {
 	const botInfo = botlist.fetchBot(req.params.id);
 	if (botInfo !== '')
 		res.json(botlist.fetchBot(req.params.id));
@@ -74,10 +72,8 @@ router.post("/bots/remove-bot", (req, res) => {
 	let botName = bot.name;
 	if (!botName)
 		res.send('You must pass a valid bot name');
-	else {
-		console.log(botName);
-		res.send('Bot removed Successfully!');
-		botlist.removeBot(botName);		
+	else {		
+		botlist.removeBot(botName,res);		
 	}
 });
 
