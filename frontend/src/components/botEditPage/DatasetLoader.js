@@ -1,36 +1,24 @@
 import React, { Component } from 'react'
 import Card from "react-bootstrap/Card"
-import * as electron from "../../electronScript";
+import {connect} from "react-redux"
+import {loadHeaderAction,ChangeHeaderAction} from '../../Store/actions'
 
-export default class DatasetLoader extends Component {
+ class DatasetLoader extends Component {
 
-    state ={
-        Datasets : ["Cradit Card data","Transaction data","ATM Data"],
-        headers : [],
-        status : []
-    }
+
 
     handleChange = (e) =>{
-        let headerExample=["Firstname","Lastname","Email id","Transaction Id","Date of birth"]
-        const status = new Array(headerExample.length).fill("notSelected");
-        this.setState({
-            headers:headerExample,
-            status:status
-        })
+        
+        this.props.loadHeaders()
     }
 
     changestatus = (index) =>{
-        let newstatus=this.state.status
-        newstatus[index]="changing"
-        this.setState({
-            status:newstatus
-        })
-        electron.ipcRenderer.send("test", newstatus[index]);
+        this.props.changeHeader(index)
 
     }
 
     render() {  
-        if(this.state.headers.length === 0)
+        if(this.props.headers.length === 0)
         {
             return(
                 <div>
@@ -41,7 +29,7 @@ export default class DatasetLoader extends Component {
                         </label>
                         <select className="form-control" style={{width:"20vh",margin:"auto"}} onChange={this.handleChange}>
                             <option value="" >Select your Dataset</option>
-                            {this.state.Datasets.map((dataset,index) =>{
+                            {this.props.datasets.map((dataset,index) =>{
                                 return(
                             <option key={index} value={dataset}>{dataset}</option>
                                 )
@@ -53,14 +41,13 @@ export default class DatasetLoader extends Component {
             )
         }
         else{
-            // console.log(this.state)
             return(
                 <div>
                     <Card style={{height:"70vh"}}>
                     <div style={{margin:"3vh",textAlign:"center"}}>
                     <h2 className="mb-4">DataSet Columns</h2>
-                    {this.state.headers.map((header,index) =>{
-                        if(this.state.status[index]==="notSelected")
+                    {this.props.headers.map((header,index) =>{
+                        if(this.props.status[index]==="notSelected")
                         {
                             return(
                                 <div  key={index} onClick={() => this.changestatus(index)}>
@@ -68,7 +55,7 @@ export default class DatasetLoader extends Component {
                                 </div>
                                 )   
                         }
-                        else if (this.state.status[index]==="changing")
+                        else if (this.props.status[index]==="changing")
                         {
                             return(
                                 <div  key={index} onClick={() => this.changestatus(index)}>
@@ -80,7 +67,7 @@ export default class DatasetLoader extends Component {
                         {
                             return(
                                 <div  key={index} onClick={() => this.changestatus(index)}>
-                                <h3><span className="badge badge-primary text-center">{index+1}.  {header}</span></h3>
+                                <h3><span className="badge badge-success text-center">{index+1}.  {header}</span></h3>
                                 </div>
                                 )   
                         }
@@ -93,3 +80,20 @@ export default class DatasetLoader extends Component {
         }
     }
 }
+
+const mapStateToProps=(state)=>{
+    return{
+        datasets:state.datasets,
+        headers:state.headers,
+        status:state.status,
+
+    }
+}
+const mapDispathtoProps=(dispatch)=>{
+    return {
+        loadHeaders:()=> {dispatch(loadHeaderAction())},
+        changeHeader:(index)=> {dispatch(ChangeHeaderAction(index))},
+    }
+} 
+
+export default connect(mapStateToProps,mapDispathtoProps)(DatasetLoader)
