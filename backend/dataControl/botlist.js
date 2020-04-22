@@ -6,24 +6,38 @@ const async = require('async');
 
 let botsList = new DataStore({ filename: `${path.join(__dirname, "../data/bots.db")}`, autoload: true });
 
-// Add Bot Function
-const addBot = function (botName, runTime, category) {
-	const currentDateTime = getCurrentTime();
-	// inserting new bot in db
-	let bot = {
-		// id: id,
-		botName: botName,
-		runTime: runTime,
-		category: category,
-		status: 'disabled',
-		lastActive: currentDateTime
-	}
-	botsList.insert(bot, (err, doc) => {
-		console.log('Inserted bot named: ', doc.botName, 'with ID', doc._id);
+// GET BOTS LIST
+const listAllBots = function (res) {
+	let bots = null;
+	botsList.find({ }, function (err, docs) {
+		res.send(docs);
 	});
+}
+
+// ADD BOT
+const addBot = function (botName, runTime, category, res) {
+
+	botsList.findOne({ botName: botName }, (err, docs) => {
+		if (docs === null) {
+			const currentDateTime = getCurrentTime();
+			// inserting new bot in db
+			let bot = {
+				// id: id,
+				botName: botName,
+				runTime: runTime,
+				category: category,
+				status: 'disabled',
+				lastActive: currentDateTime
+			}
+			botsList.insert(bot, (err, doc) => {
+				res.send(`Inserted bot named, '${doc.botName}' as: \n ${JSON.stringify(doc)}`);
+			});
+		} else
+			res.send('a bot with this bot name already exists, change the bot name and try again!');			
+	});	
 };
 
-// Delete Bot Function
+// REMOVE BOT
 const removeBot = function (botName,res) {
 	botsList.remove({ botName: botName }, (err, doc) => {
 		if (err)
@@ -78,15 +92,7 @@ const editBotProcess = function (botInfo) {
 	saveBots(bots);
 }
 
-// List all Bots Function
-const listAllBots = function (res) {
-	let bots = null;
-	// Finding all bots
-	botsList.find({ }, function (err, docs) {
-		console.log(docs);
-		res.send(docs);
-	});
-}
+
 
 // Fetch single bot
 const fetchBot = (id) => {

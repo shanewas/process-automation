@@ -58,8 +58,7 @@ router.post("/bots/add-bot", (req, res) => {
 		let botName = bot.botName;
 		let runTime = bot.runTime;
 		let category = bot.category;
-		botlist.addBot(botName, runTime, category);
-		res.send('New Bot Added!');
+		botlist.addBot(botName, runTime, category, res);		
 	}
 	else 
 		res.send('Unable to add new bot, you must provide all 3 of these informations - bot name, run time & bot category!!');
