@@ -36,6 +36,7 @@
 /vendor/LICENSES.chromium.html
 /vendor/pyyaml
 node_modules/
+backend/data/
 SHASUMS256.txt
 **/package-lock.json
 compile_commands.json

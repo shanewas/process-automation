@@ -1,5 +1,0 @@
-{"botName":"peach","processSequence":[{"type":"start"},{"type":"LoadData","elementType":"any form element","data":""},{"type":"end"}],"_id":"Z1c2XPdwArm0gDzg"}
-{"botName":"almond","processSequence":[{"type":"start"},{"type":"LoadData","elementType":"any form element","data":""},{"type":"loop","condition":"any form element","scope":"","iteration":"","increment":"","breakPoint":"","skipPoint":""},{"type":"if/else","conditions":["list of conditons"],"scope":""},{"type":"click","elementType":"....."},{"type":"end"}],"_id":"ufsRVGHzm0565PAu"}
-{"botName":"kiwi","processSequence":[{"type":"start"}],"_id":"h4ZxKvZBsDWmKynx"}
-{"botName":"kiwi","processSequence":[{"type":"start"},{"type":"click","elementType":"....."}],"_id":"h4ZxKvZBsDWmKynx"}
-{"botName":"kiwi","processSequence":[{"type":"start"},{"type":"click","elementType":"....."},{"type":"end"}],"_id":"h4ZxKvZBsDWmKynx"}
