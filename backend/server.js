@@ -42,11 +42,7 @@ router.get("/bots", (req, res) => {
 
 //api - fetching informations of a single bot
 router.get("/bots/:name", (req,res) => {
-	const botInfo = botlist.fetchBot(req.params.id);
-	if (botInfo !== '')
-		res.json(botlist.fetchBot(req.params.id));
-	else
-		res.json({ "message": "You must pass a valid bot ID" });
+	botlist.fetchBot(req.params.name, res);	
 });
 
 //api - adding a new bot

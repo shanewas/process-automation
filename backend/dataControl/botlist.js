@@ -14,6 +14,16 @@ const listAllBots = function (res) {
 	});
 }
 
+// GET SINGLE BOT
+const fetchBot = (botName, res) => {
+	botsList.findOne({ botName: botName }, (err, docs) => {
+		if (docs === null)
+			res.send('The bot you are looking for does not exist, provide a valid bot name and try again!');
+		else
+			res.send(`Here is the bot you were looking for: \n${JSON.stringify(docs)}`);
+	});
+}
+
 // ADD BOT
 const addBot = function (botName, runTime, category, res) {
 
@@ -92,30 +102,6 @@ const editBotProcess = function (botInfo) {
 	saveBots(bots);
 }
 
-
-
-// Fetch single bot
-const fetchBot = (id) => {
-	const bots = loadBots();
-	if (0 < id <= bots[bots.length-1].id) {
-		const botToFetch = bots.find((bot) => bot.id === parseInt(id));
-		console.log(botToFetch);
-		return botToFetch;
-	} else
-		return botToFetch = '';
-}
-
-// Fetch BotList Function
-const loadBots = function () {
-	try {
-		const dataBuffer = fs.readFileSync(`${path.join(__dirname, "botlist.json")}`);
-		const dataJSON = dataBuffer.toString();
-		return JSON.parse(dataJSON);
-	} catch (err){
-		return [];
-	}
-};
-
 // Store BotList Function
 const saveBots = function (bots) {
 	const dataJSON = JSON.stringify(bots);
@@ -139,12 +125,3 @@ module.exports = {
 	getCurrentTime: getCurrentTime,
 	editBotProcess: editBotProcess
 };
-
-// addBot("mandarin", 1, "filler");
-// console.log(fetchBot('carrot'));
-
-// removeBot('banana');
-// const bots = loadBots();
-// console.log('last bot id = ' + bots[bots.length - 1].id);
-// editBot('tomato',2,'filler');
-// listAllBots();
