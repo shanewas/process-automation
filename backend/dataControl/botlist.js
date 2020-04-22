@@ -5,6 +5,7 @@ const DataStore = require('nedb');
 const async = require('async');
 
 let botsList = new DataStore({ filename: `${path.join(__dirname, "../data/bots.db")}`, autoload: true });
+let processList = new DataStore({ filename: `${path.join(__dirname, "../data/process.db")}`, autoload: true });
 
 // GET BOTS LIST
 const listAllBots = function (res) {
@@ -20,7 +21,7 @@ const fetchBot = (botName, res) => {
 		if (docs === null)
 			res.send('The bot you are looking for does not exist, provide a valid bot name and try again!');
 		else
-			res.send(`Here is the bot you were looking for: \n${JSON.stringify(docs)}`);
+			res.send(docs);
 	});
 }
 
@@ -40,7 +41,7 @@ const addBot = function (botName, runTime, category, res) {
 				lastActive: currentDateTime
 			}
 			botsList.insert(bot, (err, doc) => {
-				res.send(`Inserted bot named, '${doc.botName}' as: \n ${JSON.stringify(doc)}`);
+				res.send(doc);
 			});
 		} else
 			res.send('a bot with this bot name already exists, change the bot name and try again!');			
@@ -64,6 +65,47 @@ const removeBot = function (botName,res) {
 	// saveBots(botsToKeep);
 }
 
+// ADD/EDIT PROCESS
+const editBotProcess = function (botProcess, key, name, res) {
+	console.log('bot name = ' + name);
+	console.log('bot process = ' + JSON.stringify(botProcess));
+	console.log('key name = ' + key);
+	
+	processList.find({ botName: name }, (err, docs) => {
+		console.log(docs.length);
+		if (docs.length === 0) {		
+			bot = {
+				botName: name,
+				processSequence: [botProcess]
+			};
+			processList.insert((bot), (err, docs) => {
+				res.send(docs.processSequence);
+			});			
+		} else {
+			processList.findOne({ botName: name }, (err, docs) => {
+				prevProcessList = docs.processSequence;
+				// console.log(prevProcessList);
+				prevProcessList.push(botProcess);
+				console.log(prevProcessList);
+				processList.update({ botName: name }, { $set: { processSequence: prevProcessList } }, (err, numReplaced) => {
+					res.send(prevProcessList);
+				});
+			});			
+		}
+	});
+}
+
+// GET PROCESS SEQUENCE FOR SINGLE BOT
+const getProcessSequence = (botName,res) => {
+	processList.findOne({ botName: botName }, (err, docs) => {
+		if (docs !== null) {
+			console.log(docs);
+			res.send(docs.processSequence);
+		} else
+			res.send('Unable to get the process sequence, give valid bot name and try again!')
+	});
+};
+
 // Edit Bot Function
 const editBot = function (botInfo) {
 	const bots = loadBots();
@@ -86,21 +128,7 @@ const editBot = function (botInfo) {
 	saveBots(bots);
 }
 
-// Edit bot process
-const editBotProcess = function (botInfo) {
-	const bots = botsList;
-	bots.forEach(function (bot) { 
-		if (bot.id === botInfo.id) {
-			bot.botName = botInfo.botName;
-			bot.runTime = botInfo.runTime;
-			bot.category = botInfo.category;
-			bot.status = botInfo.status;
-			bot.processSequence = botInfo.processSequence;
-		}
-	});
 
-	saveBots(bots);
-}
 
 // Store BotList Function
 const saveBots = function (bots) {
@@ -123,5 +151,6 @@ module.exports = {
 	listAllBots: listAllBots,
 	fetchBot: fetchBot,
 	getCurrentTime: getCurrentTime,
-	editBotProcess: editBotProcess
+	editBotProcess: editBotProcess, 
+	getProcessSequence:getProcessSequence
 };

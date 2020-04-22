@@ -90,25 +90,16 @@ router.put("/bots/update-bot/:id", (req, res) => {
 });
 
 //api - bot process sequence update
-router.put("/bots/update-bot-process/:id", (req, res) => {
-	const botProcess = req.body["processSequence"];
-	const botInfo = botlist.fetchBot(req.params.id);
+router.put("/bots/update-bot-process/:name", (req, res) => {
+	const botProcess = req.body;
 	let key = "processSequence";
-	
-	if (key in botInfo) {
-		console.log('this bot is already associated with a process');
-		botInfo[key].push(botProcess);
-		
-		botlist.editBot(botInfo);
-		console.log(botInfo);
-	} else {
-		botInfo[key] = botProcess;
-		console.log('bot id before edit =' + botInfo.id);
+	botlist.editBotProcess(botProcess, key, req.params.name, res);	
+});
 
-		botlist.editBot(botInfo);
-		console.log(botInfo);
-	}
-})
+//api - get process sequence for single bot
+router.get("/bots/get-process/:name", (req, res) => {
+	botlist.getProcessSequence(req.params.name, res);
+});
 
 // REGISTER OUR ROUTES -------------------------------
 // all of our routes will be prefixed with /api
