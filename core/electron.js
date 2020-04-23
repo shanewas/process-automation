@@ -18,7 +18,7 @@ function generateMainWindow() {
 	win = window.createWindow(
 		isDev
 			? "http://localhost:4000"
-			: `file://${path.join(__dirname,"../frontend/build/index.html")}`,
+			: `file://${path.join(__dirname, "../frontend/build/index.html")}`,
 		false
 	);
 	contectWindow = window.createWindow("none", true);
@@ -46,8 +46,8 @@ ipcMain.on("search-link", function (event, object) {
 	contectWindow.show();
 });
 
-ipcMain.on("xpath", function (e, args) {
-	console.log(args);
+ipcMain.on("idSeq", function (e, args) {
+	console.log(args.tagName);
 	win.webContents.send("search-link", args);
 });
 
