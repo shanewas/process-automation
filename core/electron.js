@@ -47,7 +47,8 @@ ipcMain.on("search-link", function (event, object) {
 		procSeq["link"] = `https://${object}`;
 	}
 	console.log(procSeq);
-	// win.webContents.send("search-link", procSeq["link"]);
+	/** uncomment to enable link in process flowchart */
+	// win.webContents.send("process-link", procSeq["link"]);
 	contectWindow.loadURL(procSeq["link"]);
 	contectWindow.show();
 });
@@ -62,7 +63,7 @@ ipcMain.on("idSeq", function (e, args) {
 		args["_type"] = "click";
 	}
 	console.log(args);
-	win.webContents.send("search-link", args);
+	win.webContents.send("process-link", args);
 });
 
 app.on("ready", generateMainWindow);
