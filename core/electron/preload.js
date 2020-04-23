@@ -1,6 +1,5 @@
 const xpath = require("../modules/xpath");
-const { ipcRenderer } = require("electron");
-const { win, contectWindow } = require("./windowList");
+const { ipcSend } = require("./ipcManage");
 
 window.onload = function () {
 	const body = document.querySelector("body");
@@ -22,7 +21,7 @@ window.onload = function () {
 				parentLength: e.path.length,
 			};
 			console.log(idSeq);
-			ipcRenderer.send("idSeq", idSeq);
+			ipcSend("idSeq", idSeq);
 		}
 	});
 };
