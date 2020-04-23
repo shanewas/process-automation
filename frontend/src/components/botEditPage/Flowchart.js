@@ -14,7 +14,7 @@ class Flowchart extends Component {
     componentDidMount()
 	{
         const self = this;
-		electron.ipcRenderer.on(electron.SearchLinkChannel, function (e, content) {
+		electron.ipcRenderer.on(electron.ProcessLinkChannel, function (e, content) {
 			var joined = self.state.process.concat(content);
             self.setState({ process: joined })
             

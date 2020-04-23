@@ -6,6 +6,7 @@ export const addBotChannel = "add-bot";
 export const deleteBotChannel = "delete-bot";
 export const startBotChannel = "start-bot";
 export const SearchLinkChannel = "search-link";
+export const ProcessLinkChannel = "process-link";
 
 // window.onload = function () {
 
