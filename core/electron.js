@@ -13,6 +13,8 @@ require("electron-reload")(__dirname, {
 	electron: path.join(__dirname, "node_modules", ".bin", "electron"),
 });
 
+let procSeq = {};
+
 function generateMainWindow() {
 	// let isDev = false;
 	win = window.createWindow(
@@ -38,16 +40,28 @@ function generateMainWindow() {
 }
 
 ipcMain.on("search-link", function (event, object) {
+	procSeq["_type"] = "link";
 	if (object.includes("http://" || object.includes("https://"))) {
-		contectWindow.loadURL(object);
+		procSeq["link"] = object;
 	} else {
-		contectWindow.loadURL(`https://${object}`);
+		procSeq["link"] = `https://${object}`;
 	}
+	console.log(procSeq);
+	// win.webContents.send("search-link", procSeq["link"]);
+	contectWindow.loadURL(procSeq["link"]);
 	contectWindow.show();
 });
 
 ipcMain.on("idSeq", function (e, args) {
-	console.log(args.tagName);
+	if (
+		(args.tagName == "INPUT" || args.tagName == "SELECT") &&
+		args.type != "submit"
+	) {
+		args["_type"] = "LoadData";
+	} else {
+		args["_type"] = "click";
+	}
+	console.log(args);
 	win.webContents.send("search-link", args);
 });
 
