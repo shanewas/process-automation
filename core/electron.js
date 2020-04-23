@@ -37,6 +37,7 @@ function generateMainWindow() {
 	Menu.setApplicationMenu(mainMenu);
 
 	win.on("closed", () => (window = null));
+	contectWindow.on("closed", () => (contectWindow = null));
 }
 
 ipcMain.on("search-link", function (event, object) {
