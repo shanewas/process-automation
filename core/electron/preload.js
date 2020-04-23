@@ -7,17 +7,22 @@ window.onload = function () {
 	body.addEventListener("click", (e) => {
 		if (e.shiftKey) {
 			e.preventDefault();
-			var type;
+			var type, placeholder;
 			e.path[0].type ? (type = e.path[0].type) : (type = null);
+			e.path[0].placeholder
+				? (placeholder = e.path[0].placeholder)
+				: (placeholder = null);
 			let idSeq = {
-				type: type,
 				tagName: e.path[0].tagName,
+				type: type,
+				placeholder: placeholder,
 				value: e.path[0].innerHTML,
 				xpath: `${xpath.getXPath(e)}`,
+				parent: e.path,
+				parentLength: e.path.length,
 			};
 			console.log(idSeq);
-			const xp = xpath.getXPath(e);
-			ipcRenderer.send("xpath", idSeq);
+			ipcRenderer.send("idSeq", idSeq);
 		}
 	});
 };
