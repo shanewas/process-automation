@@ -1,0 +1,41 @@
+[
+{
+    "type":"link",
+    "link":"....."
+},
+{
+    "type":"click",
+    "elementType":"....."
+},
+
+{
+    "type":"LoadData",
+    "elementType":"any form element",
+    "data":""
+},
+{
+    "type":"if/else",
+    "conditions":["list of conditons"],
+    "scope":""
+    
+},
+{
+    "type":"loop",
+    "condition":"any form element",
+    "scope":"",
+    "iteration":"",
+    "increment":"",
+    "breakPoint":"",
+    "skipPoint":""
+
+},
+{
+    "type":"start"
+    
+},
+{
+    "type":"end"
+    
+}
+
+]

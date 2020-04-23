@@ -4,6 +4,9 @@ const cors = require("cors");
 const fs = require("fs");
 const core = express();
 
+const DataStore = require('nedb');
+let botsList = new DataStore({ filename: `${path.join(__dirname, "../data/bots.db")}`, autoload: true });
+
 //import botlist.js from backend/dataControl
 const botlist = require('./dataControl/botlist.js');
 
@@ -34,21 +37,12 @@ router.use("/bots/:id", (req,res,next) => {
 });
 
 router.get("/bots", (req, res) => {
-	let rawdata = fs.readFileSync(
-		`${path.join(__dirname, "dataControl/botlist.json")}`
-	);
-	let botlist = JSON.parse(rawdata);
-
-	res.json(botlist);
+	botlist.listAllBots(res);	
 });
 
 //api - fetching informations of a single bot
-router.get("/bots/:id", (req,res) => {
-	const botInfo = botlist.fetchBot(req.params.id);
-	if (botInfo !== '')
-		res.json(botlist.fetchBot(req.params.id));
-	else
-		res.json({ "message": "You must pass a valid bot ID" });
+router.get("/bots/:name", (req,res) => {
+	botlist.fetchBot(req.params.name, res);	
 });
 
 //api - adding a new bot
@@ -60,8 +54,7 @@ router.post("/bots/add-bot", (req, res) => {
 		let botName = bot.botName;
 		let runTime = bot.runTime;
 		let category = bot.category;
-		botlist.addBot(botName, runTime, category);
-		res.send('New Bot Added!');
+		botlist.addBot(botName, runTime, category, res);		
 	}
 	else 
 		res.send('Unable to add new bot, you must provide all 3 of these informations - bot name, run time & bot category!!');
@@ -71,20 +64,11 @@ router.post("/bots/add-bot", (req, res) => {
 router.post("/bots/remove-bot", (req, res) => {
 	let bot = req.body;
 	//extracting bot id 
-	let botId = bot.id;
-	if (!botId)
-		res.send('You must pass a valid bot ID');
-	else {
-		console.log(botId);
-		const bots = botlist.listAllBots();
-		let botToRemove = bots.find((bot) => bot.id === parseInt(botId));
-
-		if (!botToRemove)
-			res.send('No bot found!');
-		else {
-			botlist.removeBot(botId);
-			res.send('Bot removed Successfully!');
-		}
+	let botName = bot.name;
+	if (!botName)
+		res.send('You must pass a valid bot name');
+	else {		
+		botlist.removeBot(botName,res);		
 	}
 });
 
@@ -103,6 +87,18 @@ router.put("/bots/update-bot/:id", (req, res) => {
 	}
 	else
 		res.json({ "message": "Bot update Failed!" });
+});
+
+//api - bot process sequence update
+router.put("/bots/update-bot-process/:name", (req, res) => {
+	const botProcess = req.body;
+	let key = "processSequence";
+	botlist.editBotProcess(botProcess, key, req.params.name, res);	
+});
+
+//api - get process sequence for single bot
+router.get("/bots/get-process/:name", (req, res) => {
+	botlist.getProcessSequence(req.params.name, res);
 });
 
 // REGISTER OUR ROUTES -------------------------------

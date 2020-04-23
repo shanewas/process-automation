@@ -1,82 +1,134 @@
 const fs = require("fs");
 const path = require("path");
 const moment = require('moment');
+const DataStore = require('nedb');
+const async = require('async');
 
-// Add Bot Function
-const addBot = function (botName, runTime, category) {
-	// fetching stored bots from json file
-	const bots = loadBots();
-	const currentDateTime = getCurrentTime();
-	const id = bots[bots.length - 1].id + 1;
-	console.log('Successfully added bot number: '+id);
-   
-	bots.push({
-		id: id,
-		botName: botName,
-		runTime: runTime,
-		category: category,
-		status: 'disabled',
-		lastActive: currentDateTime
+let botsList = new DataStore({ filename: `${path.join(__dirname, "../data/bots.db")}`, autoload: true });
+let processList = new DataStore({ filename: `${path.join(__dirname, "../data/process.db")}`, autoload: true });
+
+// GET BOTS LIST
+const listAllBots = function (res) {
+	let bots = null;
+	botsList.find({ }, function (err, docs) {
+		res.send(docs);
 	});
+}
 
-	saveBots(bots);
+// GET SINGLE BOT
+const fetchBot = (botName, res) => {
+	botsList.findOne({ botName: botName }, (err, docs) => {
+		if (docs === null)
+			res.send('The bot you are looking for does not exist, provide a valid bot name and try again!');
+		else
+			res.send(docs);
+	});
+}
+
+// ADD BOT
+const addBot = function (botName, runTime, category, res) {
+
+	botsList.findOne({ botName: botName }, (err, docs) => {
+		if (docs === null) {
+			const currentDateTime = getCurrentTime();
+			// inserting new bot in db
+			let bot = {
+				// id: id,
+				botName: botName,
+				runTime: runTime,
+				category: category,
+				status: 'disabled',
+				lastActive: currentDateTime
+			}
+			botsList.insert(bot, (err, doc) => {
+				res.send(doc);
+			});
+		} else
+			res.send('a bot with this bot name already exists, change the bot name and try again!');			
+	});	
 };
 
-// Delete Bot Function
-const removeBot = function (id) {
-	const bots = loadBots();
-	const botsToKeep = bots.filter(function (bot) {
-		return bot.id != id;
+// REMOVE BOT
+const removeBot = function (botName,res) {
+	botsList.remove({ botName: botName }, (err, doc) => {
+		if (err)
+			res.send('Unable to remove bot, please try again!');
+		else {
+			if (doc > 0) {				
+				let resMsg = `Bot: '${botName}' has been removed successfully!`;
+				res.send(resMsg);
+			} else 
+				res.send('Unable to remove bot, please pass a valid bot name!');			
+		}		
 	});
 
-	saveBots(botsToKeep);
+	// saveBots(botsToKeep);
 }
+
+// ADD/EDIT PROCESS
+const editBotProcess = function (botProcess, key, name, res) {
+	console.log('bot name = ' + name);
+	console.log('bot process = ' + JSON.stringify(botProcess));
+	console.log('key name = ' + key);
+	
+	processList.find({ botName: name }, (err, docs) => {
+		console.log(docs.length);
+		if (docs.length === 0) {		
+			bot = {
+				botName: name,
+				processSequence: [botProcess]
+			};
+			processList.insert((bot), (err, docs) => {
+				res.send(docs.processSequence);
+			});			
+		} else {
+			processList.findOne({ botName: name }, (err, docs) => {
+				prevProcessList = docs.processSequence;
+				// console.log(prevProcessList);
+				prevProcessList.push(botProcess);
+				console.log(prevProcessList);
+				processList.update({ botName: name }, { $set: { processSequence: prevProcessList } }, (err, numReplaced) => {
+					res.send(prevProcessList);
+				});
+			});			
+		}
+	});
+}
+
+// GET PROCESS SEQUENCE FOR SINGLE BOT
+const getProcessSequence = (botName,res) => {
+	processList.findOne({ botName: botName }, (err, docs) => {
+		if (docs !== null) {
+			console.log(docs);
+			res.send(docs.processSequence);
+		} else
+			res.send('Unable to get the process sequence, give valid bot name and try again!')
+	});
+};
 
 // Edit Bot Function
 const editBot = function (botInfo) {
 	const bots = loadBots();
+
+	console.log('bot id in edit ='+botInfo.id);
 	bots.forEach(function (bot) { 
 		if (bot.id === botInfo.id) {
-			bot.botName = botInfo.botName;
-			bot.runTime = botInfo.runTime;
-			bot.category = botInfo.category;
-			bot.status = botInfo.status;
+			// bot.botName = botInfo.botName;
+			// bot.runTime = botInfo.runTime;
+			// bot.category = botInfo.category;
+			// bot.status = botInfo.status;
+			let updatedField = Object.keys(botInfo);
+			console.log('updated fields = ' + updatedField);
+			updatedField.forEach((field) => {
+				bot[field] = botInfo[field];					
+			});
 		}
 	});
 
 	saveBots(bots);
 }
 
-// List all Bots Function
-const listAllBots = function () {
-	const bots = loadBots();
-	// bots.forEach(function (bot) {
-	// 	console.log(bot.botName);
-	// });
-	return bots;
-}
 
-// Fetch single bot
-const fetchBot = (id) => {
-	const bots = loadBots();
-	if (0 < id <= bots[bots.length-1].id) {
-		const botToFetch = bots.find((bot) => bot.id === parseInt(id));
-		console.log(botToFetch);
-		return botToFetch;
-	} else
-		return botToFetch = '';
-}
-
-// Fetch BotList Function
-const loadBots = function () {
-	try {
-		const dataBuffer = fs.readFileSync(`${path.join(__dirname, "botlist.json")}`);
-		const dataJSON = dataBuffer.toString();
-		return JSON.parse(dataJSON);
-	} catch (err){
-		return [];
-	}
-};
 
 // Store BotList Function
 const saveBots = function (bots) {
@@ -98,14 +150,7 @@ module.exports = {
 	editBot: editBot,
 	listAllBots: listAllBots,
 	fetchBot: fetchBot,
-	getCurrentTime:getCurrentTime
+	getCurrentTime: getCurrentTime,
+	editBotProcess: editBotProcess, 
+	getProcessSequence:getProcessSequence
 };
-
-// addBot("mandarin", 1, "filler");
-// console.log(fetchBot('carrot'));
-
-// removeBot('banana');
-// const bots = loadBots();
-// console.log('last bot id = ' + bots[bots.length - 1].id);
-// listAllBots();
-// editBot('tomato',2,'filler');
