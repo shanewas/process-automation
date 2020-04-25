@@ -1,5 +1,5 @@
-export const loadHeaderAction =() =>{
-    return {type:"LOAD_HEADERS"}
+export const loadHeaderAction =(headers) =>{
+    return {type:"LOAD_HEADERS",headers}
 }
 
 export function ChangeHeaderAction(index){

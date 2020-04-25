@@ -5,8 +5,9 @@ const initState={
     status:[]
 }
 
-const loadHeaders = (state) =>{
-            const headerExample=["Firstname","Lastname","Email id","Transaction Id","Date of birth"]
+const loadHeaders = (state,headers) =>{
+            console.log(headers)
+            const headerExample=headers
             const status = new Array(headerExample.length).fill("notSelected");
             return {
                 ...state,
@@ -29,7 +30,14 @@ const changeHeaders = (state,index) =>{
     }
     else
     {
-        const newstatus = [...state.status];
+        if(index===state.selectedHeader)
+        {
+            return{
+                ...state
+            }
+        }
+        else{
+            const newstatus = [...state.status];
         newstatus[index]="changing";
         newstatus[state.selectedHeader]="notSelected";
         return {
@@ -37,6 +45,8 @@ const changeHeaders = (state,index) =>{
             status:newstatus,
             selectedHeader:index
         }
+        }
+        
     }
 
 }
@@ -66,7 +76,7 @@ const rootReducer = (state=initState,action) =>{
 
     switch(action.type) {
         case "LOAD_HEADERS":
-            return loadHeaders(state)
+            return loadHeaders(state,action.headers)
         case "CHANGE_HEADER":
             return changeHeaders(state,action.index)
         case "USE_HEADER":

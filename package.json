@@ -145,9 +145,9 @@
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "csv-parser": "^2.3.2",
-    "electron-squirrel-startup": "^1.0.0",
     "electron-is-dev": "^1.2.0",
     "electron-reload": "^1.5.0",
+    "electron-squirrel-startup": "^1.0.0",
     "express": "^4.17.1",
     "jquery": "^3.5.0",
     "moment": "^2.24.0"
