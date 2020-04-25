@@ -13,12 +13,14 @@ require("electron-reload")(__dirname, {
 	electron: path.join(__dirname, "node_modules", ".bin", "electron"),
 });
 
+let procSeq = {};
+
 function generateMainWindow() {
 	// let isDev = false;
 	win = window.createWindow(
 		isDev
 			? "http://localhost:4000"
-			: `file://${path.join(__dirname,"../frontend/build/index.html")}`,
+			: `file://${path.join(__dirname, "../frontend/build/index.html")}`,
 		false
 	);
 	contectWindow = window.createWindow("none", true);
@@ -35,20 +37,34 @@ function generateMainWindow() {
 	Menu.setApplicationMenu(mainMenu);
 
 	win.on("closed", () => (window = null));
+	contectWindow.on("closed", () => (contectWindow = null));
 }
 
 ipcMain.on("search-link", function (event, object) {
+	procSeq["_type"] = "link";
 	if (object.includes("http://" || object.includes("https://"))) {
-		contectWindow.loadURL(object);
+		procSeq["link"] = object;
 	} else {
-		contectWindow.loadURL(`https://${object}`);
+		procSeq["link"] = `https://${object}`;
 	}
+	console.log(procSeq);
+	/** uncomment to enable link in process flowchart */
+	// win.webContents.send("process-link", procSeq["link"]);
+	contectWindow.loadURL(procSeq["link"]);
 	contectWindow.show();
 });
 
-ipcMain.on("xpath", function (e, args) {
+ipcMain.on("idSeq", function (e, args) {
+	if (
+		(args.tagName == "INPUT" || args.tagName == "SELECT") &&
+		args.type != "submit"
+	) {
+		args["_type"] = "LoadData";
+	} else {
+		args["_type"] = "click";
+	}
 	console.log(args);
-	win.webContents.send("search-link", args);
+	win.webContents.send("process-link", args);
 });
 
 app.on("ready", generateMainWindow);
