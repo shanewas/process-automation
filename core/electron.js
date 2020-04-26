@@ -50,6 +50,7 @@ ipcMain.on("search-link", function (event, object) {
 	console.log(procSeq);
 	/** uncomment to enable link in process flowchart */
 	win.webContents.send("process-link", procSeq["link"]);
+
 	contectWindow.loadURL(procSeq["link"]);
 	contectWindow.show();
 });
