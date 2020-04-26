@@ -21,7 +21,7 @@ import {loadHeaderAction,ChangeHeaderAction} from '../../Store/actions'
         Papa.parse(data, {
         complete: (results) =>{
          headers=results.data[0]
-        this.props.loadHeaders(headers)
+        this.props.loadHeaders(headers,data.path)
          
         }
         })
@@ -106,7 +106,7 @@ const mapStateToProps=(state)=>{
 }
 const mapDispathtoProps=(dispatch)=>{
     return {
-        loadHeaders:(headers)=> {dispatch(loadHeaderAction(headers))},
+        loadHeaders:(headers,path)=> {dispatch(loadHeaderAction(headers,path))},
         changeHeader:(index)=> {dispatch(ChangeHeaderAction(index))},
     }
 } 

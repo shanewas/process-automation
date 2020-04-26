@@ -1,6 +1,11 @@
 import React, { Component } from "react";
 
 export default class SidebarLeft extends Component {
+
+  save = () =>{
+    this.props.savebot()
+  }
+
   render() {
     return (
       <div className="left side-menu">
@@ -38,22 +43,22 @@ export default class SidebarLeft extends Component {
               <li className="menu-title">Actions</li>
 
               <li>
-                <a href="index.html" className="waves-effect">
-                  <i className="fas fa-calendar-check fa-2x mr-2" />
-                  <span> Test Bot  </span>
-                </a>
+                <div onClick={this.save} className="waves-effect p-3">
+                  <i className="fas fa-save fa-2x mr-2" />
+                  <span> Save Bot  </span>
+                </div>
               </li>
               <li>
-                <a href="index.html" className="waves-effect">
+                <div className="waves-effect p-3">
                   <i className="fas fa-code fa-2x mr-2" />
                   <span> Compile Bot  </span>
-                </a>
+                </div>
               </li>
               <li>
-                <a href="index.html" className="waves-effect">
+                <div className="waves-effect p-3">
                   <i className="fas fa-rocket fa-2x mr-2" />
                   <span> Run Bot  </span>
-                </a>
+                </div>
               </li>
              
             </ul>

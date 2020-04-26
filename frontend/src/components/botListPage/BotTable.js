@@ -83,9 +83,9 @@ render(){
               </tr>
             </thead>
             <tbody>
-            {this.state.botList.map((bot) =>{
+            {this.state.botList.map((bot,i) =>{
               return(
-                <tr key={bot.id}>
+                <tr key={i}>
                 <td>{bot.botName}</td>
                 <td>
                   <span className={this.badgemaker(bot.status)}>{bot.status}</span>
