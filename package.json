@@ -177,7 +177,7 @@
     "electron-build": "electron-builder",
     "release": "yarn react-build && electron-builder --publish=always",
     "build": "yarn react-build && yarn electron-build",
-    "start": "concurrently \"cross-env BROWSER=none yarn backend-start\" \"cross-env BROWSER=none yarn react-start\" \"wait-on http://localhost:4000 && electron-forge start\"",
+    "start": "concurrently \"cross-env BROWSER=none yarn backend-start\" \"cross-env BROWSER=none yarn react-start\" \"wait-on http://localhost:4000 && electron .\"",
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
