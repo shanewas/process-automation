@@ -49,14 +49,19 @@ router.get("/bots/:name", (req,res) => {
 router.post("/bots/add-bot", (req, res) => {
 	let bot = req.body;
 
-	if ('botName' in bot && 'process' in bot && 'filepath' in bot && 'header' in bot && 'status' in bot) {
-		//extracting bot info
+	// if ('botName' in bot && 'process' in bot && 'filepath' in bot && 'header' in bot && 'status' in bot) {
+	// 	//extracting bot info
+	// 	let botName = bot.botName;
+	// 	let process = bot.process;
+	// 	let filepath = bot.filepath;
+	// 	let header = bot.header;
+	// 	let status = bot.status;
+	// 	botlist.addBot(botName, process, filepath, header, status, res);		
+	// }
+	if ('botName' in bot && 'botType' in bot) {
 		let botName = bot.botName;
-		let process = bot.process;
-		let filepath = bot.filepath;
-		let header = bot.header;
-		let status = bot.status;
-		botlist.addBot(botName, process, filepath, header, status, res);		
+		let botType = bot.botType;
+		botlist.addBot(botName, botType, res);		
 	}
 	else 
 		res.send('Unable to add new bot, you must provide all 5 of these informations - bot name, process, filepath, header, status!!');
@@ -94,8 +99,7 @@ router.put("/bots/update-bot/:id", (req, res) => {
 //api - bot process sequence update
 router.put("/bots/update-bot-process/:name", (req, res) => {
 	const botProcess = req.body;
-	let key = "processSequence";
-	botlist.editBotProcess(botProcess, key, req.params.name, res);	
+	botlist.editBotProcess(req.params.name, botProcess, res);	
 });
 
 //api - get process sequence for single bot

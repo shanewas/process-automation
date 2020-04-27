@@ -26,7 +26,7 @@ const fetchBot = (botName, res) => {
 }
 
 // ADD BOT
-const addBot = function (botName, process, filepath, header, status, res) {
+const addBot = function (botName, botType, res) {
 
 	botsList.findOne({ botName: botName }, (err, docs) => {
 		if (docs === null) {
@@ -35,10 +35,7 @@ const addBot = function (botName, process, filepath, header, status, res) {
 			let bot = {
 				// id: id,
 				botName: botName,
-				process: process,
-				filepath: filepath,
-				header: header,
-				status: status
+				botType: botType
 			}
 			botsList.insert(bot, (err, doc) => {
 				res.send(doc);
@@ -66,31 +63,33 @@ const removeBot = function (botName,res) {
 }
 
 // ADD/EDIT PROCESS
-const editBotProcess = function (botProcess, key, name, res) {
-	console.log('bot name = ' + name);
-	console.log('bot process = ' + JSON.stringify(botProcess));
-	console.log('key name = ' + key);
-	
-	processList.find({ botName: name }, (err, docs) => {
-		console.log(docs.length);
-		if (docs.length === 0) {		
-			bot = {
-				botName: name,
-				processSequence: [botProcess]
-			};
-			processList.insert((bot), (err, docs) => {
-				res.send(docs.processSequence);
-			});			
-		} else {
-			processList.findOne({ botName: name }, (err, docs) => {
-				prevProcessList = docs.processSequence;
-				// console.log(prevProcessList);
-				prevProcessList.push(botProcess);
-				console.log(prevProcessList);
-				processList.update({ botName: name }, { $set: { processSequence: prevProcessList } }, (err, numReplaced) => {
-					res.send(prevProcessList);
-				});
-			});			
+const editBotProcess = function (botName, process, res) {
+	bot = botsList.findOne({ botName: botName }, (err, docs) => {
+		if (docs === null)
+			res.send('No such bot exists!');
+		else {
+			processList.find({ botName: botName }, (err, docs) => {
+				console.log(docs.length);
+				if (docs.length === 0) {		
+					bot = {
+						botName: botName,
+						processSequence: process
+					};
+					processList.insert((bot), (err, docs) => {
+						res.send(docs.processSequence);
+					});			
+				} else {
+					processList.findOne({ botName: botName }, (err, docs) => {
+						prevProcessList = docs.processSequence;
+						// console.log(prevProcessList);
+						prevProcessList.push(botProcess);
+						console.log(prevProcessList);
+						processList.update({ botName: name }, { $set: { processSequence: prevProcessList } }, (err, numReplaced) => {
+							res.send(prevProcessList);
+						});
+					});			
+				}
+			});
 		}
 	});
 }
