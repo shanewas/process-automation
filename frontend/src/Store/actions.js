@@ -1,5 +1,5 @@
-export const loadHeaderAction =() =>{
-    return {type:"LOAD_HEADERS"}
+export const loadHeaderAction =(headers,path) =>{
+    return {type:"LOAD_HEADERS",headers,path}
 }
 
 export function ChangeHeaderAction(index){
@@ -12,4 +12,14 @@ export function UseHeaderAction(){
 
 export function UnselectHeaderAction(index){
     return{type:"UNSELECT_HEADER",index}
+}
+
+export function SendProcessAction(process){
+    return{type:"SEND_PROCESS",process}
+}
+export function editProcessAction(process){
+    return{type:"SEND_PROCESS",process}
+}
+export function selectBotAction(bot){
+    return{type:"SELECT_BOT",bot}
 }

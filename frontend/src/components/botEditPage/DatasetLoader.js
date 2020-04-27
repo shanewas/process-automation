@@ -1,20 +1,32 @@
 import React, { Component } from 'react'
 import Card from "react-bootstrap/Card"
+import Dropzone from 'react-dropzone';
 import {connect} from "react-redux"
+import * as Papa from 'papaparse';
 import {loadHeaderAction,ChangeHeaderAction} from '../../Store/actions'
 
  class DatasetLoader extends Component {
 
 
 
-    handleChange = (e) =>{
-        
-        this.props.loadHeaders()
-    }
-
     changestatus = (index) =>{
         this.props.changeHeader(index)
 
+    }
+    
+    fileperse = (file) =>{
+        
+        let data=file[0]
+        let headers=null;
+        Papa.parse(data, {
+        complete: (results) =>{
+         headers=results.data[0]
+        this.props.loadHeaders(headers,data.path)
+         
+        }
+        })
+        
+        
     }
 
     render() {  
@@ -24,17 +36,20 @@ import {loadHeaderAction,ChangeHeaderAction} from '../../Store/actions'
                 <div>
                     <Card style={{height:"70vh",paddingTop:"22vh"}}>
                     <div className="text-center">
-                        <label className="h2 text-center mb-4">
-                        No Dataset Selected
-                        </label>
-                        <select className="form-control" style={{width:"20vh",margin:"auto"}} onChange={this.handleChange}>
-                            <option value="" >Select your Dataset</option>
-                            {this.props.datasets.map((dataset,index) =>{
-                                return(
-                            <option key={index} value={dataset}>{dataset}</option>
-                                )
-                            })}
-                        </select>
+                        
+                        <Dropzone accept=".csv" onDrop={acceptedFiles => this.fileperse(acceptedFiles)}>
+                        {({getRootProps, getInputProps}) => (
+                            <section>
+                            <div {...getRootProps()}>
+                                <input {...getInputProps()} />
+                                <label className="h2 text-center mb-4">
+                                No Dataset Selected
+                                </label>    
+                                <p>Drag & drop some files here, or click to select files</p>
+                            </div>
+                            </section>
+                        )}
+                        </Dropzone>
                     </div>
                     </Card>
                 </div>
@@ -50,24 +65,24 @@ import {loadHeaderAction,ChangeHeaderAction} from '../../Store/actions'
                         if(this.props.status[index]==="notSelected")
                         {
                             return(
-                                <div  key={index} onClick={() => this.changestatus(index)}>
-                                <h3><span className="badge badge-danger text-center">{index+1}.  {header}</span></h3>
+                                <div  key={index}>
+                                <h3><button onClick={() => this.changestatus(index)} className=" btn btn-danger btn-lg text-center">{index+1}.  {header}</button></h3>
                                 </div>
                                 )   
                         }
                         else if (this.props.status[index]==="changing")
                         {
                             return(
-                                <div  key={index} onClick={() => this.changestatus(index)}>
-                                <h3><span className="badge badge-warning text-center">{index+1}.  {header}</span></h3>
+                                <div  key={index}>
+                                <h3><button onClick={() => this.changestatus(index)} className="btn btn-warning btn-lg text-center">{index+1}.  {header}</button></h3>
                                 </div>
                                 )   
                         }
                         else 
                         {
                             return(
-                                <div  key={index} onClick={() => this.changestatus(index)}>
-                                <h3><span className="badge badge-success text-center">{index+1}.  {header}</span></h3>
+                                <div  key={index}>
+                                <h3><button onClick={() => this.changestatus(index)} className="btn btn-success btn-lg text-center">{index+1}.  {header}</button></h3>
                                 </div>
                                 )   
                         }
@@ -91,7 +106,7 @@ const mapStateToProps=(state)=>{
 }
 const mapDispathtoProps=(dispatch)=>{
     return {
-        loadHeaders:()=> {dispatch(loadHeaderAction())},
+        loadHeaders:(headers,path)=> {dispatch(loadHeaderAction(headers,path))},
         changeHeader:(index)=> {dispatch(ChangeHeaderAction(index))},
     }
 } 
