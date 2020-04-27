@@ -49,15 +49,17 @@ router.get("/bots/:name", (req,res) => {
 router.post("/bots/add-bot", (req, res) => {
 	let bot = req.body;
 
-	if ('botName' in bot && 'runTime' in bot && 'category' in bot) {
+	if ('botName' in bot && 'process' in bot && 'filepath' in bot && 'header' in bot && 'status' in bot) {
 		//extracting bot info
 		let botName = bot.botName;
-		let runTime = bot.runTime;
-		let category = bot.category;
-		botlist.addBot(botName, runTime, category, res);		
+		let process = bot.process;
+		let filepath = bot.filepath;
+		let header = bot.header;
+		let status = bot.status;
+		botlist.addBot(botName, process, filepath, header, status, res);		
 	}
 	else 
-		res.send('Unable to add new bot, you must provide all 3 of these informations - bot name, run time & bot category!!');
+		res.send('Unable to add new bot, you must provide all 5 of these informations - bot name, process, filepath, header, status!!');
 });
 
 //api - removing a bot

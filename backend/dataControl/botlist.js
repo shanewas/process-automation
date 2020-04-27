@@ -26,7 +26,7 @@ const fetchBot = (botName, res) => {
 }
 
 // ADD BOT
-const addBot = function (botName, runTime, category, res) {
+const addBot = function (botName, process, filepath, header, status, res) {
 
 	botsList.findOne({ botName: botName }, (err, docs) => {
 		if (docs === null) {
@@ -35,10 +35,10 @@ const addBot = function (botName, runTime, category, res) {
 			let bot = {
 				// id: id,
 				botName: botName,
-				runTime: runTime,
-				category: category,
-				status: 'disabled',
-				lastActive: currentDateTime
+				process: process,
+				filepath: filepath,
+				header: header,
+				status: status
 			}
 			botsList.insert(bot, (err, doc) => {
 				res.send(doc);
