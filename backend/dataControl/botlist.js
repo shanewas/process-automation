@@ -106,25 +106,18 @@ const getProcessSequence = (botName,res) => {
 };
 
 // Edit Bot Function
-const editBot = function (botInfo) {
-	const bots = loadBots();
-
-	console.log('bot id in edit ='+botInfo.id);
-	bots.forEach(function (bot) { 
-		if (bot.id === botInfo.id) {
-			// bot.botName = botInfo.botName;
-			// bot.runTime = botInfo.runTime;
-			// bot.category = botInfo.category;
-			// bot.status = botInfo.status;
-			let updatedField = Object.keys(botInfo);
-			console.log('updated fields = ' + updatedField);
-			updatedField.forEach((field) => {
-				bot[field] = botInfo[field];					
+const editBot = function (botName, filepath, header, status, res) {
+	console.log('edit bot: ' + botName);
+	botsList.findOne({ botName: botName }, (err, docs) => {
+		if (docs === null)
+			res.send('Unable to edit bot, no such bot exists!');
+		else {
+			botsList.update({ botName: botName }, { $set: { filepath: filepath, status: status, header: header } }, (err, numReplaced) => {
+				console.log(numReplaced);
+				res.send('Bot updated successfully!');
 			});
 		}
 	});
-
-	saveBots(bots);
 }
 
 
@@ -143,13 +136,13 @@ const getCurrentTime = () => {
 	return currentDateTime;
 }
 
-module.exports = {
-	addBot: addBot,
-	removeBot: removeBot,
-	editBot: editBot,
-	listAllBots: listAllBots,
-	fetchBot: fetchBot,
-	getCurrentTime: getCurrentTime,
-	editBotProcess: editBotProcess, 
-	getProcessSequence:getProcessSequence
-};
+	module.exports = {
+		addBot: addBot,
+		removeBot: removeBot,
+		editBot: editBot,
+		listAllBots: listAllBots,
+		fetchBot: fetchBot,
+		getCurrentTime: getCurrentTime,
+		editBotProcess: editBotProcess,
+		getProcessSequence: getProcessSequence
+	};
