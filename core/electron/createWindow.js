@@ -3,7 +3,7 @@ const path = require("path");
 
 const { BrowserWindow } = electron;
 let window;
-function createWindow(loadurl, preload = false) {
+function createWindow(loadurl, preload = false, payload = "preload.js") {
 	// create new window
 	window = new BrowserWindow({
 		width: 1200,
@@ -17,7 +17,7 @@ function createWindow(loadurl, preload = false) {
 			webSecurity: false,
 			nodeIntegration: true,
 			plugins: true,
-			preload: preload ? path.join(__dirname, "preload.js") : null,
+			preload: preload ? path.join(__dirname, payload) : null,
 		},
 	});
 	// window.loadURL(
