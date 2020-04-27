@@ -5,7 +5,7 @@ const isDev = require("electron-is-dev");
 let window = require("./electron/createWindow");
 const menu = require("./electron/menu");
 const conf = require("./electron/config");
-let { win, contectWindow } = require("./electron/windowList");
+let { win, contectWindow, loadingWindow } = require("./electron/windowList");
 
 const { app, Menu, ipcMain } = electron;
 
@@ -28,6 +28,11 @@ function generateMainWindow() {
 		e.preventDefault();
 		contectWindow.hide();
 	});
+	loadingWindow = window.createWindow("none", true, "RunningBot.js");
+	loadingWindow.on("close", (e) => {
+		e.preventDefault();
+		loadingWindow.hide();
+	});
 	win.once("ready-to-show", function () {
 		win.show();
 	});
@@ -38,6 +43,7 @@ function generateMainWindow() {
 
 	win.on("closed", () => (window = null));
 	contectWindow.on("closed", () => (contectWindow = null));
+	loadingWindow.on("closed", () => (loadingWindow = null));
 }
 
 ipcMain.on("search-link", function (event, object) {
@@ -49,7 +55,7 @@ ipcMain.on("search-link", function (event, object) {
 	}
 	console.log(procSeq);
 	/** uncomment to enable link in process flowchart */
-	win.webContents.send("process-link", procSeq["link"]);
+	win.webContents.send("process-link", procSeq);
 
 	contectWindow.loadURL(procSeq["link"]);
 	contectWindow.show();
@@ -66,6 +72,28 @@ ipcMain.on("idSeq", function (e, args) {
 	}
 	console.log(args);
 	win.webContents.send("process-link", args);
+});
+
+ipcMain.on("Save-Bot", function (e, bot) {
+	botSeq = bot;
+	bot.process[0]._type == "link"
+		? loadingWindow.loadURL(bot.process[0].link)
+		: "invalid link";
+	// loadingWindow.once("ready-to-show", function () {
+	// 	loadingWindow.webContents.send("test", bot);
+	// 	loadingWindow.show();
+	// });
+	// bot.process.forEach((proc) => {
+	// 	console.log(`proc : ${proc} && document: ${doc}`);
+	// });
+	console.log(bot);
+	// botlist.editBotProcess(
+	// 	bot.process,
+	// 	"key",
+	// 	bot.botName,
+	// 	bot.headers,
+	// 	bot.status
+	// );
 });
 
 app.on("ready", generateMainWindow);
