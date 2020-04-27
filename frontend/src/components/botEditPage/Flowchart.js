@@ -72,7 +72,7 @@ class Flowchart extends Component {
                             
                             return(    
                                 <div key={index} className=" text-white bg-primary text-center mr-5 ml-5 mb-2 mt-5 p-3">
-                                    Opened Webpage {step}
+                                    Opened Webpage {step.link}
                                 </div>
                                 )
                                 
