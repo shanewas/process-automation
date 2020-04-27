@@ -25,6 +25,7 @@ const fetchBot = (botName, res) => {
 	});
 }
 
+// Nabil
 // ADD BOT
 const addBot = function (botName, botType, res) {
 
@@ -62,6 +63,7 @@ const removeBot = function (botName,res) {
 	// saveBots(botsToKeep);
 }
 
+// Nabil
 // ADD/EDIT PROCESS
 const editBotProcess = function (botName, process, res) {
 	bot = botsList.findOne({ botName: botName }, (err, docs) => {
@@ -82,9 +84,10 @@ const editBotProcess = function (botName, process, res) {
 					processList.findOne({ botName: botName }, (err, docs) => {
 						prevProcessList = docs.processSequence;
 						// console.log(prevProcessList);
-						prevProcessList.push(botProcess);
+						for (let i = 0; i < process.length; i++)
+							prevProcessList.push(process[i]);
 						console.log(prevProcessList);
-						processList.update({ botName: name }, { $set: { processSequence: prevProcessList } }, (err, numReplaced) => {
+						processList.update({ botName: botName }, { $set: { processSequence: prevProcessList } }, (err, numReplaced) => {
 							res.send(prevProcessList);
 						});
 					});			
@@ -105,6 +108,7 @@ const getProcessSequence = (botName,res) => {
 	});
 };
 
+//Nabil
 // Edit Bot Function
 const editBot = function (botName, filepath, header, status, res) {
 	console.log('edit bot: ' + botName);
