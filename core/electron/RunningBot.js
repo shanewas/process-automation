@@ -1,62 +1,73 @@
 // const electron = require("electron");
 const electron = require("electron");
-const { remote } = electron;
+const botlist = require("../../backend/dataControl/botlist");
+const usability = require("../modules/usability");
 
-// // const botlist = require("../../backend/dataControl/botlist");
-// const usability = require("../modules/usability");
-// var a = {
-// 	botName: "Potato",
-// 	process: [
-// 		{ _type: "link", link: "https://facebook.com" },
-// 		{
-// 			tagName: "INPUT",
-// 			type: "text",
-// 			placeholder: "Search GitHub",
-// 			value: "",
-// 			xpath:
-// 				"BODY/DIV[1]/HEADER[1]/DIV[1]/DIV[2]/DIV[2]/DIV[1]/DIV[1]/DIV[1]/FORM[1]/LABEL[1]/INPUT[1]",
-// 			_type: "LoadData",
-// 		},
-// 		{
-// 			tagName: "A",
-// 			type: null,
-// 			placeholder: null,
-// 			value: "\n          Sign&nbsp;in\n        ",
-// 			xpath: "BODY/DIV[1]/HEADER[1]/DIV[1]/DIV[2]/DIV[2]/A[1]",
-// 			_type: "click",
-// 		},
-// 	],
-// 	filepath: null,
-// 	headers: [],
-// 	status: [],
-// };
+const { remote, ipcRenderer } = electron;
+
+console.log("HJi");
+let a = {
+	process: [
+		{ _type: "link", link: "https://facebook.com" },
+		{
+			placeholder: null,
+			tagName: "INPUT",
+			type: "email",
+			value: "",
+			xpath: '//*[@id="email"]',
+			_type: "LoadData",
+			dataHeader: "first_name",
+			dataHeaderindex: 0,
+		},
+		{
+			placeholder: null,
+			tagName: "INPUT",
+			type: "password",
+			value: "",
+			xpath: '//*[@id="pass"]',
+			_type: "LoadData",
+			dataHeader: "last_name",
+			dataHeaderindex: 1,
+		},
+		{
+			placeholder: null,
+			tagName: "INPUT",
+			type: "submit",
+			value: "",
+			xpath: '//*[@id="u_0_b"]',
+			_type: "click",
+		},
+	],
+};
+// ipcRenderer.on("run-bot-trigger", function (e, process) {
+// 	console.log(process);
+// });
+// console.log(`${botlist.getProcessSequence("Potato")} weorkingaihsidas`);
+// remote.getCurrentWindow().loadURL("https://twitter.com");
 // let usab = new usability(a.process);
-// window.onload = function () {
-// 	const body = document.querySelector("body");
-// 	// if (a.process[0]._type == "link") {
-// 	// 	remote.getCurrentWindow().loadURL(a.process[0].link);
-// 	// }
-// 	body.addEventListener("click", (e) => {
-// 		if (e.shiftKey) {
-// 			e.preventDefault();
-// 			for (i = 1; i < a.process.length; i++) {
-// 				if (a.process[i]._type == "click") {
-// 					// usab.click();
-// 					console.log(document);
-// 				}
-// 			}
-// 		}
-// 	});
-// };
-function click(path) {
-	let xPathRes = document.evaluate(
-		this.path,
-		document,
-		null,
-		XPathResult.FIRST_ORDERED_NODE_TYPE,
-		null
-	);
-	return xPathRes.singleNodeValue.click();
-}
-
-remote.ipcRenderer.send("wtf");
+window.onload = function () {
+	const body = document.querySelector("body");
+	// if (a.process[0]._type == "link") {
+	// 	remote.getCurrentWindow().loadURL(a.process[0].link);
+	// }
+	body.addEventListener("click", (e) => {
+		if (e.shiftKey) {
+			e.preventDefault();
+			for (i = 1; i < a.process.length; i++) {
+				console.log(`count down : ${i}`);
+				switch (a.process[i]._type) {
+					case "LoadData":
+						usability.form(a.process[i].xpath, "potato");
+						console.log(a.process[i]._type);
+						break;
+					case "click":
+						usability.click(a.process[i].xpath);
+						console.log(a.process[i]._type);
+						break;
+					default:
+						console.log("_type doesnt match");
+				}
+			}
+		}
+	});
+};
