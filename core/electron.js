@@ -75,25 +75,7 @@ ipcMain.on("idSeq", function (e, args) {
 });
 
 ipcMain.on("Save-Bot", function (e, bot) {
-	botSeq = bot;
-	bot.process[0]._type == "link"
-		? loadingWindow.loadURL(bot.process[0].link)
-		: "invalid link";
-	// loadingWindow.once("ready-to-show", function () {
-	// 	loadingWindow.webContents.send("test", bot);
-	// 	loadingWindow.show();
-	// });
-	// bot.process.forEach((proc) => {
-	// 	console.log(`proc : ${proc} && document: ${doc}`);
-	// });
-	console.log(bot);
-	// botlist.editBotProcess(
-	// 	bot.process,
-	// 	"key",
-	// 	bot.botName,
-	// 	bot.headers,
-	// 	bot.status
-	// );
+	
 });
 
 app.on("ready", generateMainWindow);
