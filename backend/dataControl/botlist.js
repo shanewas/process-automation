@@ -25,8 +25,9 @@ const fetchBot = (botName, res) => {
 	});
 }
 
+// Nabil
 // ADD BOT
-const addBot = function (botName, runTime, category, res) {
+const addBot = function (botName, botType, res) {
 
 	botsList.findOne({ botName: botName }, (err, docs) => {
 		if (docs === null) {
@@ -35,10 +36,7 @@ const addBot = function (botName, runTime, category, res) {
 			let bot = {
 				// id: id,
 				botName: botName,
-				runTime: runTime,
-				category: category,
-				status: 'disabled',
-				lastActive: currentDateTime
+				botType: botType
 			}
 			botsList.insert(bot, (err, doc) => {
 				res.send(doc);
@@ -65,32 +63,36 @@ const removeBot = function (botName,res) {
 	// saveBots(botsToKeep);
 }
 
+// Nabil
 // ADD/EDIT PROCESS
-const editBotProcess = function (botProcess, key, name, res) {
-	console.log('bot name = ' + name);
-	console.log('bot process = ' + JSON.stringify(botProcess));
-	console.log('key name = ' + key);
-	
-	processList.find({ botName: name }, (err, docs) => {
-		console.log(docs.length);
-		if (docs.length === 0) {		
-			bot = {
-				botName: name,
-				processSequence: [botProcess]
-			};
-			processList.insert((bot), (err, docs) => {
-				res.send(docs.processSequence);
-			});			
-		} else {
-			processList.findOne({ botName: name }, (err, docs) => {
-				prevProcessList = docs.processSequence;
-				// console.log(prevProcessList);
-				prevProcessList.push(botProcess);
-				console.log(prevProcessList);
-				processList.update({ botName: name }, { $set: { processSequence: prevProcessList } }, (err, numReplaced) => {
-					res.send(prevProcessList);
-				});
-			});			
+const editBotProcess = function (botName, process, res) {
+	bot = botsList.findOne({ botName: botName }, (err, docs) => {
+		if (docs === null)
+			res.send('No such bot exists!');
+		else {
+			processList.find({ botName: botName }, (err, docs) => {
+				console.log(docs.length);
+				if (docs.length === 0) {		
+					bot = {
+						botName: botName,
+						processSequence: process
+					};
+					processList.insert((bot), (err, docs) => {
+						res.send(docs.processSequence);
+					});			
+				} else {
+					processList.findOne({ botName: botName }, (err, docs) => {
+						prevProcessList = docs.processSequence;
+						// console.log(prevProcessList);
+						for (let i = 0; i < process.length; i++)
+							prevProcessList.push(process[i]);
+						console.log(prevProcessList);
+						processList.update({ botName: botName }, { $set: { processSequence: prevProcessList } }, (err, numReplaced) => {
+							res.send(prevProcessList);
+						});
+					});			
+				}
+			});
 		}
 	});
 }
@@ -106,26 +108,20 @@ const getProcessSequence = (botName,res) => {
 	});
 };
 
+//Nabil
 // Edit Bot Function
-const editBot = function (botInfo) {
-	const bots = loadBots();
-
-	console.log('bot id in edit ='+botInfo.id);
-	bots.forEach(function (bot) { 
-		if (bot.id === botInfo.id) {
-			// bot.botName = botInfo.botName;
-			// bot.runTime = botInfo.runTime;
-			// bot.category = botInfo.category;
-			// bot.status = botInfo.status;
-			let updatedField = Object.keys(botInfo);
-			console.log('updated fields = ' + updatedField);
-			updatedField.forEach((field) => {
-				bot[field] = botInfo[field];					
+const editBot = function (botName, filepath, header, status, res) {
+	console.log('edit bot: ' + botName);
+	botsList.findOne({ botName: botName }, (err, docs) => {
+		if (docs === null)
+			res.send('Unable to edit bot, no such bot exists!');
+		else {
+			botsList.update({ botName: botName }, { $set: { filepath: filepath, status: status, header: header } }, (err, numReplaced) => {
+				console.log(numReplaced);
+				res.send('Bot updated successfully!');
 			});
 		}
 	});
-
-	saveBots(bots);
 }
 
 
@@ -144,13 +140,13 @@ const getCurrentTime = () => {
 	return currentDateTime;
 }
 
-module.exports = {
-	addBot: addBot,
-	removeBot: removeBot,
-	editBot: editBot,
-	listAllBots: listAllBots,
-	fetchBot: fetchBot,
-	getCurrentTime: getCurrentTime,
-	editBotProcess: editBotProcess, 
-	getProcessSequence:getProcessSequence
-};
+	module.exports = {
+		addBot: addBot,
+		removeBot: removeBot,
+		editBot: editBot,
+		listAllBots: listAllBots,
+		fetchBot: fetchBot,
+		getCurrentTime: getCurrentTime,
+		editBotProcess: editBotProcess,
+		getProcessSequence: getProcessSequence
+	};

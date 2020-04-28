@@ -48,16 +48,14 @@ router.get("/bots/:name", (req,res) => {
 //api - adding a new bot
 router.post("/bots/add-bot", (req, res) => {
 	let bot = req.body;
-
-	if ('botName' in bot && 'runTime' in bot && 'category' in bot) {
-		//extracting bot info
+	if ('botName' in bot && 'botType' in bot) {
 		let botName = bot.botName;
-		let runTime = bot.runTime;
-		let category = bot.category;
-		botlist.addBot(botName, runTime, category, res);		
+		let botType = bot.botType;
+		botlist.addBot(botName, botType, res);
 	}
-	else 
-		res.send('Unable to add new bot, you must provide all 3 of these informations - bot name, run time & bot category!!');
+	else {
+		res.send('Unable to add new bot, you must provide all 5 of these informations - bot name, process, filepath, header, status!!');
+	}
 });
 
 //api - removing a bot
@@ -73,27 +71,23 @@ router.post("/bots/remove-bot", (req, res) => {
 });
 
 //api - edit/updating a bot
-router.put("/bots/update-bot/:id", (req, res) => {
-	const botInfo = botlist.fetchBot(req.params.id);
-	let botUpdate = req.body;
-	if (botInfo !== '' && Object.keys(botUpdate).length > 0) {
-		let updatedFields = Object.keys(botUpdate);		
-		updatedFields.forEach((field) => {
-			botInfo[field] = botUpdate[field];
-		});
-			
-		botlist.editBot(botInfo);	
-		res.json('Bot updated Successfully!');
+router.put("/bots/update-bot/:name", (req, res) => {
+	if (req.params.name === null)
+		res.send('Unable to edit bot, please provide a bot name!');
+	else {
+		if (req.body.length === 0)
+			res.send('Request failed, you must provie all 3 of these: "filepath", "header" and "status"');
+		else {
+			let bot = req.body;
+			botlist.editBot(req.params.name, bot.filepath, bot.header, bot.status, res);
+		}
 	}
-	else
-		res.json({ "message": "Bot update Failed!" });
 });
 
 //api - bot process sequence update
 router.put("/bots/update-bot-process/:name", (req, res) => {
 	const botProcess = req.body;
-	let key = "processSequence";
-	botlist.editBotProcess(botProcess, key, req.params.name, res);	
+	botlist.editBotProcess(req.params.name, botProcess, res);	
 });
 
 //api - get process sequence for single bot
