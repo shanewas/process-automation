@@ -18,10 +18,13 @@ const listAllBots = function (res) {
 // GET SINGLE BOT
 const fetchBot = (botName, res) => {
 	botsList.findOne({ botName: botName }, (err, docs) => {
-		if (docs === null)
+		if (docs === null){
 			res.send('The bot you are looking for does not exist, provide a valid bot name and try again!');
-		else
+			return false;
+		}else{
 			res.send(docs);
+			return true;
+		}
 	});
 }
 

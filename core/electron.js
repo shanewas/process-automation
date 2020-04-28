@@ -6,6 +6,7 @@ let window = require("./electron/createWindow");
 const menu = require("./electron/menu");
 const conf = require("./electron/config");
 let { win, contectWindow, loadingWindow } = require("./electron/windowList");
+const botlist = require("../backend/dataControl/botlist");
 
 const { app, Menu, ipcMain } = electron;
 
@@ -75,7 +76,11 @@ ipcMain.on("idSeq", function (e, args) {
 });
 
 ipcMain.on("Save-Bot", function (e, bot) {
-	
+	if (!botlist.fetchBot(bot.botName)) {
+		botlist.addBot(bot.botName, "automation");
+	}
+	botlist.editBotProcess(bot.botName, bot.process);
+	botlist.editBot(bot.botName, bot.filepath, bot.headers, bot.status);
 });
 
 app.on("ready", generateMainWindow);

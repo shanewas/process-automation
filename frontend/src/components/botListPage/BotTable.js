@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import DeleteBotModal from './DeleteBotModal';
-import moment from 'moment'
+import moment from 'moment';
+import * as electron from "../../electronScript";
 
 
 export default class BotTable extends Component {
@@ -21,7 +22,8 @@ deletebot = (bot) =>{
 editbot = () =>{
   this.setState({editmodalShow:true})
 }
-startbot = () =>{
+startbot = (botName) =>{
+  electron.ipcRenderer.send(electron.startBotChannel, botName)
   this.setState({startmodalShow:true})
 }
 
@@ -105,7 +107,7 @@ render(){
                       <i className="far fa-trash-alt"></i> Delete
                       </div></div>
                       <div className="btn btn-success mr-2 btn-sm">
-                        <div onClick={this.startbot}>
+                        <div onClick={()=>this.startbot(bot.botName)}>
                       <i className="fas fa-running"></i> Start
                       </div></div>
                   </div>
