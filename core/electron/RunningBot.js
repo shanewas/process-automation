@@ -45,33 +45,31 @@ let a = {
 // console.log(`${botlist.getProcessSequence("Potato")} weorkingaihsidas`);
 // remote.getCurrentWindow().loadURL("https://twitter.com");
 // let usab = new usability(a.process);
-window.onload = function () {
-	const body = document.querySelector("body");
-	// if (a.process[0]._type == "link") {
-	// 	remote.getCurrentWindow().loadURL(a.process[0].link);
-	// }
-	body.addEventListener("click", (e) => {
-		if (e.shiftKey) {
-			e.preventDefault();
-			for (i = 1; i < a.process.length; i++) {
-				console.log(`count down : ${i}`);
-				switch (a.process[i]._type) {
-					case "link":
-						usability.form(a.process[i].xpath, "potato");
-						console.log(a.process[i]._type);
-						break;
-					case "LoadData":
-						usability.form(a.process[i].xpath, "potato");
-						console.log(a.process[i]._type);
-						break;
-					case "click":
-						usability.click(a.process[i].xpath);
-						console.log(a.process[i]._type);
-						break;
-					default:
-						console.log("_type doesnt match");
-				}
+
+// window.onload = function () {
+document.addEventListener("DOMContentLoaded", (event) => {
+	if (ipcRenderer.sendSync("run") == "run-bot") {
+		for (i = 1; i < a.process.length; i++) {
+			console.log(`count down : ${i}`);
+			switch (a.process[i]._type) {
+				case "click":
+					usability.click(a.process[i].xpath);
+					console.log(a.process[i]._type);
+					break;
+				// case "link":
+				// 	usability.form(a.process[i].xpath, "potato");
+				// 	console.log(a.process[i]._type);
+				// 	break;
+				case "LoadData":
+					usability.form(a.process[i].xpath, "potato");
+					console.log(a.process[i]._type);
+					break;
+				default:
+					console.log("_type doesnt match");
 			}
 		}
-	});
-};
+	} else {
+		console.log("cant run");
+	}
+});
+// };
