@@ -18,7 +18,7 @@ export default function AddBotModal(props) {
         body: JSON.stringify({
           botName: name,
           runTime: 1,
-          category: category,
+          botType: category,
         }),
       });
       props.onHide();
