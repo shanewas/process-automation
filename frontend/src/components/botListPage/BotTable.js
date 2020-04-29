@@ -98,11 +98,7 @@ render(){
                   <div>
                     <div className="btn btn-primary mr-2 btn-sm">
                       <div onClick={this.editbot}>
-                      <i className="far fa-edit"></i> Edit
-                      </div></div>
-                    <div className="btn btn-danger mr-2 btn-sm">
-                      <div onClick={()=>this.deletebot(bot)}>
-                      <i className="far fa-trash-alt"></i> Delete
+                      <i className="fas fa-hammer"></i> Build
                       </div></div>
                       <div className="btn btn-success mr-2 btn-sm">
                         <div onClick={this.startbot}>

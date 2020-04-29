@@ -34,24 +34,27 @@ import {loadHeaderAction,ChangeHeaderAction} from '../../Store/actions'
         {
             return(
                 <div>
-                    <Card style={{height:"70vh",paddingTop:"22vh"}}>
-                    <div className="text-center">
+                    
                         
                         <Dropzone accept=".csv" onDrop={acceptedFiles => this.fileperse(acceptedFiles)}>
                         {({getRootProps, getInputProps}) => (
                             <section>
                             <div {...getRootProps()}>
                                 <input {...getInputProps()} />
+                                <Card style={{height:"70vh",paddingTop:"22vh"}}>
+                            <div className="text-center">
                                 <label className="h2 text-center mb-4">
                                 No Dataset Selected
                                 </label>    
                                 <p>Drag & drop some files here, or click to select files</p>
+                                </div>
+                            </Card>
                             </div>
                             </section>
+                           
                         )}
                         </Dropzone>
-                    </div>
-                    </Card>
+                 
                 </div>
             )
         }
