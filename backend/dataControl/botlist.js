@@ -27,11 +27,22 @@ const fetchBot = (botName, res) => {
 		}
 	});
 }
+const MainFetchBot = (botName) => {
+	botsList.findOne({ botName: botName }, (err, docs) => {
+		if (docs === null){
+			// res.send('The bot you are looking for does not exist, provide a valid bot name and try again!');
+			return false;
+		}else{
+			// res.send(docs);
+			return docs;
+		}
+	});
+}
 
 // Nabil
 // ADD BOT
 const addBot = function (botName, botType, res) {
-
+	console.log(botName);
 	botsList.findOne({ botName: botName }, (err, docs) => {
 		if (docs === null) {
 			const currentDateTime = getCurrentTime();
@@ -99,6 +110,37 @@ const editBotProcess = function (botName, process, res) {
 		}
 	});
 }
+const MainEditBotProcess = function (botName, process) {
+	bot = botsList.findOne({ botName: botName }, (err, docs) => {
+		if (docs === null)
+			console.log('No such bot exists!');
+		else {
+			processList.find({ botName: botName }, (err, docs) => {
+				console.log(docs.length);
+				if (docs.length === 0) {		
+					bot = {
+						botName: botName,
+						processSequence: process
+					};
+					processList.insert((bot), (err, docs) => {
+						// res.send(docs.processSequence);
+					});			
+				} else {
+					processList.findOne({ botName: botName }, (err, docs) => {
+						prevProcessList = docs.processSequence;
+						// console.log(prevProcessList);
+						for (let i = 0; i < process.length; i++)
+							prevProcessList.push(process[i]);
+						console.log(prevProcessList);
+						processList.update({ botName: botName }, { $set: { processSequence: prevProcessList } }, (err, numReplaced) => {
+							// res.send(prevProcessList);
+						});
+					});			
+				}
+			});
+		}
+	});
+}
 
 // GET PROCESS SEQUENCE FOR SINGLE BOT
 const getProcessSequence = (botName,res) => {
@@ -111,6 +153,7 @@ const getProcessSequence = (botName,res) => {
 	});
 };
 
+
 //Nabil
 // Edit Bot Function
 const editBot = function (botName, filepath, header, status, res) {
@@ -122,6 +165,20 @@ const editBot = function (botName, filepath, header, status, res) {
 			botsList.update({ botName: botName }, { $set: { filepath: filepath, status: status, header: header } }, (err, numReplaced) => {
 				console.log(numReplaced);
 				res.send('Bot updated successfully!');
+			});
+		}
+	});
+}
+// Edit Bot Function
+const MainEditBot = function (botName, filepath, header, status) {
+	console.log('edit bot: ' + botName);
+	botsList.findOne({ botName: botName }, (err, docs) => {
+		if (docs === null)
+			console.log('Unable to edit bot, no such bot exists!');
+		else {
+			botsList.update({ botName: botName }, { $set: { filepath: filepath, status: status, header: header } }, (err, numReplaced) => {
+				// console.log(numReplaced);
+				// res.send('Bot updated successfully!');
 			});
 		}
 	});
@@ -147,9 +204,13 @@ const getCurrentTime = () => {
 		addBot: addBot,
 		removeBot: removeBot,
 		editBot: editBot,
+		MainEditBot:MainEditBot,
+		MainEditBotProcess:MainEditBotProcess,
 		listAllBots: listAllBots,
 		fetchBot: fetchBot,
+		MainFetchBot:MainFetchBot,
 		getCurrentTime: getCurrentTime,
 		editBotProcess: editBotProcess,
-		getProcessSequence: getProcessSequence
+		getProcessSequence: getProcessSequence, 
+		processList:processList
 	};
