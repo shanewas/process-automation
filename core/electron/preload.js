@@ -17,8 +17,8 @@ window.onload = function () {
 				placeholder: placeholder,
 				value: e.path[0].innerHTML,
 				xpath: `${xpath.getXPath(e)}`,
-				parent: e.path,
-				parentLength: e.path.length,
+				// parent: e.path,
+				// parentLength: e.path.length,
 			};
 			console.log(idSeq);
 			ipcSend("idSeq", idSeq);
