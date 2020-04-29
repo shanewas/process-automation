@@ -56,6 +56,10 @@ window.onload = function () {
 			for (i = 1; i < a.process.length; i++) {
 				console.log(`count down : ${i}`);
 				switch (a.process[i]._type) {
+					case "link":
+						usability.form(a.process[i].xpath, "potato");
+						console.log(a.process[i]._type);
+						break;
 					case "LoadData":
 						usability.form(a.process[i].xpath, "potato");
 						console.log(a.process[i]._type);
