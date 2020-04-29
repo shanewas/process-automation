@@ -1,7 +1,6 @@
 const electron = require("electron");
 const path = require("path");
 const isDev = require("electron-is-dev");
-
 let window = require("./electron/createWindow");
 const menu = require("./electron/menu");
 const conf = require("./electron/config");
@@ -76,13 +75,10 @@ ipcMain.on("idSeq", function (e, args) {
 });
 
 ipcMain.on("Save-Bot", function (e, bot) {
-	if (!botlist.fetchBot(bot.botName)) {
-		botlist.addBot(bot.botName, "automation");
-	}
 	botlist.editBotProcess(bot.botName, bot.process);
 	botlist.editBot(bot.botName, bot.filepath, bot.headers, bot.status);
 });
-
+let run = false;
 ipcMain.on("start-bot", function (e, botName) {
 	console.log("asdasd");
 	let process = {
@@ -120,9 +116,19 @@ ipcMain.on("start-bot", function (e, botName) {
 	};
 	loadingWindow.loadURL(process.process[0].link);
 	loadingWindow.show();
+	run = true;
 	// loadingWindow.webContents.send("run-bot-trigger", "works");
 	// e.sender.send("run-bot-trigger", "async pong");
 	// ipcMain.on("open-window", function (e, link) {});
+});
+
+ipcMain.on("run", function (e) {
+	if (run) {
+		run = false;
+		e.returnValue = "run-bot";
+	} else {
+		e.returnValue = "dont-run";
+	}
 });
 
 app.on("ready", generateMainWindow);
