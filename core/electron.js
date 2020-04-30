@@ -23,17 +23,18 @@ function generateMainWindow() {
 			: `file://${path.join(__dirname, "../frontend/build/index.html")}`,
 		false
 	);
-	contectWindow = window.createWindow("none", true);
+	contectWindow = window.createWindow("none", win, false, true);
 	contectWindow.on("close", (e) => {
 		e.preventDefault();
 		contectWindow.hide();
 	});
-	loadingWindow = window.createWindow("none", true, "RunningBot.js");
+	loadingWindow = window.createWindow("none", win, true, true, true, "RunningBot.js");
 	loadingWindow.on("close", (e) => {
 		e.preventDefault();
 		loadingWindow.hide();
 	});
 	win.once("ready-to-show", function () {
+		win.maximize();
 		win.show();
 	});
 	// Build menu
