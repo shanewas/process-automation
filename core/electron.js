@@ -75,51 +75,17 @@ ipcMain.on("idSeq", function (e, args) {
 });
 
 ipcMain.on("Save-Bot", function (e, bot) {
-	botlist.editBotProcess(bot.botName, bot.process);
-	botlist.editBot(bot.botName, bot.filepath, bot.headers, bot.status);
+	botlist.MainEditBotProcess(bot.botName, bot.process);
+	botlist.MainEditBot(bot.botName, bot.filepath, bot.headers, bot.status);
 });
 let run = false;
 ipcMain.on("start-bot", function (e, botName) {
-	console.log("asdasd");
-	let process = {
-		process: [
-			{ _type: "link", link: "https://facebook.com" },
-			{
-				placeholder: null,
-				tagName: "INPUT",
-				type: "email",
-				value: "",
-				xpath: '//*[@id="email"]',
-				_type: "LoadData",
-				dataHeader: "first_name",
-				dataHeaderindex: 0,
-			},
-			{
-				placeholder: null,
-				tagName: "INPUT",
-				type: "password",
-				value: "",
-				xpath: '//*[@id="pass"]',
-				_type: "LoadData",
-				dataHeader: "last_name",
-				dataHeaderindex: 1,
-			},
-			{
-				placeholder: null,
-				tagName: "INPUT",
-				type: "radio",
-				value: "1",
-				xpath: '//*[@id="u_0_9"]',
-				_type: "click",
-			},
-		],
-	};
-	loadingWindow.loadURL(process.process[0].link);
-	loadingWindow.show();
 	run = true;
-	// loadingWindow.webContents.send("run-bot-trigger", "works");
-	// e.sender.send("run-bot-trigger", "async pong");
-	// ipcMain.on("open-window", function (e, link) {});
+	botlist.RunP1(botName, loadingWindow);
+	loadingWindow.show();
+	ipcMain.on("want-bot-name", function (e) {
+		e.reply("reply-bot-name", botName);
+	});
 });
 
 ipcMain.on("run", function (e) {

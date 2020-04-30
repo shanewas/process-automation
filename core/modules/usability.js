@@ -1,10 +1,7 @@
 const fs = require("fs");
 const csv = require("csv-parser");
 
-function usability(path) {
-	this.path = path;
-	this.valueArr = [];
-}
+class usability {}
 // part of dropdown work
 function setSelectedValue(selectObj, valueToSet) {
 	for (let i = 0; i < selectObj.length; i = i + 1) {
@@ -34,7 +31,7 @@ usability.prototype.valueToFillUp = function valueToFillUp() {
 	return keys;
 };
 // clicking on the element of the event
-function click(path) {
+usability.prototype.click = function click(document, path) {
 	let xPathRes = document.evaluate(
 		path,
 		document,
@@ -43,11 +40,15 @@ function click(path) {
 		null
 	);
 	return xPathRes.singleNodeValue.click();
-}
+};
 
 // filling up form field with data passed.
 // if no data found will fill up with "no fill up information"
-function form(path, data = "No Fill Up Information") {
+usability.prototype.form = function form(
+	document,
+	path,
+	data = "No Fill Up Information"
+) {
 	let xPathRes = document.evaluate(
 		path,
 		document,
@@ -56,7 +57,7 @@ function form(path, data = "No Fill Up Information") {
 		null
 	);
 	return (xPathRes.singleNodeValue.value = data);
-}
+};
 // radio select
 usability.prototype.radio = function radio() {
 	let xPathRes = document.evaluate(
@@ -86,4 +87,4 @@ usability.prototype.dropDown = function dropDown(data = "0") {
 	setSelectedValue(xPathRes.singleNodeValue, data);
 };
 
-module.exports = { usability, click, form };
+module.exports = { usability };
