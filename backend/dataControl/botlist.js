@@ -146,23 +146,12 @@ const RunP1 = (botName, window) => {
 };
 // ******************************************************MAIN END **********************************************************************
 // FROM MAIN ---------------------------------------------------------------------------------------------------------- // dont change
-const RunP2 = (botName, document) => {
+const RunP2 = (botName, document, window) => {
 	let xPathRes;
 	processList.findOne({ botName: botName }, (err, docs) => {
 		if (docs !== null) {
 			docs.processSequence.forEach((element) => {
 				switch (element._type) {
-					case "click":
-						xPathRes = document.evaluate(
-							element.xpath,
-							document,
-							null,
-							XPathResult.FIRST_ORDERED_NODE_TYPE,
-							null
-						);
-						// usability.click(document, element.xpath);
-						console.log(xPathRes.singleNodeValue.click());
-						break;
 					case "LoadData":
 						xPathRes = document.evaluate(
 							element.xpath,
@@ -174,6 +163,21 @@ const RunP2 = (botName, document) => {
 						xPathRes.singleNodeValue.value = "potato";
 						// usability.form(document, element.xpath, "potato");
 						console.log(element.xpath);
+						break;
+					case "click":
+						xPathRes = document.evaluate(
+							element.xpath,
+							document,
+							null,
+							XPathResult.FIRST_ORDERED_NODE_TYPE,
+							null
+						);
+						// usability.click(document, element.xpath);
+						console.log(xPathRes.singleNodeValue.click());
+						break;
+					case "link":
+						window.loadURL(element.link);
+						window.show();
 						break;
 					default:
 						console.log("_type doesnt match");

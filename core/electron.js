@@ -58,7 +58,9 @@ ipcMain.on("search-link", function (event, object) {
 	win.webContents.send("process-link", procSeq);
 
 	contectWindow.loadURL(procSeq["link"]);
-	contectWindow.show();
+	contectWindow.once("ready-to-show", function () {
+		contectWindow.show();
+	});
 });
 
 ipcMain.on("idSeq", function (e, args) {
@@ -82,7 +84,7 @@ let run = false;
 ipcMain.on("start-bot", function (e, botName) {
 	run = true;
 	botlist.RunP1(botName, loadingWindow);
-	loadingWindow.show();
+	// loadingWindow.show();
 	ipcMain.on("want-bot-name", function (e) {
 		e.reply("reply-bot-name", botName);
 	});
