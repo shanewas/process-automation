@@ -144,9 +144,21 @@ const RunP1 = (botName, window) => {
 			);
 	});
 };
+
+function getDataSet(botName) {
+	botsList.findOne({ botName: botName }, (err, docs) => {
+		if (docs === null) {
+			console.log(docs.filepath);
+			return docs.filepath;
+		} else {
+			return "File path missing";
+		}
+	});
+}
 // ******************************************************MAIN END **********************************************************************
 // FROM MAIN ---------------------------------------------------------------------------------------------------------- // dont change
 const RunP2 = (botName, document, window) => {
+	console.log(getDataSet(botName));
 	let xPathRes;
 	processList.findOne({ botName: botName }, (err, docs) => {
 		if (docs !== null) {
