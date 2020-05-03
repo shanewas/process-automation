@@ -49,9 +49,12 @@ function generateMainWindow() {
 	// Inset menu
 	Menu.setApplicationMenu(mainMenu);
 
-	win.on("closed", () => (window = null));
-	contectWindow.on("closed", () => (contectWindow = null));
-	loadingWindow.on("closed", () => (loadingWindow = null));
+	win.on(
+		"closed",
+		() => ((window = null), (loadingWindow = null), (contectWindow = null))
+	);
+	// contectWindow.on("closed", () => (contectWindow = null));
+	// loadingWindow.on("closed", () => (loadingWindow = null));
 }
 
 ipcMain.on("search-link", function (event, object) {
@@ -86,25 +89,28 @@ ipcMain.on("Save-Bot", function (e, bot) {
 	botlist.MainEditBotProcess(bot.botName, bot.process);
 	botlist.MainEditBot(bot.botName, bot.filepath, bot.headers, bot.status);
 });
-// let run = false;
-global.status = { run: false };
+let run = false;
 ipcMain.on("start-bot", function (e, botName) {
-	global.status.run = true;
-	console.log(global.status.run);
+	run = true;
+	console.log(botName)
 	botlist.RunP1(botName, loadingWindow);
 	// loadingWindow.show();
 	ipcMain.on("want-bot-name", function (e) {
+		run = false;
 		e.reply("reply-bot-name", botName);
 	});
 });
 
 ipcMain.on("run", function (e) {
-	if (global.status.run) {
-		e.returnValue = "run-bot";
+	if (run) {
+		e.returnValue = true;
 	} else {
-		e.returnValue = "dont-run";
+		e.returnValue = false;
 	}
 });
+// ipcMain.on("run-false", function (e) {
+// 	run = false;
+// });
 
 app.on("ready", generateMainWindow);
 

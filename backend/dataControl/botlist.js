@@ -2,6 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const moment = require("moment");
 const DataStore = require("nedb");
+const csv = require("csv-parser");
 
 let botsList = new DataStore({
 	filename: `${path.join(__dirname, "../data/bots.db")}`,
@@ -136,7 +137,9 @@ const getProcessSequence = (botName, res) => {
 const RunP1 = (botName, window) => {
 	processList.findOne({ botName: botName }, (err, docs) => {
 		if (docs !== null) {
-			console.log(`Loading: ${botName} of link ${docs.processSequence[0].link}`); 
+			console.log(
+				`Loading: ${botName} of link ${docs.processSequence[0].link}`
+			);
 			window.loadURL(docs.processSequence[0].link);
 		} else
 			console.log(
@@ -144,62 +147,84 @@ const RunP1 = (botName, window) => {
 			);
 	});
 };
-
+function read_csv(csv_data) {
+	fs.createReadStream(csv_data, { bufferSize: 64 * 1024 })
+		.pipe(csv())
+		.on("data", (row) => {
+			this.valueArr.push(row);
+		})
+		.on("end", () => {
+			console.log("CSV file successfully processed");
+		});
+}
 function getDataSet(botName) {
 	botsList.findOne({ botName: botName }, (err, docs) => {
 		if (docs === null) {
-			console.log(docs.filepath);
-			return docs.filepath;
+			console.log("docs.filepath");
 		} else {
 			return "File path missing";
 		}
 	});
 }
+
 // ******************************************************MAIN END **********************************************************************
 // FROM MAIN ---------------------------------------------------------------------------------------------------------- // dont change
+var i = 1;
 const RunP2 = (botName, document, window) => {
-	// console.log(getDataSet(botName));
-	let xPathRes;
-	processList.findOne({ botName: botName }, (err, docs) => {
-		if (docs !== null) {
-			docs.processSequence.forEach((element) => {
-				switch (element._type) {
-					case "LoadData":
-						xPathRes = document.evaluate(
-							element.xpath,
-							document,
-							null,
-							XPathResult.FIRST_ORDERED_NODE_TYPE,
-							null
-						);
-						xPathRes.singleNodeValue.value = "potato";
-						// usability.form(document, element.xpath, "potato");
-						console.log(element.xpath);
-						break;
-					case "click":
-						xPathRes = document.evaluate(
-							element.xpath,
-							document,
-							null,
-							XPathResult.FIRST_ORDERED_NODE_TYPE,
-							null
-						);
-						// usability.click(document, element.xpath);
-						console.log(xPathRes.singleNodeValue.click());
-						break;
-					case "link":
-						console.log(`Got the name: ${botName} of link ${element.link}`);
-						window.loadURL(element.link);
-						window.show();
-						break;
-					default:
-						console.log("_type doesnt match");
-				}
+	var j = 0;
+	botsList.findOne({ botName: botName }, (err, docs) => {
+		if (docs === null) {
+			return "File path missing";
+		} else {
+			console.log(`${i++} : ${j++} : File path : ${docs.filepath}`);
+			let xPathRes = null;
+			processList.findOne({ botName: botName }, async (err, docs) => {
+				if (docs !== null) {
+					window.show();
+					console.log(`${botName} has seq of: ${docs.processSequence.length}`);
+					// console.log(docs.processSequence[0]);
+					for (
+						let element = 1;
+						element < docs.processSequence.length;
+						element++
+					) {
+						console.log(`LOOPING: ${element} times`);
+						switch (docs.processSequence[element]._type) {
+							case "LoadData":
+								xPathRes = document.evaluate(
+									docs.processSequence[element].xpath,
+									document,
+									null,
+									XPathResult.FIRST_ORDERED_NODE_TYPE,
+									null
+								);
+								await (xPathRes.singleNodeValue.value = "potato");
+								break;
+							case "click":
+								xPathRes = document.evaluate(
+									docs.processSequence[element].xpath,
+									document,
+									null,
+									XPathResult.FIRST_ORDERED_NODE_TYPE,
+									null
+								);
+								await xPathRes.singleNodeValue.click();
+								console.log(docs.processSequence[element].xpath);
+								console.log(xPathRes);
+								break;
+							case "link":
+								await window.loadURL(docs.processSequence[element].link);
+								break;
+							default:
+								console.log("_type doesnt match");
+						}
+					}
+				} else
+					console.log(
+						"Unable to get the process sequence, give valid bot name and try again!"
+					);
 			});
-		} else
-			console.log(
-				"Unable to get the process sequence, give valid bot name and try again!"
-			);
+		}
 	});
 };
 
