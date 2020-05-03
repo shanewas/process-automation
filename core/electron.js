@@ -23,12 +23,19 @@ function generateMainWindow() {
 			: `file://${path.join(__dirname, "../frontend/build/index.html")}`,
 		false
 	);
-	contectWindow = window.createWindow("none", win, false, true);
+	contectWindow = window.createWindow("none", win, false, true, true);
 	contectWindow.on("close", (e) => {
 		e.preventDefault();
 		contectWindow.hide();
 	});
-	loadingWindow = window.createWindow("none", win, true, true, true, "RunningBot.js");
+	loadingWindow = window.createWindow(
+		"none",
+		win,
+		true,
+		true,
+		true,
+		"RunningBot.js"
+	);
 	loadingWindow.on("close", (e) => {
 		e.preventDefault();
 		loadingWindow.hide();
@@ -59,9 +66,7 @@ ipcMain.on("search-link", function (event, object) {
 	win.webContents.send("process-link", procSeq);
 
 	contectWindow.loadURL(procSeq["link"]);
-	contectWindow.once("ready-to-show", function () {
-		contectWindow.show();
-	});
+	contectWindow.show();
 });
 
 ipcMain.on("idSeq", function (e, args) {
@@ -81,9 +86,11 @@ ipcMain.on("Save-Bot", function (e, bot) {
 	botlist.MainEditBotProcess(bot.botName, bot.process);
 	botlist.MainEditBot(bot.botName, bot.filepath, bot.headers, bot.status);
 });
-let run = false;
+// let run = false;
+global.status = { run: false };
 ipcMain.on("start-bot", function (e, botName) {
-	run = true;
+	global.status.run = true;
+	console.log(global.status.run);
 	botlist.RunP1(botName, loadingWindow);
 	// loadingWindow.show();
 	ipcMain.on("want-bot-name", function (e) {
@@ -92,8 +99,7 @@ ipcMain.on("start-bot", function (e, botName) {
 });
 
 ipcMain.on("run", function (e) {
-	if (run) {
-		run = false;
+	if (global.status.run) {
 		e.returnValue = "run-bot";
 	} else {
 		e.returnValue = "dont-run";
