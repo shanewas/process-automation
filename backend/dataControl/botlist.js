@@ -136,7 +136,7 @@ const getProcessSequence = (botName, res) => {
 const RunP1 = (botName, window) => {
 	processList.findOne({ botName: botName }, (err, docs) => {
 		if (docs !== null) {
-			console.log("starting loading");
+			console.log(`Loading: ${botName} of link ${docs.processSequence[0].link}`); 
 			window.loadURL(docs.processSequence[0].link);
 		} else
 			console.log(
@@ -144,9 +144,21 @@ const RunP1 = (botName, window) => {
 			);
 	});
 };
+
+function getDataSet(botName) {
+	botsList.findOne({ botName: botName }, (err, docs) => {
+		if (docs === null) {
+			console.log(docs.filepath);
+			return docs.filepath;
+		} else {
+			return "File path missing";
+		}
+	});
+}
 // ******************************************************MAIN END **********************************************************************
 // FROM MAIN ---------------------------------------------------------------------------------------------------------- // dont change
 const RunP2 = (botName, document, window) => {
+	// console.log(getDataSet(botName));
 	let xPathRes;
 	processList.findOne({ botName: botName }, (err, docs) => {
 		if (docs !== null) {
@@ -176,6 +188,7 @@ const RunP2 = (botName, document, window) => {
 						console.log(xPathRes.singleNodeValue.click());
 						break;
 					case "link":
+						console.log(`Got the name: ${botName} of link ${element.link}`);
 						window.loadURL(element.link);
 						window.show();
 						break;
