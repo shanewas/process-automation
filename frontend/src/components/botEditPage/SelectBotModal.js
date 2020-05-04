@@ -38,7 +38,12 @@ export default function SelectBotModal(props) {
               },
               body: JSON.stringify({
                 botName: name,
+<<<<<<< HEAD
                 botType: category
+=======
+                runTime: 1,
+                botType: category,
+>>>>>>> 397727ff0c0dbe56539d2a9786f77d61832d1d25
               }),
             })
             .then((res)=>{console.log(res)})

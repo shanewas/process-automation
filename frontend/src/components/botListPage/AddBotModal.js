@@ -17,6 +17,10 @@ export default function AddBotModal(props) {
         },
         body: JSON.stringify({
           botName: name,
+<<<<<<< HEAD
+=======
+          runTime: 1,
+>>>>>>> 397727ff0c0dbe56539d2a9786f77d61832d1d25
           botType: category,
         }),
       });

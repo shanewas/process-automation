@@ -2,9 +2,12 @@ import React, { Component } from 'react';
 import DeleteBotModal from './DeleteBotModal';
 import moment from 'moment';
 import * as electron from "../../electronScript";
+<<<<<<< HEAD
 import { connect } from 'react-redux';
 import {loadBotAction} from '../../Store/actions'
 import { Link } from "react-router-dom";
+=======
+>>>>>>> 397727ff0c0dbe56539d2a9786f77d61832d1d25
 
 class BotTable extends Component {
 
