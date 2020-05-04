@@ -14,6 +14,7 @@ require("electron-reload")(__dirname, {
 });
 
 let procSeq = {};
+let run = false;
 
 function generateMainWindow() {
 	// let isDev = false;
@@ -89,14 +90,12 @@ ipcMain.on("Save-Bot", function (e, bot) {
 	botlist.MainEditBotProcess(bot.botName, bot.process);
 	botlist.MainEditBot(bot.botName, bot.filepath, bot.headers, bot.status);
 });
-let run = false;
+
 ipcMain.on("start-bot", function (e, botName) {
 	run = true;
-	console.log(botName)
 	botlist.RunP1(botName, loadingWindow);
-	// loadingWindow.show();
 	ipcMain.on("want-bot-name", function (e) {
-		run = false;
+		// run = false;
 		e.reply("reply-bot-name", botName);
 	});
 });
@@ -108,9 +107,6 @@ ipcMain.on("run", function (e) {
 		e.returnValue = false;
 	}
 });
-// ipcMain.on("run-false", function (e) {
-// 	run = false;
-// });
 
 app.on("ready", generateMainWindow);
 
