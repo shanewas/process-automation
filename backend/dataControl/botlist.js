@@ -163,43 +163,40 @@ const RunP2 = (botName, document, window) => {
 				.on("data", (row) => {
 					console.log(`data count ${i++}`);
 					let xPathRes = null;
-					processList.findOne({ botName: botName }, async (err, docs) => {
-						if (docs !== null) {
+					processList.findOne({ botName: botName }, async (err, pdocs) => {
+						if (pdocs !== null) {
 							window.show();
 							for (
 								let element = 1;
-								element < docs.processSequence.length;
+								element < pdocs.processSequence.length;
 								element++
 							) {
-								switch (docs.processSequence[element]._type) {
+								let header = pdocs.processSequence[element].dataHeader;
+								switch (pdocs.processSequence[element]._type) {
 									case "LoadData":
 										xPathRes = document.evaluate(
-											docs.processSequence[element].xpath,
+											pdocs.processSequence[element].xpath,
 											document,
 											null,
 											XPathResult.FIRST_ORDERED_NODE_TYPE,
 											null
 										);
-										await (xPathRes.singleNodeValue.value = row.first_name);
+										await (xPathRes.singleNodeValue.value = row[header]);
 										break;
 									case "click":
 										xPathRes = document.evaluate(
-											docs.processSequence[element].xpath,
+											pdocs.processSequence[element].xpath,
 											document,
 											null,
 											XPathResult.FIRST_ORDERED_NODE_TYPE,
 											null
 										);
-										if (element.type == "submit") {
-											console.log("url opened");
-											// let currentURL = window.webContents.getURL();
-											await xPathRes.singleNodeValue.click();
-											// await window.loadURL(currentURL);
-										} else await xPathRes.singleNodeValue.click();
+										await xPathRes.singleNodeValue.click();
+										// await xPathRes.singleNodeValue.click();
 										break;
-									case "link":
-										await window.loadURL(docs.processSequence[element].link);
-										break;
+									// case "link":
+									// 	await window.loadURL(docs.processSequence[element].link);
+									// 	break;
 									default:
 										console.log("_type doesnt match");
 								}
