@@ -133,7 +133,7 @@ const getProcessSequence = (botName, res) => {
 			);
 	});
 };
-// FORM MAIN
+// ****************************************NO CHANGE MAIN RUN BOT PROCESS*********************************************************************//
 const RunP1 = (botName, window) => {
 	processList.findOne({ botName: botName }, (err, docs) => {
 		if (docs !== null) {
@@ -141,6 +141,7 @@ const RunP1 = (botName, window) => {
 				`Loading: ${botName} of link ${docs.processSequence[0].link}`
 			);
 			window.loadURL(docs.processSequence[0].link);
+			window.show();
 		} else
 			console.log(
 				"Unable to get the process sequence, give valid bot name and try again!"
@@ -148,71 +149,103 @@ const RunP1 = (botName, window) => {
 	});
 };
 
-// ******************************************************MAIN END **********************************************************************
-// FROM MAIN ---------------------------------------------------------------------------------------------------------- // dont change
-const RunP2 = (botName, document, window) => {
-	var i = 1;
-	var j = 0;
-	botsList.findOne({ botName: botName }, (err, docs) => {
-		if (docs === null) {
-			return "File path missing";
-		} else {
-			// console.log(`${i++} : ${j++} : File path : ${docs.filepath}`);
-			fs.createReadStream(docs.filepath, { bufferSize: 64 * 1024 })
-				.pipe(csv())
-				.on("data", (row) => {
-					console.log(`data count ${i++}`);
-					let xPathRes = null;
-					processList.findOne({ botName: botName }, async (err, pdocs) => {
-						if (pdocs !== null) {
-							window.show();
-							for (
-								let element = 1;
-								element < pdocs.processSequence.length;
-								element++
-							) {
-								let header = pdocs.processSequence[element].dataHeader;
-								switch (pdocs.processSequence[element]._type) {
-									case "LoadData":
-										xPathRes = document.evaluate(
-											pdocs.processSequence[element].xpath,
-											document,
-											null,
-											XPathResult.FIRST_ORDERED_NODE_TYPE,
-											null
-										);
-										await (xPathRes.singleNodeValue.value = row[header]);
-										break;
-									case "click":
-										xPathRes = document.evaluate(
-											pdocs.processSequence[element].xpath,
-											document,
-											null,
-											XPathResult.FIRST_ORDERED_NODE_TYPE,
-											null
-										);
-										await xPathRes.singleNodeValue.click();
-										// await xPathRes.singleNodeValue.click();
-										break;
-									// case "link":
-									// 	await window.loadURL(docs.processSequence[element].link);
-									// 	break;
-									default:
-										console.log("_type doesnt match");
-								}
-							}
-						} else
-							console.log(
-								"Unable to get the process sequence, give valid bot name and try again!"
-							);
-					});
-				})
-				.on("end", () => {
-					console.log("CSV file successfully processed");
-				});
-		}
+function GetProcess(botName) {
+	return new Promise((resolve, reject) => {
+		processList.findOne({ botName: botName }, function (err, docs) {
+			docs !== null ? resolve(docs) : `No process found under ${botName} bot`;
+		});
 	});
-};
+}
+function GetBot(botName) {
+	return new Promise((resolve, reject) => {
+		botsList.findOne({ botName: botName }, function (err, docs) {
+			docs !== null ? resolve(docs) : `No bot found named ${botName}`;
+		});
+	});
+}
+
+function GetCsv(filepath) {
+	var x = [];
+	fs.createReadStream(filepath, { bufferSize: 64 * 1024 })
+		.pipe(csv())
+		.on("data", (row) => {
+			x.push(row);
+		})
+		.on("end", () => {
+			console.log("CSV file successfully processed");
+		});
+	return new Promise((resolve, reject) => {
+		resolve(x);
+	});
+}
+// ****************************************NO CHANGE MAIN RUN BOT PROCESS*********************************************************************//
+
+// ******************************************************MAIN Start **********************************************************************
+// FROM MAIN ---------------------------------------------------------------------------------------------------------- // dont change
+// const RunP2 = (botName, document, window) => {
+// 	var i = 1;
+// 	var j = 0;
+// 	botsList.findOne({ botName: botName }, (err, docs) => {
+// 		if (docs === null) {
+// 			return "File path missing";
+// 		} else {
+// 			// console.log(`${i++} : ${j++} : File path : ${docs.filepath}`);
+// 			fs.createReadStream(docs.filepath, { bufferSize: 64 * 1024 })
+// 				.pipe(csv())
+// 				.on("data", (row) => {
+// 					console.log(`data count ${i++}`);
+// 					// console.log(x);
+// 					let xPathRes = null;
+// 					processList.findOne({ botName: botName }, async (err, pdocs) => {
+// 						if (pdocs !== null) {
+// 							window.show();
+// 							for (
+// 								let element = 1;
+// 								element < pdocs.processSequence.length;
+// 								element++
+// 							) {
+// 								let header = pdocs.processSequence[element].dataHeader;
+// 								switch (pdocs.processSequence[element]._type) {
+// 									case "LoadData":
+// 										xPathRes = document.evaluate(
+// 											pdocs.processSequence[element].xpath,
+// 											document,
+// 											null,
+// 											XPathResult.FIRST_ORDERED_NODE_TYPE,
+// 											null
+// 										);
+// 										await (xPathRes.singleNodeValue.value = row[header]);
+// 										break;
+// 									case "click":
+// 										xPathRes = document.evaluate(
+// 											pdocs.processSequence[element].xpath,
+// 											document,
+// 											null,
+// 											XPathResult.FIRST_ORDERED_NODE_TYPE,
+// 											null
+// 										);
+// 										await xPathRes.singleNodeValue.click();
+// 										// await xPathRes.singleNodeValue.click();
+// 										break;
+// 									// case "link":
+// 									// 	await window.loadURL(docs.processSequence[element].link);
+// 									// 	break;
+// 									default:
+// 										console.log("_type doesnt match");
+// 								}
+// 							}
+// 						} else
+// 							console.log(
+// 								"Unable to get the process sequence, give valid bot name and try again!"
+// 							);
+// 					});
+// 				})
+// 				.on("end", () => {
+// 					console.log("CSV file successfully processed");
+// 				});
+// 		}
+// 	});
+// };
 
 // FROM MAIN ---------------------------------------------------------------------------------------------------------- // dont change
 const editBot = function (botName, filepath, header, status, res) {
@@ -300,8 +333,11 @@ const getCurrentTime = () => {
 };
 
 module.exports = {
+	GetProcess: GetProcess,
+	GetBot: GetBot,
+	GetCsv: GetCsv,
 	RunP1: RunP1,
-	RunP2: RunP2,
+	// RunP2: RunP2,
 	addBot: addBot,
 	removeBot: removeBot,
 	editBot: editBot,
