@@ -147,83 +147,72 @@ const RunP1 = (botName, window) => {
 			);
 	});
 };
-function read_csv(csv_data) {
-	fs.createReadStream(csv_data, { bufferSize: 64 * 1024 })
-		.pipe(csv())
-		.on("data", (row) => {
-			this.valueArr.push(row);
-		})
-		.on("end", () => {
-			console.log("CSV file successfully processed");
-		});
-}
-function getDataSet(botName) {
-	botsList.findOne({ botName: botName }, (err, docs) => {
-		if (docs === null) {
-			console.log("docs.filepath");
-		} else {
-			return "File path missing";
-		}
-	});
-}
 
 // ******************************************************MAIN END **********************************************************************
 // FROM MAIN ---------------------------------------------------------------------------------------------------------- // dont change
-var i = 1;
 const RunP2 = (botName, document, window) => {
+	var i = 1;
 	var j = 0;
 	botsList.findOne({ botName: botName }, (err, docs) => {
 		if (docs === null) {
 			return "File path missing";
 		} else {
-			console.log(`${i++} : ${j++} : File path : ${docs.filepath}`);
-			let xPathRes = null;
-			processList.findOne({ botName: botName }, async (err, docs) => {
-				if (docs !== null) {
-					window.show();
-					console.log(`${botName} has seq of: ${docs.processSequence.length}`);
-					// console.log(docs.processSequence[0]);
-					for (
-						let element = 1;
-						element < docs.processSequence.length;
-						element++
-					) {
-						console.log(`LOOPING: ${element} times`);
-						switch (docs.processSequence[element]._type) {
-							case "LoadData":
-								xPathRes = document.evaluate(
-									docs.processSequence[element].xpath,
-									document,
-									null,
-									XPathResult.FIRST_ORDERED_NODE_TYPE,
-									null
-								);
-								await (xPathRes.singleNodeValue.value = "potato");
-								break;
-							case "click":
-								xPathRes = document.evaluate(
-									docs.processSequence[element].xpath,
-									document,
-									null,
-									XPathResult.FIRST_ORDERED_NODE_TYPE,
-									null
-								);
-								await xPathRes.singleNodeValue.click();
-								console.log(docs.processSequence[element].xpath);
-								console.log(xPathRes);
-								break;
-							case "link":
-								await window.loadURL(docs.processSequence[element].link);
-								break;
-							default:
-								console.log("_type doesnt match");
-						}
-					}
-				} else
-					console.log(
-						"Unable to get the process sequence, give valid bot name and try again!"
-					);
-			});
+			// console.log(`${i++} : ${j++} : File path : ${docs.filepath}`);
+			fs.createReadStream(docs.filepath, { bufferSize: 64 * 1024 })
+				.pipe(csv())
+				.on("data", (row) => {
+					console.log(`data count ${i++}`);
+					let xPathRes = null;
+					processList.findOne({ botName: botName }, async (err, docs) => {
+						if (docs !== null) {
+							window.show();
+							for (
+								let element = 1;
+								element < docs.processSequence.length;
+								element++
+							) {
+								switch (docs.processSequence[element]._type) {
+									case "LoadData":
+										xPathRes = document.evaluate(
+											docs.processSequence[element].xpath,
+											document,
+											null,
+											XPathResult.FIRST_ORDERED_NODE_TYPE,
+											null
+										);
+										await (xPathRes.singleNodeValue.value = row.first_name);
+										break;
+									case "click":
+										xPathRes = document.evaluate(
+											docs.processSequence[element].xpath,
+											document,
+											null,
+											XPathResult.FIRST_ORDERED_NODE_TYPE,
+											null
+										);
+										if (element.type == "submit") {
+											console.log("url opened");
+											// let currentURL = window.webContents.getURL();
+											await xPathRes.singleNodeValue.click();
+											// await window.loadURL(currentURL);
+										} else await xPathRes.singleNodeValue.click();
+										break;
+									case "link":
+										await window.loadURL(docs.processSequence[element].link);
+										break;
+									default:
+										console.log("_type doesnt match");
+								}
+							}
+						} else
+							console.log(
+								"Unable to get the process sequence, give valid bot name and try again!"
+							);
+					});
+				})
+				.on("end", () => {
+					console.log("CSV file successfully processed");
+				});
 		}
 	});
 };

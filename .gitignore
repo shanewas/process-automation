@@ -39,6 +39,7 @@
 /vendor/pyyaml
 node_modules/
 backend/data/
+resources/
 data/
 SHASUMS256.txt
 **/package-lock.json
