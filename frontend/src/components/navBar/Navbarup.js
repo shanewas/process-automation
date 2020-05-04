@@ -2,7 +2,9 @@
 import React, { Component } from "react";
 import logo from "../../images/logo.png";
 import { Link } from "react-router-dom";
-export default class Navbar extends Component {
+import { connect } from "react-redux";
+import { clearAllAction } from "../../Store/actions";
+class Navbar extends Component {
   render() {
     return (
       <div id="wrapper">
@@ -107,7 +109,7 @@ export default class Navbar extends Component {
               </li>
              
               <li className="dropdown notification-list list-inline-item d-none d-md-inline-block">
-                <Link className="nav-link waves-effect" to="/build">
+                <Link className="nav-link waves-effect" to="/build/" onClick={()=>{this.props.clearProcess()}}>
                   <i className="fas fa-lg fa-lightbulb mr-2"></i>Create New
                 </Link>
               </li>
@@ -125,3 +127,10 @@ export default class Navbar extends Component {
     );
   }
 }
+const mapDispathtoProps=(dispatch)=>{
+  return {
+      clearProcess:()=>{dispatch(clearAllAction())},
+
+  }
+} 
+export default connect(null,mapDispathtoProps)(Navbar)

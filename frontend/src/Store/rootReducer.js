@@ -91,7 +91,64 @@ const editProcess = (state,process) =>{
             process:process,
         }
 }
+const clearAll = () =>{
+    return {
+        headers:[],
+        selectedHeader:null,
+        status:[],
+        filepath:null,
+        process:[],
+        botName:null,
+        prevStatus:null
+    }
+}
+const clearFlowchart = (state) =>{
 
+    const status = new Array(state.headers.length).fill("notSelected");
+    return {
+        ...state,
+        process:[],
+        status:status,
+
+
+    }
+}
+const clearDataset = (state) =>{
+    return {
+        ...state,
+        filepath:null,
+        prevStatus:null,
+        headers:[],
+        selectedHeader:null,
+        status:[],
+
+    }
+}
+const removeStep = (state,index,num_of_step) =>{
+    let newprocess = [...state.process];
+    newprocess.splice(index,num_of_step)
+    return {
+        ...state,
+        process:newprocess
+    }
+}
+
+const loadBot = (state,bot) =>{
+    const status = new Array(bot.header.length).fill("notSelected");
+    return {
+        ...state,
+        headers:bot.header,
+        status:status,
+        filepath:bot.filepath,
+        selectedHeader:null,
+        prevStatus:null,
+        botName:bot.botName,
+        process:bot.process
+
+
+
+    }
+}
 
 const rootReducer = (state=initState,action) =>{
 
@@ -107,9 +164,19 @@ const rootReducer = (state=initState,action) =>{
         case "UNSELECT_HEADER":
             return UnselectHeader(state,action.index)
         case "SEND_PROCESS":
-        return EntryProcess(state,action.process)
+            return EntryProcess(state,action.process)
         case "EDIT_PROCESS":
-        return editProcess(state,action.process)
+            return editProcess(state,action.process)
+        case "CLEAR_All":
+            return clearAll()
+        case "CLEAR_FLOWCHART":
+            return clearFlowchart(state)
+        case "CLEAR_DATASET":
+            return clearDataset(state)
+        case "REMOVE_STEP":
+            return removeStep(state,action.index,action.num_of_step)
+        case "LOAD_BOT":
+            return loadBot(state,action.bot)
         default:
         return state
       }

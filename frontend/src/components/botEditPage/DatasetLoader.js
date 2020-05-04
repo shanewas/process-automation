@@ -3,7 +3,7 @@ import Card from "react-bootstrap/Card"
 import Dropzone from 'react-dropzone';
 import {connect} from "react-redux"
 import * as Papa from 'papaparse';
-import {loadHeaderAction,ChangeHeaderAction} from '../../Store/actions'
+import {loadHeaderAction,ChangeHeaderAction, clearDatasetAction} from '../../Store/actions'
 
  class DatasetLoader extends Component {
 
@@ -63,6 +63,7 @@ import {loadHeaderAction,ChangeHeaderAction} from '../../Store/actions'
                 <div>
                     <Card style={{height:"70vh"}}>
                     <div style={{margin:"3vh",textAlign:"center"}}>
+                    <span><i className="fas fa-undo-alt float-right fa-2x" onClick={()=>{this.props.clearDataset()}}></i></span>
                     <h2 className="mb-4">DataSet Columns</h2>
                     {this.props.headers.map((header,index) =>{
                         if(this.props.status[index]==="notSelected")
@@ -111,6 +112,7 @@ const mapDispathtoProps=(dispatch)=>{
     return {
         loadHeaders:(headers,path)=> {dispatch(loadHeaderAction(headers,path))},
         changeHeader:(index)=> {dispatch(ChangeHeaderAction(index))},
+        clearDataset:()=> {dispatch(clearDatasetAction())},
     }
 } 
 

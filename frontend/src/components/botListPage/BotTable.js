@@ -1,27 +1,58 @@
 import React, { Component } from 'react';
 import DeleteBotModal from './DeleteBotModal';
-import moment from 'moment'
+import moment from 'moment';
+import * as electron from "../../electronScript";
+import { connect } from 'react-redux';
+import {loadBotAction} from '../../Store/actions'
+import { Link } from "react-router-dom";
 
-
-export default class BotTable extends Component {
+class BotTable extends Component {
 
 
   state = {
     botList:[],
-    editmodalShow:false,
-    deletemodalShow:false,
-    startmodalShow:false,
-    deletebotselect:null
+
 }
 
+buildbot = (botName) =>{
+  console.log(botName)
+  let filepath;
+  let status;
+  let header;
+  let process;
+  Promise.all([
+     fetch('api/bots/get-process/'+botName)
+  .then((response) => {
+    return response.json();
+  })
+  .then((data) => {
+    process=data
+  }),
+      fetch('api/bots/'+botName)
+  .then((response) => {
+    return response.json();
+  })
+  .then((data) => {
+    filepath=data.filepath
+    status=data.status
+    header=data.header
 
-deletebot = (bot) =>{
-  this.setState({deletemodalShow:true,deletebotselect:bot})
+  })
+  ]).then(()=>{
+    let bot ={}
+    bot['filepath']=filepath
+    bot['botName']=botName
+    bot['status']=status
+    bot['header']=header
+    bot['process']=process
+    console.log(bot)
+    this.props.loadBot(bot)
+
+  })
+
 }
-editbot = () =>{
-  this.setState({editmodalShow:true})
-}
-startbot = () =>{
+startbot = (botName) =>{
+  electron.ipcRenderer.send(electron.startBotChannel, botName)
   this.setState({startmodalShow:true})
 }
 
@@ -47,10 +78,6 @@ componentDidMount(){
     })
   });
 }
-
-// editHandle = () => {
-//   electron.ipcRenderer.send(electron.editBotChannel);
-// }
 
 
 render(){
@@ -96,12 +123,14 @@ render(){
                 <td>{moment(bot.lastActive,"MMMM Do YYYY at H:mm:ss a").fromNow()}</td>
                 <td>
                   <div>
+                    <Link to="/build">
                     <div className="btn btn-primary mr-2 btn-sm">
-                      <div onClick={this.editbot}>
+                      <div onClick={()=>{this.buildbot(bot.botName)}}>
                       <i className="fas fa-hammer"></i> Build
                       </div></div>
+                      </Link>
                       <div className="btn btn-success mr-2 btn-sm">
-                        <div onClick={this.startbot}>
+                        <div onClick={()=>this.startbot(bot.botName)}>
                       <i className="fas fa-running"></i> Start
                       </div></div>
                   </div>
@@ -122,3 +151,11 @@ render(){
 }
   
 }
+
+const mapDispathtoProps=(dispatch)=>{
+  return {
+      loadBot:(bot)=> {dispatch(loadBotAction(bot))},
+  }
+} 
+
+export default connect(null,mapDispathtoProps)(BotTable)

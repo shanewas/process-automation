@@ -22,7 +22,7 @@
 {
     "type":"loop",
     "condition":"any form element",
-    "scope":"",
+    "process" : [],
     "iteration":"",
     "increment":"",
     "breakPoint":"",
