@@ -86,7 +86,7 @@ router.put("/bots/update-bot/:name", (req, res) => {
 
 //api - bot process sequence update
 router.put("/bots/update-bot-process/:name", (req, res) => {
-	const botProcess = req.body;
+	const botProcess = req.body.process;
 	botlist.editBotProcess(req.params.name, botProcess, res);	
 });
 
