@@ -221,13 +221,15 @@ const RunP2 = (botName, document, window) => {
 const editBot = function (botName, filepath, header, status, res) {
 	console.log("edit bot: " + botName);
 	botsList.findOne({ botName: botName }, (err, docs) => {
-		if (docs === null) res.send("Unable to edit bot, no such bot exists!");
+		if (docs === null) {
+			console.log("Not found")
+			res.send("Unable to edit bot, no such bot exists!");
+		}
 		else {
 			botsList.update(
 				{ botName: botName },
 				{ $set: { filepath: filepath, status: status, header: header } },
 				(err, numReplaced) => {
-					console.log(numReplaced);
 					res.send("Bot updated successfully!");
 				}
 			);
