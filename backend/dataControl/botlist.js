@@ -58,6 +58,8 @@ const addBot = function (botName, botType, res) {
 				// id: id,
 				botName: botName,
 				botType: botType,
+				botStatus: 'disabled',
+				lastActive: getCurrentTime()
 			};
 			botsList.insert(bot, (err, doc) => {
 				res.send(doc);
@@ -284,7 +286,9 @@ const MainEditBot = function (botName, filepath, header, status) {
 };
 // FROM MAIN ---------------------------------------------------------------------------------------------------------- // dont change
 const MainEditBotProcess = function (botName, process) {
+	console.log('bot name inside MainEditBotProcess = ' + botName);
 	bot = botsList.findOne({ botName: botName }, (err, docs) => {
+		console.log('doc value inside MainEditBotProcess = '+docs);
 		if (docs === null) console.log("No such bot exists!");
 		else {
 			processList.find({ botName: botName }, (err, docs) => {
