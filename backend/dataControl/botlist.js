@@ -58,19 +58,20 @@ const addBot = function (botName, botType, res) {
 				// id: id,
 				botName: botName,
 				botType: botType,
-				botStatus: 'disabled',
-				lastActive: getCurrentTime()
+				botStatus: "disabled",
+				lastActive: getCurrentTime(),
 			};
 			botsList.insert(bot, (err, doc) => {
 				res.send(doc);
 			});
-			console.log(botName+ "has been Added");
-
+			console.log(botName + "has been Added");
 		} else
 			res.send(
 				"a bot with this bot name already exists, change the bot name and try again!"
 			);
-			console.log("a bot with this bot name already exists, change the bot name and try again!");
+		console.log(
+			"a bot with this bot name already exists, change the bot name and try again!"
+		);
 	});
 };
 
@@ -136,12 +137,12 @@ const getProcessSequence = (botName, res) => {
 };
 // ****************************************NO CHANGE MAIN RUN BOT PROCESS*********************************************************************//
 const RunP1 = (botName, window) => {
-	processList.findOne({ botName: botName }, (err, docs) => {
+	processList.findOne({ botName: botName }, async (err, docs) => {
 		if (docs !== null) {
 			console.log(
 				`Loading: ${botName} of link ${docs.processSequence[0].link}`
 			);
-			window.loadURL(docs.processSequence[0].link);
+			await window.loadURL(docs.processSequence[0].link);
 			window.show();
 		} else
 			console.log(
@@ -181,82 +182,13 @@ function GetCsv(filepath) {
 }
 // ****************************************NO CHANGE MAIN RUN BOT PROCESS*********************************************************************//
 
-// ******************************************************MAIN Start **********************************************************************
-// FROM MAIN ---------------------------------------------------------------------------------------------------------- // dont change
-// const RunP2 = (botName, document, window) => {
-// 	var i = 1;
-// 	var j = 0;
-// 	botsList.findOne({ botName: botName }, (err, docs) => {
-// 		if (docs === null) {
-// 			return "File path missing";
-// 		} else {
-// 			// console.log(`${i++} : ${j++} : File path : ${docs.filepath}`);
-// 			fs.createReadStream(docs.filepath, { bufferSize: 64 * 1024 })
-// 				.pipe(csv())
-// 				.on("data", (row) => {
-// 					console.log(`data count ${i++}`);
-// 					// console.log(x);
-// 					let xPathRes = null;
-// 					processList.findOne({ botName: botName }, async (err, pdocs) => {
-// 						if (pdocs !== null) {
-// 							window.show();
-// 							for (
-// 								let element = 1;
-// 								element < pdocs.processSequence.length;
-// 								element++
-// 							) {
-// 								let header = pdocs.processSequence[element].dataHeader;
-// 								switch (pdocs.processSequence[element]._type) {
-// 									case "LoadData":
-// 										xPathRes = document.evaluate(
-// 											pdocs.processSequence[element].xpath,
-// 											document,
-// 											null,
-// 											XPathResult.FIRST_ORDERED_NODE_TYPE,
-// 											null
-// 										);
-// 										await (xPathRes.singleNodeValue.value = row[header]);
-// 										break;
-// 									case "click":
-// 										xPathRes = document.evaluate(
-// 											pdocs.processSequence[element].xpath,
-// 											document,
-// 											null,
-// 											XPathResult.FIRST_ORDERED_NODE_TYPE,
-// 											null
-// 										);
-// 										await xPathRes.singleNodeValue.click();
-// 										// await xPathRes.singleNodeValue.click();
-// 										break;
-// 									// case "link":
-// 									// 	await window.loadURL(docs.processSequence[element].link);
-// 									// 	break;
-// 									default:
-// 										console.log("_type doesnt match");
-// 								}
-// 							}
-// 						} else
-// 							console.log(
-// 								"Unable to get the process sequence, give valid bot name and try again!"
-// 							);
-// 					});
-// 				})
-// 				.on("end", () => {
-// 					console.log("CSV file successfully processed");
-// 				});
-// 		}
-// 	});
-// };
-
-// FROM MAIN ---------------------------------------------------------------------------------------------------------- // dont change
 const editBot = function (botName, filepath, header, status, res) {
 	console.log("edit bot: " + botName);
 	botsList.findOne({ botName: botName }, (err, docs) => {
 		if (docs === null) {
-			console.log("Not found")
+			console.log("Not found");
 			res.send("Unable to edit bot, no such bot exists!");
-		}
-		else {
+		} else {
 			botsList.update(
 				{ botName: botName },
 				{ $set: { filepath: filepath, status: status, header: header } },
@@ -267,61 +199,6 @@ const editBot = function (botName, filepath, header, status, res) {
 		}
 	});
 };
-// FROM MAIN ---------------------------------------------------------------------------------------------------------- // dont change
-const MainEditBot = function (botName, filepath, header, status) {
-	console.log("edit bot: " + botName);
-	botsList.findOne({ botName: botName }, (err, docs) => {
-		if (docs === null) console.log("Unable to edit bot, no such bot exists!");
-		else {
-			botsList.update(
-				{ botName: botName },
-				{ $set: { filepath: filepath, status: status, header: header } },
-				(err, numReplaced) => {
-					// console.log(numReplaced);
-					// res.send('Bot updated successfully!');
-				}
-			);
-		}
-	});
-};
-// FROM MAIN ---------------------------------------------------------------------------------------------------------- // dont change
-const MainEditBotProcess = function (botName, process) {
-	console.log('bot name inside MainEditBotProcess = ' + botName);
-	bot = botsList.findOne({ botName: botName }, (err, docs) => {
-		console.log('doc value inside MainEditBotProcess = '+docs);
-		if (docs === null) console.log("No such bot exists!");
-		else {
-			processList.find({ botName: botName }, (err, docs) => {
-				console.log(docs.length);
-				if (docs.length === 0) {
-					bot = {
-						botName: botName,
-						processSequence: process,
-					};
-					processList.insert(bot, (err, docs) => {
-						// res.send(docs.processSequence);
-					});
-				} else {
-					processList.findOne({ botName: botName }, (err, docs) => {
-						prevProcessList = docs.processSequence;
-						// console.log(prevProcessList);
-						for (let i = 0; i < process.length; i++)
-							prevProcessList.push(process[i]);
-						console.log(prevProcessList);
-						processList.update(
-							{ botName: botName },
-							{ $set: { processSequence: prevProcessList } },
-							(err, numReplaced) => {
-								// res.send(prevProcessList);
-							}
-						);
-					});
-				}
-			});
-		}
-	});
-};
-// ******************************************************MAIN END **********************************************************************
 
 // Store BotList Function
 const saveBots = function (bots) {
@@ -342,12 +219,9 @@ module.exports = {
 	GetBot: GetBot,
 	GetCsv: GetCsv,
 	RunP1: RunP1,
-	// RunP2: RunP2,
 	addBot: addBot,
 	removeBot: removeBot,
 	editBot: editBot,
-	MainEditBot: MainEditBot,
-	MainEditBotProcess: MainEditBotProcess,
 	listAllBots: listAllBots,
 	fetchBot: fetchBot,
 	MainFetchBot: MainFetchBot,
