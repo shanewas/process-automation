@@ -14,10 +14,8 @@ require("electron-reload")(__dirname, {
 });
 
 let procSeq = {};
-let run = false;
 
 function generateMainWindow() {
-	// let isDev = false;
 	win = window.createWindow(
 		isDev
 			? "http://localhost:4000"
@@ -66,7 +64,6 @@ ipcMain.on("search-link", function (event, object) {
 		procSeq["link"] = `https://${object}`;
 	}
 	console.log(procSeq);
-	/** uncomment to enable link in process flowchart */
 	win.webContents.send("process-link", procSeq);
 
 	contectWindow.loadURL(procSeq["link"]);
@@ -92,20 +89,10 @@ ipcMain.on("Save-Bot", function (e, bot) {
 });
 
 ipcMain.on("start-bot", function (e, botName) {
-	run = true;
 	botlist.RunP1(botName, loadingWindow);
 	ipcMain.on("want-bot-name", function (e) {
-		// run = false;
 		e.reply("reply-bot-name", botName);
 	});
-});
-
-ipcMain.on("run", function (e) {
-	if (run) {
-		e.returnValue = true;
-	} else {
-		e.returnValue = false;
-	}
 });
 
 app.on("ready", generateMainWindow);
