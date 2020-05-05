@@ -1,6 +1,6 @@
 const electron = require("electron");
 
-const { ipcRenderer } = electron;
+const { ipcRenderer, remote } = electron;
 
 document.addEventListener("readystatechange", (event) => {
 	if (event.target.readyState === "complete") {
@@ -14,9 +14,9 @@ document.addEventListener("readystatechange", (event) => {
 				XPathResult.FIRST_ORDERED_NODE_TYPE,
 				null
 			);
-			console.log(xPathRes);
 			xPathRes.singleNodeValue.value = package.loadData;
 		});
+		// remote.ipcMain.removeAllListeners("form-fill-up");
 		ipcRenderer.send("need-click");
 		ipcRenderer.on("click-it", function (e, package) {
 			xPathRes = document.evaluate(
@@ -26,9 +26,8 @@ document.addEventListener("readystatechange", (event) => {
 				XPathResult.FIRST_ORDERED_NODE_TYPE,
 				null
 			);
-			console.log(xPathRes);
 			xPathRes.singleNodeValue.click();
-			console.log("click");
 		});
+		// remote.ipcMain.removeAllListeners("click-it");
 	}
 });

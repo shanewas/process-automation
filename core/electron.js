@@ -101,23 +101,22 @@ ipcMain.on("start-bot", async function (e, botName) {
 		let xpath = botProcess.processSequence[index].xpath;
 		let loadData = "sopme data";
 		let package = { xpath, loadData };
-		console.log(botProcess.processSequence[index]);
 		switch (botProcess.processSequence[index]._type) {
 			case "LoadData":
 				ipcMain.on("need-form", function () {
 					loadingWindow.webContents.send("form-fill-up", package);
 				});
-				console.log(`LoadData : ${xpath}`);
 				break;
 			case "click":
 				ipcMain.on("need-click", function () {
 					loadingWindow.webContents.send("click-it", package);
 				});
-				console.log(`Click : ${xpath}`);
 			default:
 				console.log("_type doesnt match");
 		}
 	}
+	// ipcMain.removeAllListeners("need-form");
+	// ipcMain.removeAllListeners("need-click");
 });
 
 app.on("ready", generateMainWindow);
