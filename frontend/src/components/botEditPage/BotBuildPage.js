@@ -8,7 +8,7 @@ import Flowchart from "./Flowchart";
 import DatasetLoader from "./DatasetLoader";
 import {connect} from "react-redux"
 import SelectBotModal from "./SelectBotModal";
-import {selectBotAction} from '../../Store/actions'
+import {selectBotAction,clearAllAction} from '../../Store/actions'
 import * as electron from "../../electronScript";
 
 class BotBuildPage extends Component {
@@ -18,34 +18,38 @@ class BotBuildPage extends Component {
 }
 
 savebot =() =>{
-  if(!this.props.botName){
+ 
   this.setState({selectmodalShow:true})
-  }
-  else{
-    let saveBotObject={}
-  saveBotObject.botName=this.props.botName
-  saveBotObject.process=this.props.process
-  saveBotObject.filepath=this.props.filepath
-  saveBotObject.headers=this.props.headers
-  saveBotObject.status=this.props.status
-  electron.send(electron.SaveBotChannel, saveBotObject);
-
-  }
-  
+ 
 }
 selectBot = (botName) =>{
   let saveBotObject={}
   saveBotObject.botName=botName
-  saveBotObject.process=this.props.process
   saveBotObject.filepath=this.props.filepath
   saveBotObject.headers=this.props.headers
   saveBotObject.status=this.props.status
+  let process=this.props.process
+  fetch("/api/bots/update-bot-process/"+botName, {
+        method: "put",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          process
+        }),
+      });
+  fetch("/api/bots/update-bot/"+botName, {
+    method: "put",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      saveBotObject
+    }),
+  });
 
-  console.log(saveBotObject)
-  electron.send(electron.SaveBotChannel, saveBotObject);
 
 }
-
 
   render() {
     return (
@@ -89,6 +93,7 @@ const mapStateToProps=(state)=>{
 const mapDispathtoProps=(dispatch)=>{
     return {
         selectBot:(bot)=> {dispatch(selectBotAction(bot))},
+        clearProcess:()=>{dispatch(clearAllAction())},
 
     }
 } 

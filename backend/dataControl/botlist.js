@@ -50,7 +50,6 @@ const MainFetchBot = (botName) => {
 // Nabil
 // ADD BOT
 const addBot = function (botName, botType, res) {
-	console.log(botName);
 	botsList.findOne({ botName: botName }, (err, docs) => {
 		if (docs === null) {
 			const currentDateTime = getCurrentTime();
@@ -63,10 +62,13 @@ const addBot = function (botName, botType, res) {
 			botsList.insert(bot, (err, doc) => {
 				res.send(doc);
 			});
+			console.log(botName+ "has been Added");
+
 		} else
 			res.send(
 				"a bot with this bot name already exists, change the bot name and try again!"
 			);
+			console.log("a bot with this bot name already exists, change the bot name and try again!");
 	});
 };
 
@@ -92,7 +94,6 @@ const editBotProcess = function (botName, process, res) {
 		if (docs === null) res.send("No such bot exists!");
 		else {
 			processList.find({ botName: botName }, (err, docs) => {
-				console.log(docs.length);
 				if (docs.length === 0) {
 					bot = {
 						botName: botName,
@@ -104,10 +105,8 @@ const editBotProcess = function (botName, process, res) {
 				} else {
 					processList.findOne({ botName: botName }, (err, docs) => {
 						prevProcessList = docs.processSequence;
-						// console.log(prevProcessList);
 						for (let i = 0; i < process.length; i++)
 							prevProcessList.push(process[i]);
-						console.log(prevProcessList);
 						processList.update(
 							{ botName: botName },
 							{ $set: { processSequence: prevProcessList } },
@@ -251,13 +250,15 @@ function GetCsv(filepath) {
 const editBot = function (botName, filepath, header, status, res) {
 	console.log("edit bot: " + botName);
 	botsList.findOne({ botName: botName }, (err, docs) => {
-		if (docs === null) res.send("Unable to edit bot, no such bot exists!");
+		if (docs === null) {
+			console.log("Not found")
+			res.send("Unable to edit bot, no such bot exists!");
+		}
 		else {
 			botsList.update(
 				{ botName: botName },
 				{ $set: { filepath: filepath, status: status, header: header } },
 				(err, numReplaced) => {
-					console.log(numReplaced);
 					res.send("Bot updated successfully!");
 				}
 			);

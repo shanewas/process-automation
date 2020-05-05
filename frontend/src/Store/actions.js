@@ -23,3 +23,19 @@ export function editProcessAction(process){
 export function selectBotAction(bot){
     return{type:"SELECT_BOT",bot}
 }
+export function clearAllAction(){
+    return{type:"CLEAR_All"}
+}
+export function clearFlowchartAction(){
+    return{type:"CLEAR_FLOWCHART"}
+}
+export function clearDatasetAction(){
+    return{type:"CLEAR_DATASET"}
+}
+export function removeStepAction(index,num_of_step){
+    return{type:"REMOVE_STEP",index,num_of_step}
+}
+
+export function loadBotAction(bot){
+    return{type:"LOAD_BOT",bot}
+}

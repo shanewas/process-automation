@@ -27,6 +27,7 @@ export default function SelectBotModal(props) {
             setSelectexisting(false)
             setCreateNew(false)
         }
+
         const handleSubmitNewBot = (evt) => {
             evt.preventDefault();
             setLoading(true)
@@ -37,11 +38,14 @@ export default function SelectBotModal(props) {
               },
               body: JSON.stringify({
                 botName: name,
-                runTime: 1,
-                botType: category,
+                botType: category
               }),
-            });
-            props.selectbot(name)
+            })
+            .then((res)=>{console.log(res)})
+            .then(async()=>{
+            await props.selectbot(name)
+            }
+            )
             setTimeout(()=>{
                  customHide()
             }, 1000);
