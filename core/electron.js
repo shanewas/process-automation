@@ -83,16 +83,41 @@ ipcMain.on("idSeq", function (e, args) {
 	win.webContents.send("process-link", args);
 });
 
-ipcMain.on("Save-Bot", function (e, bot) {
-	botlist.MainEditBotProcess(bot.botName, bot.process);
-	botlist.MainEditBot(bot.botName, bot.filepath, bot.headers, bot.status);
-});
+var bots;
+var botProcess;
+var data;
 
-ipcMain.on("start-bot", function (e, botName) {
+ipcMain.on("start-bot", async function (e, botName) {
 	botlist.RunP1(botName, loadingWindow);
-	ipcMain.on("want-bot-name", function (e) {
-		e.reply("reply-bot-name", botName);
+
+	await botlist.GetBot(botName).then((docs) => {
+		bots = docs;
 	});
+	await botlist.GetProcess(botName).then((docs) => {
+		botProcess = docs;
+	});
+
+	for (let index = 1; index < botProcess.processSequence.length; index++) {
+		let xpath = botProcess.processSequence[index].xpath;
+		let loadData = "sopme data";
+		let package = { xpath, loadData };
+		console.log(botProcess.processSequence[index]);
+		switch (botProcess.processSequence[index]._type) {
+			case "LoadData":
+				ipcMain.on("need-form", function () {
+					loadingWindow.webContents.send("form-fill-up", package);
+				});
+				console.log(`LoadData : ${xpath}`);
+				break;
+			case "click":
+				ipcMain.on("need-click", function () {
+					loadingWindow.webContents.send("click-it", package);
+				});
+				console.log(`Click : ${xpath}`);
+			default:
+				console.log("_type doesnt match");
+		}
+	}
 });
 
 app.on("ready", generateMainWindow);
