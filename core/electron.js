@@ -58,7 +58,7 @@ function generateMainWindow() {
 
 ipcMain.on("search-link", function (event, object) {
 	procSeq["_type"] = "link";
-	if (object.includes("http://" || object.includes("https://"))) {
+	if (object.includes("http://") || object.includes("https://")) {
 		procSeq["link"] = object;
 	} else {
 		procSeq["link"] = `https://${object}`;
