@@ -63,7 +63,6 @@ ipcMain.on("search-link", function (event, object) {
 	} else {
 		procSeq["link"] = `https://${object}`;
 	}
-	console.log(procSeq);
 	win.webContents.send("process-link", procSeq);
 
 	contectWindow.loadURL(procSeq["link"]);
