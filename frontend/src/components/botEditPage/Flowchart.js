@@ -19,6 +19,10 @@ class Flowchart extends Component {
 
 
     }
+    componentWillUnmount()
+    {
+        electron.ipcRenderer.removeAllListeners(electron.ProcessLinkChannel);
+    }
     areotherusing=(index,header)=>{
         var newprocess=[...this.props.process]
         for(var x=0;x<newprocess.length;x++)
