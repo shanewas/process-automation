@@ -79,7 +79,8 @@ router.put("/bots/update-bot/:name", (req, res) => {
 			res.send('Request failed, you must provie all 3 of these: "filepath", "header" and "status"');
 		else {
 			let bot = req.body.saveBotObject;
-			botlist.editBot(req.params.name, bot.filepath, bot.header, bot.status, res);
+			console.log(bot)
+			botlist.editBot(req.params.name, bot.filepath, bot.headers, bot.status, res);
 		}
 	}
 });

@@ -12,7 +12,6 @@ class Flowchart extends Component {
 	{
 		electron.ipcRenderer.on(electron.ProcessLinkChannel,(e, content) =>{
             
-            console.log(content)
             this.props.sendProcess(content)
             
         });

@@ -9,7 +9,6 @@ import DatasetLoader from "./DatasetLoader";
 import {connect} from "react-redux"
 import SelectBotModal from "./SelectBotModal";
 import {selectBotAction,clearAllAction} from '../../Store/actions'
-import * as electron from "../../electronScript";
 
 class BotBuildPage extends Component {
 
@@ -29,6 +28,7 @@ selectBot = (botName) =>{
   saveBotObject.headers=this.props.headers
   saveBotObject.status=this.props.status
   let process=this.props.process
+  console.log(process)
   fetch("/api/bots/update-bot-process/"+botName, {
         method: "put",
         headers: {
