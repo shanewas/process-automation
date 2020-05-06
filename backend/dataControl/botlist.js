@@ -167,17 +167,17 @@ function GetBot(botName) {
 }
 
 function GetCsv(filepath) {
-	var x = [];
-	fs.createReadStream(filepath, { bufferSize: 64 * 1024 })
-		.pipe(csv())
-		.on("data", (row) => {
-			x.push(row);
-		})
-		.on("end", () => {
-			console.log("CSV file successfully processed");
-		});
 	return new Promise((resolve, reject) => {
-		resolve(x);
+		var x = [];
+		fs.createReadStream(filepath, { bufferSize: 64 * 1024 })
+			.pipe(csv())
+			.on("data", (row) => {
+				x.push(row);
+			})
+			.on("end", () => {
+				console.log("CSV file successfully processed");
+				resolve(x);
+			});
 	});
 }
 // ****************************************NO CHANGE MAIN RUN BOT PROCESS*********************************************************************//

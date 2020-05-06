@@ -87,36 +87,54 @@ var bots;
 var botProcess;
 var data;
 
-ipcMain.on("start-bot", async function (e, botName) {
-	botlist.RunP1(botName, loadingWindow);
+var processlength;
+var processCounter = 0;
+var localData;
 
+ipcMain.on("start-bot", async function (e, botName) {
 	await botlist.GetBot(botName).then((docs) => {
 		bots = docs;
 	});
 	await botlist.GetProcess(botName).then((docs) => {
 		botProcess = docs;
+		botProcess.processSequence.splice(0, 1);
+		processlength = botProcess.processSequence.length;
 	});
 
-	for (let index = 1; index < botProcess.processSequence.length; index++) {
-		let xpath = botProcess.processSequence[index].xpath;
-		let loadData = "sopme data";
-		let package = { xpath, loadData };
-		switch (botProcess.processSequence[index]._type) {
+	await botlist.GetCsv(bots.filepath).then((docs) => {
+		data = docs;
+	});
+	botlist.RunP1(botName, loadingWindow);
+	localData = data.pop();
+});
+
+ipcMain.on("need-process", function (e) {
+	if (localData) {
+		element = botProcess.processSequence[processCounter];
+		let path = element.xpath;
+		switch (element._type) {
 			case "LoadData":
-				ipcMain.on("need-form", function () {
-					loadingWindow.webContents.send("form-fill-up", package);
-				});
+				let header = element.dataHeader;
+				let dat = localData[header];
+				console.log(dat);
+				let package = { path, dat };
+				console.log(`need form listening.....`);
+				loadingWindow.webContents.send("form-fill-up", package);
 				break;
 			case "click":
-				ipcMain.on("need-click", function () {
-					loadingWindow.webContents.send("click-it", package);
-				});
+				console.log("need cluick listening .....");
+				loadingWindow.webContents.send("click-it", path);
+				break;
 			default:
 				console.log("_type doesnt match");
 		}
+		if (processCounter + 1 >= processlength) {
+			processCounter = 0;
+			localData = data.pop();
+		} else {
+			processCounter++;
+		}
 	}
-	// ipcMain.removeAllListeners("need-form");
-	// ipcMain.removeAllListeners("need-click");
 });
 
 app.on("ready", generateMainWindow);
