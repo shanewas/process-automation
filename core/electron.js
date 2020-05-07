@@ -85,7 +85,7 @@ ipcMain.on("idSeq", function (e, args) {
 var bots;
 var botProcess;
 var data;
-var itteration = 10;
+var iteration;
 var processlength;
 var processCounter = 0;
 var localData;
@@ -105,11 +105,12 @@ ipcMain.on("start-bot", async function (e, botName) {
 	});
 	botlist.RunP1(botName, loadingWindow);
 	localData = data.pop();
+	iteration = bots.botIteration;
 	idx = 1;
 });
 
 ipcMain.on("need-process", function (e) {
-	if (localData && idx <= itteration) {
+	if (localData && idx <= iteration) {
 		element = botProcess.processSequence[processCounter];
 		let path = element.xpath;
 		switch (element._type) {
