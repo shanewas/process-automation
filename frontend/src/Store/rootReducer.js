@@ -161,11 +161,10 @@ const removeStep = (state,index,num_of_step) =>{
 }
 
 const loadBot = (state,bot) =>{
-    const status = new Array(bot.header.length).fill("notSelected");
     return {
         ...state,
         headers:bot.header,
-        status:status,
+        status:bot.status,
         filepath:bot.filepath,
         selectedHeader:null,
         prevStatus:null,

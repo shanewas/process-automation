@@ -45,7 +45,6 @@ buildbot = (botName) =>{
     bot['status']=status
     bot['header']=header
     bot['process']=process
-    console.log(bot)
     this.props.loadBot(bot)
 
   })
