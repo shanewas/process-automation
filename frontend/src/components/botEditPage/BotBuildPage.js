@@ -8,7 +8,7 @@ import Flowchart from "./Flowchart";
 import DatasetLoader from "./DatasetLoader";
 import {connect} from "react-redux"
 import SelectBotModal from "./SelectBotModal";
-import {selectBotAction,clearAllAction} from '../../Store/actions'
+import {selectBotAction,clearAllAction,iterationChangeAction} from '../../Store/actions'
 
 class BotBuildPage extends Component {
 
@@ -21,12 +21,18 @@ savebot =() =>{
   this.setState({selectmodalShow:true})
  
 }
+saveIteration =(iterationNumber) =>{
+ 
+  this.props.iterationChange(iterationNumber)
+ 
+}
 selectBot = (botName) =>{
   let saveBotObject={}
   saveBotObject.botName=botName
   saveBotObject.filepath=this.props.filepath
   saveBotObject.headers=this.props.headers
   saveBotObject.status=this.props.status
+  saveBotObject.botIteration=this.props.botIteration
   let process=this.props.process
   console.log(process)
   fetch("/api/bots/update-bot-process/"+botName, {
@@ -64,7 +70,7 @@ componentWillUnmount(){
                 selectbot={this.selectBot}
                 />
         <Navbarup/>
-        <SidebarLeft savebot={this.savebot}></SidebarLeft>
+        <SidebarLeft savebot={this.savebot} saveIteration={this.saveIteration}></SidebarLeft>
 
         <div>
           <Row>
@@ -91,15 +97,15 @@ const mapStateToProps=(state)=>{
       headers:state.headers,
       status:state.status,
       filepath:state.filepath,
+      botIteration:state.botIteration,
       
-
   }
 }
 const mapDispathtoProps=(dispatch)=>{
     return {
         selectBot:(bot)=> {dispatch(selectBotAction(bot))},
         clearProcess:()=>{dispatch(clearAllAction())},
-
+        iterationChange:(iterationNumber)=>{dispatch(iterationChangeAction(iterationNumber))},
 
     }
 } 

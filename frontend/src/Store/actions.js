@@ -43,3 +43,7 @@ export function loadBotAction(bot){
 export function MenualEntryAction(data,processIndex){
     return{type:"MENUAL_ENTRY",data,processIndex}
 }
+
+export function iterationChangeAction(iterationNumber){
+    return{type:"SAVE_ITERATION",iterationNumber}
+}

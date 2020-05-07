@@ -5,7 +5,8 @@ const initState={
     filepath:null,
     process:[],
     botName:null,
-    prevStatus:null
+    prevStatus:null,
+    botIteration:1
 }
 
 const loadHeaders = (state,headers,path) =>{
@@ -171,10 +172,9 @@ const loadBot = (state,bot) =>{
         botName:bot.botName,
         process:bot.process
 
-
-
     }
 }
+
 const menualEntryData = (state,data,index) =>{
     let newprocess = [...state.process];
     newprocess[index].MenualData=data
@@ -195,6 +195,15 @@ const menualEntryData = (state,data,index) =>{
         status:newstatus
     }
 }
+
+const changeIteration = (state,iterationNumber) =>{
+
+    return {
+        ...state,
+        botIteration:iterationNumber
+    }
+}
+
 
 const rootReducer = (state=initState,action) =>{
 
@@ -225,6 +234,8 @@ const rootReducer = (state=initState,action) =>{
             return loadBot(state,action.bot)
         case "MENUAL_ENTRY":
             return menualEntryData(state,action.data,action.processIndex)
+        case "SAVE_ITERATION":
+            return changeIteration(state,action.iterationNumber)
         default:
         return state
       }
