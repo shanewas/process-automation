@@ -5,7 +5,8 @@ const initState={
     filepath:null,
     process:[],
     botName:null,
-    prevStatus:null
+    prevStatus:null,
+    botIteration:1
 }
 
 const loadHeaders = (state,headers,path) =>{
@@ -58,17 +59,44 @@ const changeHeaders = (state,index) =>{
     }
 
 }
-const selectHeaders = (state) =>{
+const areotherusing=(state,index,header)=>{
+    var newprocess=[...state.process]
+    for(var x=0;x<newprocess.length;x++)
+    {
+        if(x!==index)
+        {
+            if(newprocess[x].dataHeader===header)
+            {
+                return true
+            }
+        }
+    }
+    return false
+
+}
+const selectHeaders = (state,index) =>{
+    var newprocess=[...state.process];
     const newstatus = [...state.status];
+
+    if("dataHeader" in newprocess[index] && !areotherusing(state,index,newprocess[index].dataHeader))
+    {   
+        newstatus[newprocess[index].dataHeaderindex]="notSelected";
+    }
+    newprocess[index].dataHeader=state.headers[state.selectedHeader]
+    newprocess[index].dataHeaderindex=state.selectedHeader
+    delete newprocess[index].MenualData
     newstatus[state.selectedHeader]="used";
     
     return {
         ...state,
         status:newstatus,
-        selectedHeader:null
+        selectedHeader:null,
+        process:newprocess
     }
 
 }
+
+
 
 const UnselectHeader = (state,index) =>{
     const newstatus = [...state.status];
@@ -134,21 +162,48 @@ const removeStep = (state,index,num_of_step) =>{
 }
 
 const loadBot = (state,bot) =>{
-    const status = new Array(bot.header.length).fill("notSelected");
     return {
         ...state,
         headers:bot.header,
-        status:status,
+        status:bot.status,
         filepath:bot.filepath,
         selectedHeader:null,
         prevStatus:null,
         botName:bot.botName,
         process:bot.process
 
-
-
     }
 }
+
+const menualEntryData = (state,data,index) =>{
+    let newprocess = [...state.process];
+    newprocess[index].MenualData=data
+    const newstatus = [...state.status];
+    if("dataHeader" in newprocess[index])
+    {
+        if( !areotherusing(state,index,newprocess[index].dataHeader))
+        {   
+            newstatus[newprocess[index].dataHeaderindex]="notSelected";
+
+        }
+        delete newprocess[index].dataHeader
+        delete newprocess[index].dataHeaderindex
+    }
+    return {
+        ...state,
+        process:newprocess,
+        status:newstatus
+    }
+}
+
+const changeIteration = (state,iterationNumber) =>{
+
+    return {
+        ...state,
+        botIteration:iterationNumber
+    }
+}
+
 
 const rootReducer = (state=initState,action) =>{
 
@@ -160,7 +215,7 @@ const rootReducer = (state=initState,action) =>{
         case "CHANGE_HEADER":
             return changeHeaders(state,action.index)
         case "USE_HEADER":
-            return selectHeaders(state) 
+            return selectHeaders(state,action.index) 
         case "UNSELECT_HEADER":
             return UnselectHeader(state,action.index)
         case "SEND_PROCESS":
@@ -177,6 +232,10 @@ const rootReducer = (state=initState,action) =>{
             return removeStep(state,action.index,action.num_of_step)
         case "LOAD_BOT":
             return loadBot(state,action.bot)
+        case "MENUAL_ENTRY":
+            return menualEntryData(state,action.data,action.processIndex)
+        case "SAVE_ITERATION":
+            return changeIteration(state,action.iterationNumber)
         default:
         return state
       }
