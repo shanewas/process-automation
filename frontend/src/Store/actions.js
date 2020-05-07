@@ -6,8 +6,8 @@ export function ChangeHeaderAction(index){
     return{type:"CHANGE_HEADER",index}
 }
 
-export function UseHeaderAction(){
-    return{type:"USE_HEADER"}
+export function UseHeaderAction(index){
+    return{type:"USE_HEADER",index}
 }
 
 export function UnselectHeaderAction(index){
@@ -38,4 +38,8 @@ export function removeStepAction(index,num_of_step){
 
 export function loadBotAction(bot){
     return{type:"LOAD_BOT",bot}
+}
+
+export function MenualEntryAction(data,processIndex){
+    return{type:"MENUAL_ENTRY",data,processIndex}
 }

@@ -51,6 +51,11 @@ selectBot = (botName) =>{
 
 }
 
+componentWillUnmount(){
+
+  this.props.clearProcess()
+
+}
   render() {
     return (
       <div>
@@ -94,6 +99,7 @@ const mapDispathtoProps=(dispatch)=>{
     return {
         selectBot:(bot)=> {dispatch(selectBotAction(bot))},
         clearProcess:()=>{dispatch(clearAllAction())},
+
 
     }
 } 

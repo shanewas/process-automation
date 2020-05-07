@@ -100,9 +100,6 @@ render(){
             <thead>
               <tr>
                 <th scope="col">Name</th>
-                <th scope="col">Status</th>
-                <th scope="col">Bot Type</th>
-                <th scope="col">Run Time</th>
                 <th scope="col">Last Active</th>
                 <th scope="col">Functions</th>
 
@@ -114,11 +111,11 @@ render(){
               return(
                 <tr key={i}>
                 <td>{bot.botName}</td>
-                <td>
+                {/* <td>
                   <span className={this.badgemaker(bot.status)}>{bot.status}</span>
                 </td>
                 <td>{bot.category}</td>
-                <td>{bot.runTime}</td>
+                <td>{bot.runTime}</td> */}
                 {/* MMMM Do YYYY at H:mm:ss a */}
                 <td>{moment(bot.lastActive,"MMMM Do YYYY at H:mm:ss a").fromNow()}</td>
                 <td>

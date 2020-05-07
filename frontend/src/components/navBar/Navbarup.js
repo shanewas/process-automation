@@ -109,7 +109,7 @@ class Navbar extends Component {
               </li>
              
               <li className="dropdown notification-list list-inline-item d-none d-md-inline-block">
-                <Link className="nav-link waves-effect" to="/build/" onClick={()=>{this.props.clearProcess()}}>
+                <Link className="nav-link waves-effect" to="/build/">
                   <i className="fas fa-lg fa-lightbulb mr-2"></i>Create New
                 </Link>
               </li>
