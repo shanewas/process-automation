@@ -182,7 +182,7 @@ function GetCsv(filepath) {
 }
 // ****************************************NO CHANGE MAIN RUN BOT PROCESS*********************************************************************//
 
-const editBot = function (botName, filepath, header, status, res) {
+const editBot = function (botName, filepath, header, status,botIteration, res) {
 	console.log("edit bot: " + botName);
 	botsList.findOne({ botName: botName }, (err, docs) => {
 		if (docs === null) {
@@ -191,7 +191,7 @@ const editBot = function (botName, filepath, header, status, res) {
 		} else {
 			botsList.update(
 				{ botName: botName },
-				{ $set: { filepath: filepath, status: status, header: header } },
+				{ $set: { filepath: filepath, status: status, header: header ,botIteration:botIteration} },
 				(err, numReplaced) => {
 					res.send("Bot updated successfully!");
 				}

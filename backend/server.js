@@ -80,7 +80,7 @@ router.put("/bots/update-bot/:name", (req, res) => {
 		else {
 			let bot = req.body.saveBotObject;
 			console.log(bot)
-			botlist.editBot(req.params.name, bot.filepath, bot.headers, bot.status, res);
+			botlist.editBot(req.params.name, bot.filepath, bot.headers, bot.status,bot.botIteration ,res);
 		}
 	}
 });

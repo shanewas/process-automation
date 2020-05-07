@@ -2,12 +2,21 @@ import React, { Component } from 'react'
 import Card from "react-bootstrap/Card"
 import * as electron from "../../electronScript";
 import { connect } from 'react-redux';
-import { UseHeaderAction, UnselectHeaderAction, SendProcessAction ,editProcessAction, clearFlowchartAction,removeStepAction} from '../../Store/actions';
-
+import { UseHeaderAction, UnselectHeaderAction, SendProcessAction ,editProcessAction, clearFlowchartAction,removeStepAction, MenualEntryAction} from '../../Store/actions';
+import MenualEntryModal from "./MenualEntryModal"
 
 class Flowchart extends Component {
 
-
+    state={
+        menualEntryModalShow:false,
+        menualEntryindex:null
+    }
+    
+    menaulEntry =(index) =>{
+     
+      this.setState({menualEntryModalShow:true,menualEntryindex:index})
+     
+    }
     componentDidMount()
 	{
 		electron.ipcRenderer.on(electron.ProcessLinkChannel,(e, content) =>{
@@ -15,41 +24,25 @@ class Flowchart extends Component {
             this.props.sendProcess(content)
             
         });
-
-
     }
+
     componentWillUnmount()
     {
         electron.ipcRenderer.removeAllListeners(electron.ProcessLinkChannel);
     }
-    areotherusing=(index,header)=>{
-        var newprocess=[...this.props.process]
-        for(var x=0;x<newprocess.length;x++)
-        {
-            if(x!==index)
-            {
-                if(newprocess[x].dataHeader===header)
-                {
-                    return true
-                }
-            }
-        }
-        return false
-
-    }
+    
     insertHeader = (index) =>{
         if(this.props.selectedHeaderIndex!==null)
         {
-            var newprocess=[...this.props.process]
-        if("dataHeader" in newprocess[index] && !this.areotherusing(index,newprocess[index].dataHeader))
-        {   
-            this.props.UnselectHeader(newprocess[index].dataHeaderindex)
+        this.props.useHeaders(index)
         }
-        newprocess[index].dataHeader=this.props.headers[this.props.selectedHeaderIndex]
-        newprocess[index].dataHeaderindex=this.props.selectedHeaderIndex
-        this.props.useHeaders()
+        else{
+            this.menaulEntry(index)
         }
         
+    }
+    insertMenualEntry=(data)=>{
+        this.props.insertMenualData(data,this.state.menualEntryindex)
     }
     
     removeStep = (index)=>{
@@ -73,6 +66,10 @@ class Flowchart extends Component {
         {
             return (
                 <div>
+                     <MenualEntryModal show={this.state.menualEntryModalShow}
+                        onHide={() => this.setState({menualEntryModalShow:false})}
+                        insertMenualData={this.insertMenualEntry}
+                        />
                     <Card id="scrollstyle" style={{height:"70vh",maxHeight:"70vh",overflowY:"auto"}}>
                         <span className="float-left">Bot Name :{this.props.botName?this.props.botName:" Not Selected"}</span>
                         <span><i className="fas fa-undo-alt float-right mt-3 mr-3 fa-2x" onClick={()=>{this.props.clearFlowchart()}}></i></span>
@@ -100,7 +97,7 @@ class Flowchart extends Component {
                                     <div style={{textAlign:"center"}} >
                                     <i className="fas fa-arrow-down fa-2x"></i> 
                                     </div>
-                                    <i className="fas fa-window-close float-right mt-2 mr-4"  onClick={()=>{this.removeStep(index)}}></i>
+                                    <i className="fas fa-window-close float-right mt-2 mr-5"  onClick={()=>{this.removeStep(index)}}></i>
                                     <div style={{backgroundColor:"#eddb66"}} className="m-b-30 text-white bg text-center mr-5 ml-5 mb-2 mt-2 p-3">
                                        Clicked on the boutton {step.value}
                                     </div>
@@ -119,6 +116,9 @@ class Flowchart extends Component {
                                         <br/>
                                         {("dataHeader" in step?
                                         <span style={{float:"right"}} className="badge badge-lg badge-pill badge-success">{step.dataHeader}</span>
+                                        :
+                                        "MenualData" in step?
+                                        <span style={{float:"right"}} className="badge badge-lg badge-pill badge-warning">{step.MenualData}</span>
                                         :
                                         <h6><span style={{float:"right"}} className="badge badge-pill badge-danger">No Data Selected</span></h6>
                                         )}
@@ -166,9 +166,10 @@ const mapStateToProps=(state)=>{
 }
 const mapDispathtoProps=(dispatch)=>{
     return {
+        insertMenualData:(data,processIndex)=> {dispatch(MenualEntryAction(data,processIndex))},
         sendProcess:(process)=> {dispatch(SendProcessAction(process))},
         editProcess:(process)=> {dispatch(editProcessAction(process))},
-        useHeaders:()=> {dispatch(UseHeaderAction())},
+        useHeaders:(index)=> {dispatch(UseHeaderAction(index))},
         UnselectHeader:(index)=> {dispatch(UnselectHeaderAction(index))},
         clearFlowchart:()=> {dispatch(clearFlowchartAction())},
         removeStep:(index,num_of_step)=> {dispatch(removeStepAction(index,num_of_step))},
