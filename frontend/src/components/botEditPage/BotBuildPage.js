@@ -8,12 +8,14 @@ import Flowchart from "./Flowchart";
 import DatasetLoader from "./DatasetLoader";
 import {connect} from "react-redux"
 import SelectBotModal from "./SelectBotModal";
+import GenerateCodeModal from './GenerateCodeModal'
 import {selectBotAction,clearAllAction,iterationChangeAction} from '../../Store/actions'
 
 class BotBuildPage extends Component {
 
   state={
     selectmodalShow:false,
+    codeGenerationModal:false
 }
 
 savebot =() =>{
@@ -24,6 +26,14 @@ savebot =() =>{
 saveIteration =(iterationNumber) =>{
  
   this.props.iterationChange(iterationNumber)
+}
+
+generateCode =() =>{
+ 
+  this.setState({
+    ...this.state,
+    codeGenerationModal:true
+  })
  
 }
 selectBot = (botName) =>{
@@ -69,8 +79,10 @@ componentWillUnmount(){
                 onHide={() => this.setState({selectmodalShow:false})}
                 selectbot={this.selectBot}
                 />
+        <GenerateCodeModal show={this.state.codeGenerationModal}
+                onHide={() => this.setState({codeGenerationModal:false})}/>
         <Navbarup/>
-        <SidebarLeft savebot={this.savebot} saveIteration={this.saveIteration}></SidebarLeft>
+        <SidebarLeft savebot={this.savebot} saveIteration={this.saveIteration} generateCode={this.generateCode}></SidebarLeft>
 
         <div>
           <Row>
