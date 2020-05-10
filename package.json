@@ -59,11 +59,10 @@
     "productName": "AIW Core",
     "appId": "com.ferntechsolutions.aiw_core",
     "files": [
-      "dist/",
       "node_modules/",
       "frontend/build",
       "frontend/node_modules/",
-      "frontend/public",
+      "frontend/public/",
       "frontend/package.json",
       "backend/",
       "core/",

@@ -20,6 +20,9 @@ function generateMainWindow() {
 		isDev
 			? "http://localhost:4000"
 			: `file://${path.join(__dirname, "../frontend/build/index.html")}`,
+		null,
+		false,
+		true,
 		false
 	);
 	contectWindow = window.createWindow("none", win, false, true, true);
