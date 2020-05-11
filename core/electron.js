@@ -104,34 +104,39 @@ var processCounter = 0;
 var localData;
 var idx;
 ipcMain.on("start-bot", async function (e, botName) {
+	loadingWindow.loadURL(path.join(__dirname, "../frontend/public/empty.html"));
+	loadingWindow.show();
 	await botlist.GetBot(botName).then((docs) => {
 		bots = docs;
 	});
 	await botlist.GetProcess(botName).then((docs) => {
 		botProcess = docs;
-		// botProcess.processSequence.splice(0, 1);
 		processlength = botProcess.processSequence.length;
 	});
-
-	await botlist.GetCsv(bots.filepath).then((docs) => {
-		data = docs;
-	});
-	loadingWindow.loadURL(path.join(__dirname, "../frontend/public/empty.html"));
-	localData = data.pop();
+	if (bots.filepath) {
+		await botlist.GetCsv(bots.filepath).then((docs) => {
+			data = docs;
+		});
+		//inital pop from datacsv to localdata
+		localData = data.pop();
+	}
 	iteration = bots.botIteration;
 	idx = 0;
 });
 
 ipcMain.on("need-process", function (e) {
-	if (localData && idx < iteration) {
+	if (idx < iteration) {
 		console.log("*********Bot Process Number*********** " + idx);
 		element = botProcess.processSequence[processCounter];
 		let path;
 		switch (element._type) {
 			case "LoadData":
-				let header = element.dataHeader;
-				let dat = localData[header];
-				console.log(dat);
+				let dat;
+				if (element.dataHeader) {
+					dat = localData[element.dataHeader];
+				} else {
+					dat = element.MenualData;
+				}
 				path = element.xpath;
 				let package = { path, dat };
 				console.log(`sending data to load ...`);
@@ -145,16 +150,13 @@ ipcMain.on("need-process", function (e) {
 			case "link":
 				console.log("loading url ...");
 				loadingWindow.loadURL(element.link);
-				if (idx === 0) {
-					loadingWindow.show();
-				}
 				break;
 			default:
 				console.log("_type doesnt match");
 		}
 		if (processCounter + 1 >= processlength) {
 			processCounter = 0;
-			localData = data.pop();
+			if (bots.filepath) localData = data.pop();
 			idx++;
 		} else {
 			processCounter++;
