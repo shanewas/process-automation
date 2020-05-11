@@ -218,7 +218,6 @@ module.exports = {
 	GetProcess: GetProcess,
 	GetBot: GetBot,
 	GetCsv: GetCsv,
-	RunP1: RunP1,
 	addBot: addBot,
 	removeBot: removeBot,
 	editBot: editBot,
