@@ -88,7 +88,17 @@ ipcMain.on("idSeq", function (e, args) {
 var bots;
 var botProcess;
 var data;
-var iteration;
+
+var GLOBALPROCESINIT;
+var GLOBALPROCESLENGTH;
+
+var LOCALPROCEESSINIT = 0;
+var LOCALPROCEESSLENGTH = 0;
+
+var ITTERATIONSET = [10, 10];
+
+var itteration = 10;
+var iteration = 1;
 var processlength;
 var processCounter = 0;
 var localData;
@@ -99,35 +109,45 @@ ipcMain.on("start-bot", async function (e, botName) {
 	});
 	await botlist.GetProcess(botName).then((docs) => {
 		botProcess = docs;
-		botProcess.processSequence.splice(0, 1);
+		// botProcess.processSequence.splice(0, 1);
 		processlength = botProcess.processSequence.length;
 	});
 
 	await botlist.GetCsv(bots.filepath).then((docs) => {
 		data = docs;
 	});
-	botlist.RunP1(botName, loadingWindow);
+	loadingWindow.loadURL(path.join(__dirname, "../frontend/public/empty.html"));
 	localData = data.pop();
 	iteration = bots.botIteration;
-	idx = 1;
+	idx = 0;
 });
 
 ipcMain.on("need-process", function (e) {
-	if (localData && idx <= iteration) {
+	if (localData && idx < iteration) {
+		console.log("*********Bot Process Number*********** " + idx);
 		element = botProcess.processSequence[processCounter];
-		let path = element.xpath;
+		let path;
 		switch (element._type) {
 			case "LoadData":
 				let header = element.dataHeader;
 				let dat = localData[header];
 				console.log(dat);
+				path = element.xpath;
 				let package = { path, dat };
-				console.log(`need form listening.....`);
+				console.log(`sending data to load ...`);
 				loadingWindow.webContents.send("form-fill-up", package);
 				break;
 			case "click":
-				console.log("need cluick listening .....");
+				path = element.xpath;
+				console.log("clicking form element ...");
 				loadingWindow.webContents.send("click-it", path);
+				break;
+			case "link":
+				console.log("loading url ...");
+				loadingWindow.loadURL(element.link);
+				if (idx === 0) {
+					loadingWindow.show();
+				}
 				break;
 			default:
 				console.log("_type doesnt match");
@@ -139,6 +159,8 @@ ipcMain.on("need-process", function (e) {
 		} else {
 			processCounter++;
 		}
+	} else {
+		loadingWindow.hide();
 	}
 });
 
