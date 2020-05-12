@@ -136,16 +136,19 @@ ipcMain.on("need-process", async function (e) {
 				path = element.xpath;
 				let package = { path, dat };
 				console.log(`sending data to load ...`);
+				const elements = await page.$x(element.xpath);
+				await elements[0].type(dat);
 				loadingWindow.webContents.send("form-fill-up", package);
 				break;
 			case "click":
 				path = element.xpath;
 				console.log("clicking form element ...");
+				const elements = await page.$x(element.xpath);
+				await elements[0].click();
 				loadingWindow.webContents.send("click-it", path);
 				break;
 			case "link":
 				console.log("loading url ... " + page.url());
-				// loadingWindow.loadURL(element.link);
 				await page.goto(element.link);
 				break;
 			default:
