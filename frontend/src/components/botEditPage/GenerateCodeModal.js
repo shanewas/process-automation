@@ -1,20 +1,22 @@
-import React , { useState } from "react";
+import React , { useState, useEffect } from "react";
 import Modal from "react-bootstrap/Modal";
 
 export default function GenerateCodeModal(props) {
 
 
   const [name, setName] = useState("");
+
   
-  const handleSubmit = (evt) => {
-      evt.preventDefault();
-      props.onHide()
-  }
-  
+  useEffect(() => {
+    console.log("runnung")
+    setName(props.code)
+
+},[props.code]);
 
   return (
     <Modal
-      {...props}
+      show={props.show}
+      onHide={props.onHide}
       size="lg"
       aria-labelledby="contained-modal-title-vcenter"
       centered
@@ -26,8 +28,8 @@ export default function GenerateCodeModal(props) {
       </Modal.Header>
       <Modal.Body>
         <div style={{textAlign:"center"}}>
-        <form onSubmit={handleSubmit}>
-        <textarea rows="20" cols="50">{name}</textarea>
+        <form>
+        <textarea rows="20" cols="50" readOnly={true} defaultValue={name}></textarea>
         </form>
         </div>
       </Modal.Body>
