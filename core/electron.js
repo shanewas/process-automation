@@ -104,7 +104,9 @@ var processCounter = 0;
 var localData;
 var idx;
 ipcMain.on("start-bot", async function (e, botName) {
-	loadingWindow.loadURL(path.join(__dirname, "../frontend/public/empty.html"));
+		loadingWindow.loadURL(isDev
+		? "http://localhost:4000/loading.html"
+		: `file://${path.join(__dirname, "../frontend/build/loading.html")}`,);
 	loadingWindow.show();
 	await botlist.GetBot(botName).then((docs) => {
 		bots = docs;
