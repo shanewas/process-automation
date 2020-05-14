@@ -8,7 +8,6 @@ export default function GenerateCodeModal(props) {
 
   
   useEffect(() => {
-    console.log("runnung")
     setName(props.code)
 
 },[props.code]);

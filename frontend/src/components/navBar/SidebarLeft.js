@@ -69,7 +69,7 @@ export default class SidebarLeft extends Component {
               <li>
                 <div className="waves-effect p-3">
                   <i className="fas fa-history fa-2x mr-2 mb-4" />
-                  <span> Bot Iteration  <input className="form-control" onChange={this.itarationchange} type="number" id="example-number-input"/></span>
+                  <span> Bot Iteration  <input className="form-control" onChange={this.itarationchange} type="number" min={1} defaultValue={1} id="example-number-input"/></span>
                 </div>
               </li>
             </ul>

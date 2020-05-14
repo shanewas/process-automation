@@ -66,12 +66,16 @@ const addBot = function (botName, botType, res) {
 			});
 			console.log(botName + "has been Added");
 		} else
+		{
 			res.send(
 				"a bot with this bot name already exists, change the bot name and try again!"
 			);
-		console.log(
-			"a bot with this bot name already exists, change the bot name and try again!"
-		);
+			console.log(
+				"a bot with this bot name already exists, change the bot name and try again!"
+			);
+		}
+			
+		
 	});
 };
 

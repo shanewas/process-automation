@@ -6,7 +6,7 @@ const initState={
     process:[],
     botName:null,
     prevStatus:null,
-    botIteration:1
+    botIteration:1,
 }
 
 const loadHeaders = (state,headers,path) =>{
@@ -119,15 +119,16 @@ const editProcess = (state,process) =>{
             process:process,
         }
 }
-const clearAll = () =>{
+const clearAll = (state) =>{
     return {
+        ...state,
         headers:[],
         selectedHeader:null,
         status:[],
         filepath:null,
         process:[],
         botName:null,
-        prevStatus:null
+        prevStatus:null,
     }
 }
 const clearFlowchart = (state) =>{
@@ -223,7 +224,7 @@ const rootReducer = (state=initState,action) =>{
         case "EDIT_PROCESS":
             return editProcess(state,action.process)
         case "CLEAR_All":
-            return clearAll()
+            return clearAll(state)
         case "CLEAR_FLOWCHART":
             return clearFlowchart(state)
         case "CLEAR_DATASET":
