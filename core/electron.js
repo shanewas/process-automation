@@ -1,19 +1,23 @@
 const electron = require("electron");
-const path = require("path");
 const isDev = require("electron-is-dev");
-let window = require("./electron/createWindow");
-const menu = require("./electron/menu");
-const conf = require("./electron/config");
-let { win, contectWindow, loadingWindow } = require("./electron/windowList");
+const pie = require("puppeteer-in-electron");
+const puppeteer = require("puppeteer-core");
+const path = require("path");
 const botlist = require("../backend/dataControl/botlist");
-
-const { app, Menu, ipcMain } = electron;
+const conf = require("./electron/config");
+const menu = require("./electron/menu");
 
 require("electron-reload")(__dirname, {
 	electron: path.join(__dirname, "node_modules", ".bin", "electron"),
 });
 
+const { app, Menu, ipcMain } = electron;
+
+let { win, contectWindow, loadingWindow } = require("./electron/windowList");
+let window = require("./electron/createWindow");
+
 let procSeq = {};
+let browser;
 
 function generateMainWindow() {
 	win = window.createWindow(
@@ -88,21 +92,12 @@ ipcMain.on("idSeq", function (e, args) {
 var bots;
 var botProcess;
 var data;
-
-var GLOBALPROCESINIT;
-var GLOBALPROCESLENGTH;
-
-var LOCALPROCEESSINIT = 0;
-var LOCALPROCEESSLENGTH = 0;
-
-var ITTERATIONSET = [10, 10];
-
-var itteration = 10;
 var iteration = 1;
 var processlength;
 var processCounter = 0;
 var localData;
 var idx;
+
 ipcMain.on("start-bot", async function (e, botName) {
 		loadingWindow.loadURL(isDev
 		? "http://localhost:4000/loading.html"
@@ -126,7 +121,8 @@ ipcMain.on("start-bot", async function (e, botName) {
 	idx = 0;
 });
 
-ipcMain.on("need-process", function (e) {
+ipcMain.on("need-process", async function (e) {
+	const page = await pie.getPage(browser, loadingWindow);
 	if (idx < iteration) {
 		console.log("*********Bot Process Number*********** " + idx);
 		element = botProcess.processSequence[processCounter];
@@ -142,16 +138,20 @@ ipcMain.on("need-process", function (e) {
 				path = element.xpath;
 				let package = { path, dat };
 				console.log(`sending data to load ...`);
+				const elements = await page.$x(element.xpath);
+				await elements[0].type(dat);
 				loadingWindow.webContents.send("form-fill-up", package);
 				break;
 			case "click":
 				path = element.xpath;
 				console.log("clicking form element ...");
+				const elements = await page.$x(element.xpath);
+				await elements[0].click();
 				loadingWindow.webContents.send("click-it", path);
 				break;
 			case "link":
-				console.log("loading url ...");
-				loadingWindow.loadURL(element.link);
+				console.log("loading url ... " + page.url());
+				await page.goto(element.link);
 				break;
 			default:
 				console.log("_type doesnt match");
@@ -168,7 +168,14 @@ ipcMain.on("need-process", function (e) {
 	}
 });
 
-app.on("ready", generateMainWindow);
+const main = async () => {
+	await pie.initialize(app);
+	browser = await pie.connect(app, puppeteer);
+};
+main();
+app.on("ready", () => {
+	generateMainWindow();
+});
 
 app.on("window-all-closed", () => {
 	if (process.platform !== "darwin") {
