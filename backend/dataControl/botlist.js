@@ -66,12 +66,16 @@ const addBot = function (botName, botType, res) {
 			});
 			console.log(botName + "has been Added");
 		} else
+		{
 			res.send(
 				"a bot with this bot name already exists, change the bot name and try again!"
 			);
-		console.log(
-			"a bot with this bot name already exists, change the bot name and try again!"
-		);
+			console.log(
+				"a bot with this bot name already exists, change the bot name and try again!"
+			);
+		}
+			
+		
 	});
 };
 
@@ -136,20 +140,6 @@ const getProcessSequence = (botName, res) => {
 	});
 };
 // ****************************************NO CHANGE MAIN RUN BOT PROCESS*********************************************************************//
-const RunP1 = (botName, window) => {
-	processList.findOne({ botName: botName }, async (err, docs) => {
-		if (docs !== null) {
-			console.log(
-				`Loading: ${botName} of link ${docs.processSequence[0].link}`
-			);
-			await window.loadURL(docs.processSequence[0].link);
-			window.show();
-		} else
-			console.log(
-				"Unable to get the process sequence, give valid bot name and try again!"
-			);
-	});
-};
 
 function GetProcess(botName) {
 	return new Promise((resolve, reject) => {
@@ -182,7 +172,14 @@ function GetCsv(filepath) {
 }
 // ****************************************NO CHANGE MAIN RUN BOT PROCESS*********************************************************************//
 
-const editBot = function (botName, filepath, header, status,botIteration, res) {
+const editBot = function (
+	botName,
+	filepath,
+	header,
+	status,
+	botIteration,
+	res
+) {
 	console.log("edit bot: " + botName);
 	botsList.findOne({ botName: botName }, (err, docs) => {
 		if (docs === null) {
@@ -191,7 +188,14 @@ const editBot = function (botName, filepath, header, status,botIteration, res) {
 		} else {
 			botsList.update(
 				{ botName: botName },
-				{ $set: { filepath: filepath, status: status, header: header ,botIteration:botIteration} },
+				{
+					$set: {
+						filepath: filepath,
+						status: status,
+						header: header,
+						botIteration: botIteration,
+					},
+				},
 				(err, numReplaced) => {
 					res.send("Bot updated successfully!");
 				}
@@ -218,7 +222,6 @@ module.exports = {
 	GetProcess: GetProcess,
 	GetBot: GetBot,
 	GetCsv: GetCsv,
-	RunP1: RunP1,
 	addBot: addBot,
 	removeBot: removeBot,
 	editBot: editBot,

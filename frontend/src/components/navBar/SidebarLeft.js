@@ -5,6 +5,9 @@ export default class SidebarLeft extends Component {
   save = () =>{
     this.props.savebot()
   }
+  generateCode = () =>{
+    this.props.generateCode()
+  }
   itarationchange = (e) =>{
     this.props.saveIteration(e.target.value)
   }
@@ -52,9 +55,9 @@ export default class SidebarLeft extends Component {
                 </div>
               </li>
               <li>
-                <div className="waves-effect p-3">
+                <div onClick={this.generateCode} className="waves-effect p-3">
                   <i className="fas fa-code fa-2x mr-2" />
-                  <span> Compile Bot  </span>
+                  <span> Generate Code  </span>
                 </div>
               </li>
               <li>
@@ -66,7 +69,7 @@ export default class SidebarLeft extends Component {
               <li>
                 <div className="waves-effect p-3">
                   <i className="fas fa-history fa-2x mr-2 mb-4" />
-                  <span> Bot Iteration  <input className="form-control" onChange={this.itarationchange} type="number" id="example-number-input"/></span>
+                  <span> Bot Iteration  <input className="form-control" onChange={this.itarationchange} type="number" min={1} defaultValue={1} id="example-number-input"/></span>
                 </div>
               </li>
             </ul>

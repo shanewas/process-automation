@@ -7,6 +7,10 @@ import {loadHeaderAction,ChangeHeaderAction, clearDatasetAction} from '../../Sto
 
  class DatasetLoader extends Component {
 
+    state = {
+        file:null,
+        dataLength:null
+    }
 
 
     changestatus = (index) =>{
@@ -17,11 +21,20 @@ import {loadHeaderAction,ChangeHeaderAction, clearDatasetAction} from '../../Sto
     fileperse = (file) =>{
         
         let data=file[0]
+        console.log(data)
+        this.setState({
+            ...this.state,
+            file:data
+        })
         let headers=null;
         Papa.parse(data, {
         complete: (results) =>{
-         headers=results.data[0]
-        this.props.loadHeaders(headers,data.path)
+            headers=results.data[0]
+            this.setState({
+                ...this.state,
+                dataLength:results.data.length
+            })
+            this.props.loadHeaders(headers,data.path)
          
         }
         })
@@ -91,7 +104,13 @@ import {loadHeaderAction,ChangeHeaderAction, clearDatasetAction} from '../../Sto
                                 )   
                         }
                         
-                    })}                    
+                    })}    
+                    </div>
+                    <div className="m-5">
+                    <h6>File Name : {this.state.file.name} </h6>
+                    <h6>File Size : {this.state.file.size/1000} kB</h6>
+                    <h6>Number of Row : {this.state.dataLength-1}</h6>
+                    <h6>File path : {this.state.file.path}</h6>
                     </div>
                     </Card>
                 </div>

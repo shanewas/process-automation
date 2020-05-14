@@ -41,7 +41,6 @@ export default function SelectBotModal(props) {
                 botType: category
               }),
             })
-            .then((res)=>{console.log(res)})
             .then(async()=>{
             await props.selectbot(name)
             }

@@ -8,12 +8,17 @@ import Flowchart from "./Flowchart";
 import DatasetLoader from "./DatasetLoader";
 import {connect} from "react-redux"
 import SelectBotModal from "./SelectBotModal";
+import GenerateCodeModal from './GenerateCodeModal'
 import {selectBotAction,clearAllAction,iterationChangeAction} from '../../Store/actions'
+import {SeleniumCode} from '../../CodeGeneration'
+
 
 class BotBuildPage extends Component {
 
   state={
     selectmodalShow:false,
+    codeGenerationModal:false,
+    code:""
 }
 
 savebot =() =>{
@@ -24,7 +29,23 @@ savebot =() =>{
 saveIteration =(iterationNumber) =>{
  
   this.props.iterationChange(iterationNumber)
+}
+
+generateCode = () =>{
  
+  var code= SeleniumCode(this.props.process,this.props.botIteration,this.props.filepath)
+
+  this.setState({
+    ...this.state,
+    code:code
+  },()=>{this.showCodeModal()})
+ 
+}
+showCodeModal = () =>{
+  this.setState({
+    ...this.state,
+    codeGenerationModal:true
+  })
 }
 selectBot = (botName) =>{
   let saveBotObject={}
@@ -34,7 +55,6 @@ selectBot = (botName) =>{
   saveBotObject.status=this.props.status
   saveBotObject.botIteration=this.props.botIteration
   let process=this.props.process
-  console.log(process)
   fetch("/api/bots/update-bot-process/"+botName, {
         method: "put",
         headers: {
@@ -54,7 +74,6 @@ selectBot = (botName) =>{
     }),
   });
 
-
 }
 
 componentWillUnmount(){
@@ -69,8 +88,10 @@ componentWillUnmount(){
                 onHide={() => this.setState({selectmodalShow:false})}
                 selectbot={this.selectBot}
                 />
+        <GenerateCodeModal show={this.state.codeGenerationModal}
+                onHide={() => this.setState({codeGenerationModal:false})} code={this.state.code}/>
         <Navbarup/>
-        <SidebarLeft savebot={this.savebot} saveIteration={this.saveIteration}></SidebarLeft>
+        <SidebarLeft savebot={this.savebot} saveIteration={this.saveIteration} generateCode={this.generateCode}></SidebarLeft>
 
         <div>
           <Row>
