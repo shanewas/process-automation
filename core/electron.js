@@ -3,6 +3,7 @@ const isDev = require("electron-is-dev");
 const pie = require("puppeteer-in-electron");
 const puppeteer = require("puppeteer-core");
 const path = require("path");
+const fs = require("fs");
 const botlist = require("../backend/dataControl/botlist");
 const conf = require("./electron/config");
 const menu = require("./electron/menu");
@@ -78,14 +79,14 @@ ipcMain.on("search-link", function (event, object) {
 
 ipcMain.on("idSeq", function (e, args) {
 	if (
-		(args.tagName == "INPUT" || args.tagName == "SELECT") &&
+		(args.tagName === "INPUT" || args.tagName === "SELECT") &&
 		args.type != "submit"
 	) {
 		args["_type"] = "LoadData";
 	} else {
 		args["_type"] = "click";
 	}
-	console.log(args);
+	// console.log(args);
 	win.webContents.send("process-link", args);
 });
 
@@ -97,11 +98,14 @@ var processlength;
 var processCounter = 0;
 var localData;
 var idx;
+var ERRSTATUS = [];
 
 ipcMain.on("start-bot", async function (e, botName) {
-		loadingWindow.loadURL(isDev
-		? "http://localhost:4000/loading.html"
-		: `file://${path.join(__dirname, "../frontend/build/loading.html")}`,);
+	loadingWindow.loadURL(
+		isDev
+			? "http://localhost:4000/loading.html"
+			: `file://${path.join(__dirname, "../frontend/build/loading.html")}`
+	);
 	loadingWindow.show();
 	await botlist.GetBot(botName).then((docs) => {
 		bots = docs;
@@ -126,36 +130,60 @@ ipcMain.on("need-process", async function (e) {
 	if (idx < iteration) {
 		console.log("*********Bot Process Number*********** " + idx);
 		element = botProcess.processSequence[processCounter];
-		let path;
-		switch (element._type) {
-			case "LoadData":
-				let dat;
-				if (element.dataHeader) {
-					dat = localData[element.dataHeader];
-				} else {
-					dat = element.MenualData;
-				}
-				path = element.xpath;
-				let package = { path, dat };
-				console.log(`sending data to load ...`);
-				const elements = await page.$x(element.xpath);
-				await elements[0].type(dat);
-				loadingWindow.webContents.send("form-fill-up", package);
-				break;
-			case "click":
-				path = element.xpath;
-				console.log("clicking form element ...");
-				const elements = await page.$x(element.xpath);
-				await elements[0].click();
-				loadingWindow.webContents.send("click-it", path);
-				break;
-			case "link":
-				console.log("loading url ... " + page.url());
-				await page.goto(element.link);
-				break;
-			default:
-				console.log("_type doesnt match");
+		let elements, dat;
+		try {
+			switch (element._type) {
+				case "LoadData":
+					if (element.dataHeader) {
+						dat = localData[element.dataHeader];
+					} else {
+						dat = element.MenualData;
+					}
+					console.log(`sending data to load ...`);
+					if (element.type === "radio") {
+						if (element.ext.label === dat) {
+							elements = await page.$x(element.xpath, {
+								visible: true,
+							});
+							await elements[0].click();
+						} else {
+							loadingWindow.webContents.send("form-fill-up");
+							break;
+						}
+					} else {
+						elements = await page.$x(element.xpath);
+						await elements[0].type(dat);
+					}
+					loadingWindow.webContents.send("form-fill-up");
+					break;
+				case "click":
+					console.log("clicking form element ...");
+					elements = await page.$x(element.xpath);
+					await elements[0].click();
+					loadingWindow.webContents.send("click-it");
+					break;
+				case "link":
+					console.log("loading url ... " + page.url());
+					await page.goto(element.link);
+					break;
+				default:
+					console.log("_type doesnt match");
+			}
+		} catch (error) {
+			var errorGen = {
+				datatime: new Date(),
+				type: element._type,
+				DataLength: `#${data.length}`,
+				CurrentDataRow: `${JSON.stringify(localData)}`,
+				Iteration: `#${idx}`,
+				ProcCount: `#${processCounter}`,
+				ProcSeq_elem: element,
+				Error: error,
+			};
+			await page.reload();
+			ERRSTATUS.push(errorGen);
 		}
+
 		if (processCounter + 1 >= processlength) {
 			processCounter = 0;
 			if (bots.filepath) localData = data.pop();
@@ -167,7 +195,11 @@ ipcMain.on("need-process", async function (e) {
 		loadingWindow.hide();
 	}
 });
-
+function delay(time) {
+	return new Promise(function (resolve) {
+		setTimeout(resolve, time);
+	});
+}
 const main = async () => {
 	await pie.initialize(app);
 	browser = await pie.connect(app, puppeteer);
