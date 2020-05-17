@@ -8,7 +8,7 @@ const dbFactory = (fileName) =>
 	DataStore.create({
 		filename: `${
 			process.env.NODE_ENV === "dev" ? "." : app.getAppPath("userData")
-		}/backend/data/${fileName}`,
+		}../backend/data/${fileName}`,
 		timestampData: true,
 		autoload: true,
 	});
