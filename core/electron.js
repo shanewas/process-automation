@@ -1,4 +1,5 @@
 const electron = require("electron");
+const csv = require("csv-parser");
 const isDev = require("electron-is-dev");
 const pie = require("puppeteer-in-electron");
 const puppeteer = require("puppeteer-core");
@@ -92,7 +93,7 @@ ipcMain.on("idSeq", function (e, args) {
 
 var bots;
 var botProcess;
-var data;
+var data = [];
 var iteration = 1;
 var processlength;
 var processCounter = 0;
@@ -115,13 +116,19 @@ ipcMain.on("start-bot", async function (e, botName) {
 		processlength = botProcess.processSequence.length;
 	});
 	if (bots.filepath) {
-		await botlist.GetCsv(bots.filepath).then((docs) => {
-			data = docs;
-		});
+		fs.createReadStream(bots.filepath, { bufferSize: 64 * 1024 })
+			.pipe(csv())
+			.on("data", (row) => {
+				data.push(row);
+			})
+			.on("end", () => {
+				console.log("CSV file successfully processed");
+			});
 		//inital pop from datacsv to localdata
 		localData = data.pop();
 	}
 	iteration = bots.botIteration;
+	console.log(iteration);
 	idx = 0;
 });
 
@@ -192,14 +199,10 @@ ipcMain.on("need-process", async function (e) {
 			processCounter++;
 		}
 	} else {
-		loadingWindow.hide();
+		// loadingWindow.hide();
 	}
 });
-function delay(time) {
-	return new Promise(function (resolve) {
-		setTimeout(resolve, time);
-	});
-}
+
 const main = async () => {
 	await pie.initialize(app);
 	browser = await pie.connect(app, puppeteer);
@@ -224,61 +227,41 @@ app.on("activate", () => {
 conf.config();
 
 //data COM
-//ipcRenderer.invoke("bots", botName).then((result) => {})
-
-ipcMain.on("bots", async (event) => {
+ipcMain.handle("bots", async (event) => {
 	const result = await botlist.listAllBots();
-	if (retsult) return result;
-	else console.log("No bot Found");
+	return result;
 });
 
-//ipcRenderer.invoke("bot-name", botName).then((result) => {})
-
-ipcMain.on("bot-name", async (event, botName) => {
+ipcMain.handle("bot-name", async (event, botName) => {
 	const result = await botlist.fetchBot(botName);
-	if (retsult) return result;
-	else console.log("No bot Found");
+	return result;
 });
 
-//ipcRenderer.invoke("add-bot", botName, botType).then((result) => {})
-
-ipcMain.on("add-bot", async (event, botName, botType) => {
+ipcMain.handle("add-bot", async (event, botName, botType) => {
 	const result = await botlist.addBot(botName, botType);
 	return result;
 });
 
-//ipcRenderer.invoke("remove-bot", botName).then((result) => {})
-
-ipcMain.on("remove-bot", async (event, botName) => {
+ipcMain.handle("remove-bot", async (event, botName) => {
 	const result = await botlist.removeBot(botName);
 	return result;
 });
 
-//ipcRenderer.invoke("udpate-bot", botName, botFilePath, botStatus, botIteration).then((result) => {})
-
-ipcMain.on(
-	"update-bot",
-	async (event, botName, botFilePath, botStatus, botIteration) => {
-		const result = await botlist.editBot(
-			botName,
-			botFilePath,
-			botStatus,
-			botIteration
-		);
-		return result;
-	}
-);
-
-//ipcRenderer.invoke("update-bot-process", botName, botProcess).then((result) => {})
-
 ipcMain.on("update-bot-process", async (event, botName, botProcess) => {
-	const result = await botlist.editBotProcess(botName, botProcess);
-	return result;
+	await botlist.updateBotProcess(botName, botProcess);
 });
 
-//ipcRenderer.invoke("get-process", param).then((result) => {})
+ipcMain.on("update-bot", async (event, botName, saveBotObj) => {
+	await botlist.editBot(
+		botName,
+		saveBotObj.filepath,
+		saveBotObj.headers,
+		saveBotObj.status,
+		saveBotObj.botIteration
+	);
+});
 
-ipcMain.on("get-process", async (event, botName) => {
+ipcMain.handle("get-process", async (event, botName) => {
 	const result = await botlist.getProcessSequence(botName);
 	return result;
 });
