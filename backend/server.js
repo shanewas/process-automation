@@ -1,11 +1,9 @@
 const express = require("express");
-const path = require("path");
 const cors = require("cors");
-const fs = require("fs");
 const core = express();
 
-const DataStore = require('nedb');
-let botsList = new DataStore({ filename: `${path.join(__dirname, "../data/bots.db")}`, autoload: true });
+// const DataStore = require('nedb-promises');
+// let botsList = new DataStore({ filename: `${path.join(__dirname, "../data/bots.db")}`, autoload: true });
 
 //import botlist.js from backend/dataControl
 const botlist = require('./dataControl/botlist.js');

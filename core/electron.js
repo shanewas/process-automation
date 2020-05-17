@@ -222,3 +222,63 @@ app.on("activate", () => {
 });
 
 conf.config();
+
+//data COM
+//ipcRenderer.invoke("bots", botName).then((result) => {})
+
+ipcMain.on("bots", async (event) => {
+	const result = await botlist.listAllBots();
+	if (retsult) return result;
+	else console.log("No bot Found");
+});
+
+//ipcRenderer.invoke("bot-name", botName).then((result) => {})
+
+ipcMain.on("bot-name", async (event, botName) => {
+	const result = await botlist.fetchBot(botName);
+	if (retsult) return result;
+	else console.log("No bot Found");
+});
+
+//ipcRenderer.invoke("add-bot", botName, botType).then((result) => {})
+
+ipcMain.on("add-bot", async (event, botName, botType) => {
+	const result = await botlist.addBot(botName, botType);
+	return result;
+});
+
+//ipcRenderer.invoke("remove-bot", botName).then((result) => {})
+
+ipcMain.on("remove-bot", async (event, botName) => {
+	const result = await botlist.removeBot(botName);
+	return result;
+});
+
+//ipcRenderer.invoke("udpate-bot", botName, botFilePath, botStatus, botIteration).then((result) => {})
+
+ipcMain.on(
+	"update-bot",
+	async (event, botName, botFilePath, botStatus, botIteration) => {
+		const result = await botlist.editBot(
+			botName,
+			botFilePath,
+			botStatus,
+			botIteration
+		);
+		return result;
+	}
+);
+
+//ipcRenderer.invoke("update-bot-process", botName, botProcess).then((result) => {})
+
+ipcMain.on("update-bot-process", async (event, botName, botProcess) => {
+	const result = await botlist.editBotProcess(botName, botProcess);
+	return result;
+});
+
+//ipcRenderer.invoke("get-process", param).then((result) => {})
+
+ipcMain.on("get-process", async (event, botName) => {
+	const result = await botlist.getProcessSequence(botName);
+	return result;
+});
