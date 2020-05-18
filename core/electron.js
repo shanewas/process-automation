@@ -13,7 +13,7 @@ require("electron-reload")(__dirname, {
 	electron: path.join(__dirname, "node_modules", ".bin", "electron"),
 });
 
-const { app, Menu, ipcMain } = electron;
+const { app, Menu, ipcMain, dialog } = electron;
 
 let { win, contectWindow, loadingWindow } = require("./electron/windowList");
 let window = require("./electron/createWindow");
@@ -264,4 +264,20 @@ ipcMain.on("update-bot", async (event, botName, saveBotObj) => {
 ipcMain.handle("get-process", async (event, botName) => {
 	const result = await botlist.getProcessSequence(botName);
 	return result;
+});
+
+ipcMain.on("code-generation", async (event, file) => {
+	let options = {
+		title: "Save Generated Python File",
+		buttonLabel: "Save Bot Script",
+		filters: [
+			{ name: "Python", extensions: ["py"] },
+			{ name: "All Files", extensions: ["*"] },
+		],
+	};
+	const save = dialog.showSaveDialog(win, options);
+	fs.writeFile((await save).filePath, file, function (err) {
+		if (err) throw err;
+		console.log("Saved!");
+	});
 });
