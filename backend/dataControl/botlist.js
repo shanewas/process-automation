@@ -1,4 +1,5 @@
 const { app } = require("electron");
+const isDev = require("electron-is-dev");
 const fs = require("fs");
 const path = require("path");
 const moment = require("moment");
@@ -6,9 +7,9 @@ const DataStore = require("nedb-promises");
 
 const dbFactory = (fileName) =>
 	DataStore.create({
-		filename: `${
-			process.env.NODE_ENV === "dev" ? "." : app.getAppPath("userData")
-		}../backend/data/${fileName}`,
+		filename: isDev
+			? path.join("./backend/data/", fileName)
+			: path.join(app.getAppPath("userData"), "../backend/data/", fileName),
 		timestampData: true,
 		autoload: true,
 	});
