@@ -21,14 +21,14 @@ buildbot = (botName) =>{
   let header;
   let process;
   Promise.all([
-     fetch('api/bots/get-process/'+botName)
+    electron.ipcRenderer.invoke("get-process", botName)
   .then((response) => {
     return response.json();
   })
   .then((data) => {
     process=data
   }),
-      fetch('api/bots/'+botName)
+      electron.ipcRenderer.invoke("bot-name", botName)
   .then((response) => {
     return response.json();
   })
@@ -67,13 +67,9 @@ badgemaker =(status) =>
 
 
 componentDidMount(){
-  fetch('/api/bots')
-  .then((response) => {
-    return response.json();
-  })
-  .then((data) => {
+  electron.ipcRenderer.invoke("bots").then((result) => {
     this.setState({
-      botList:data
+      botList:result
     })
   });
 }

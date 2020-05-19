@@ -1,6 +1,6 @@
 import React , { useState, useEffect } from "react";
 import Modal from "react-bootstrap/Modal";
-
+import * as electron from "../../electronScript";
 export default function GenerateCodeModal(props) {
 
 
@@ -8,7 +8,6 @@ export default function GenerateCodeModal(props) {
 
   
   useEffect(() => {
-    console.log("runnung")
     setName(props.code)
 
 },[props.code]);
@@ -31,6 +30,7 @@ export default function GenerateCodeModal(props) {
         <form>
         <textarea rows="20" cols="50" readOnly={true} defaultValue={name}></textarea>
         </form>
+        <button type="button" className="btn btn-success" onClick={()=>{electron.ipcRenderer.send("code-generation", props.code)}}>Generate Code</button>
         </div>
       </Modal.Body>
 

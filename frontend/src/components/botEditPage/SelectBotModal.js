@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
-
+import * as electron from "../../electronScript";
 
 export default function SelectBotModal(props) {
 
@@ -31,17 +31,7 @@ export default function SelectBotModal(props) {
         const handleSubmitNewBot = (evt) => {
             evt.preventDefault();
             setLoading(true)
-            fetch("http://localhost:9000/api/bots/add-bot", {
-              method: "post",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                botName: name,
-                botType: category
-              }),
-            })
-            .then((res)=>{console.log(res)})
+            electron.ipcRenderer.invoke("add-bot", name, category)
             .then(async()=>{
             await props.selectbot(name)
             }
@@ -54,13 +44,10 @@ export default function SelectBotModal(props) {
         }
 
         useEffect(() => {
-            fetch('/api/bots')
-            .then((response) => {
-              return response.json();
-            })
+            electron.ipcRenderer.invoke("bots")
             .then((data) => {
               setBots(data)
-            });
+            }).catch(console.log("panic"));
         },[]);
 
         if(Loading)
