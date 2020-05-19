@@ -269,7 +269,7 @@ ipcMain.handle("get-process", async (event, botName) => {
 ipcMain.on("code-generation", async (event, file) => {
 	let options = {
 		title: "Save Generated Python File",
-		buttonLabel: "Save Bot Script",
+		buttonLabel: "💾 Save Script",
 		filters: [
 			{ name: "Python", extensions: ["py"] },
 			{ name: "All Files", extensions: ["*"] },
@@ -277,7 +277,7 @@ ipcMain.on("code-generation", async (event, file) => {
 	};
 	const save = dialog.showSaveDialog(win, options);
 	fs.writeFile((await save).filePath, file, function (err) {
-		if (err) throw err;
-		console.log("Saved!");
+		if (err) console.log("Canceled!");
+		else console.log("Saved!");
 	});
 });
