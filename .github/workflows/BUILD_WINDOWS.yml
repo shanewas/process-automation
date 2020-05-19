@@ -18,12 +18,16 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+      with:
+        repo-token: ${{ secrets.CORE_BUILD }}
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
     - name: install
       run: npm run install-all
+    - name: audit
+      run: npm audit fix
     - name: build
       run: npm run build
     env:
