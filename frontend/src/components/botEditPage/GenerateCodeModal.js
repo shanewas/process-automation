@@ -30,7 +30,7 @@ export default function GenerateCodeModal(props) {
         <form>
         <textarea rows="20" cols="50" readOnly={true} defaultValue={name}></textarea>
         </form>
-        <button type="button" onClick={()=>{electron.ipcRenderer.send("code-generation", props.code)}}>Generate Code</button>
+        <button type="button" className="btn btn-success" onClick={()=>{electron.ipcRenderer.send("code-generation", props.code)}}>Generate Code</button>
         </div>
       </Modal.Body>
 
