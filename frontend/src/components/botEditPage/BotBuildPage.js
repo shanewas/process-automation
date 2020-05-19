@@ -11,6 +11,7 @@ import SelectBotModal from "./SelectBotModal";
 import GenerateCodeModal from './GenerateCodeModal'
 import {selectBotAction,clearAllAction,iterationChangeAction} from '../../Store/actions'
 import {SeleniumCode} from '../../CodeGeneration'
+import * as electron from "../../electronScript";
 
 
 class BotBuildPage extends Component {
@@ -55,25 +56,8 @@ selectBot = (botName) =>{
   saveBotObject.status=this.props.status
   saveBotObject.botIteration=this.props.botIteration
   let process=this.props.process
-  fetch("/api/bots/update-bot-process/"+botName, {
-        method: "put",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          process
-        }),
-      });
-  fetch("/api/bots/update-bot/"+botName, {
-    method: "put",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      saveBotObject
-    }),
-  });
-
+  electron.ipcRenderer.send("update-bot-process", botName, process);
+  electron.ipcRenderer.send("update-bot", botName, saveBotObject);
 }
 
 componentWillUnmount(){

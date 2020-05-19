@@ -1,19 +1,25 @@
 const electron = require("electron");
-const path = require("path");
+const csv = require("csv-parser");
 const isDev = require("electron-is-dev");
-let window = require("./electron/createWindow");
-const menu = require("./electron/menu");
-const conf = require("./electron/config");
-let { win, contectWindow, loadingWindow } = require("./electron/windowList");
+const pie = require("puppeteer-in-electron");
+const puppeteer = require("puppeteer-core");
+const path = require("path");
+const fs = require("fs");
 const botlist = require("../backend/dataControl/botlist");
-
-const { app, Menu, ipcMain } = electron;
+const conf = require("./electron/config");
+const menu = require("./electron/menu");
 
 require("electron-reload")(__dirname, {
 	electron: path.join(__dirname, "node_modules", ".bin", "electron"),
 });
 
+const { app, Menu, ipcMain, dialog } = electron;
+
+let { win, contectWindow, loadingWindow } = require("./electron/windowList");
+let window = require("./electron/createWindow");
+
 let procSeq = {};
+let browser;
 
 function generateMainWindow() {
 	win = window.createWindow(
@@ -74,39 +80,33 @@ ipcMain.on("search-link", function (event, object) {
 
 ipcMain.on("idSeq", function (e, args) {
 	if (
-		(args.tagName == "INPUT" || args.tagName == "SELECT") &&
+		(args.tagName === "INPUT" || args.tagName === "SELECT") &&
 		args.type != "submit"
 	) {
 		args["_type"] = "LoadData";
 	} else {
 		args["_type"] = "click";
 	}
-	console.log(args);
+	// console.log(args);
 	win.webContents.send("process-link", args);
 });
 
 var bots;
 var botProcess;
-var data;
-
-var GLOBALPROCESINIT;
-var GLOBALPROCESLENGTH;
-
-var LOCALPROCEESSINIT = 0;
-var LOCALPROCEESSLENGTH = 0;
-
-var ITTERATIONSET = [10, 10];
-
-var itteration = 10;
+var data = [];
 var iteration = 1;
 var processlength;
 var processCounter = 0;
 var localData;
 var idx;
+var ERRSTATUS = [];
+
 ipcMain.on("start-bot", async function (e, botName) {
-		loadingWindow.loadURL(isDev
-		? "http://localhost:4000/loading.html"
-		: `file://${path.join(__dirname, "../frontend/build/loading.html")}`,);
+	loadingWindow.loadURL(
+		isDev
+			? "http://localhost:4000/loading.html"
+			: `file://${path.join(__dirname, "../frontend/build/loading.html")}`
+	);
 	loadingWindow.show();
 	await botlist.GetBot(botName).then((docs) => {
 		bots = docs;
@@ -116,46 +116,81 @@ ipcMain.on("start-bot", async function (e, botName) {
 		processlength = botProcess.processSequence.length;
 	});
 	if (bots.filepath) {
-		await botlist.GetCsv(bots.filepath).then((docs) => {
-			data = docs;
-		});
+		fs.createReadStream(bots.filepath, { bufferSize: 64 * 1024 })
+			.pipe(csv())
+			.on("data", (row) => {
+				data.push(row);
+			})
+			.on("end", () => {
+				console.log("CSV file successfully processed");
+			});
 		//inital pop from datacsv to localdata
 		localData = data.pop();
 	}
 	iteration = bots.botIteration;
+	console.log(iteration);
 	idx = 0;
 });
 
-ipcMain.on("need-process", function (e) {
+ipcMain.on("need-process", async function (e) {
+	const page = await pie.getPage(browser, loadingWindow);
 	if (idx < iteration) {
 		console.log("*********Bot Process Number*********** " + idx);
 		element = botProcess.processSequence[processCounter];
-		let path;
-		switch (element._type) {
-			case "LoadData":
-				let dat;
-				if (element.dataHeader) {
-					dat = localData[element.dataHeader];
-				} else {
-					dat = element.MenualData;
-				}
-				path = element.xpath;
-				let package = { path, dat };
-				console.log(`sending data to load ...`);
-				loadingWindow.webContents.send("form-fill-up", package);
-				break;
-			case "click":
-				path = element.xpath;
-				console.log("clicking form element ...");
-				loadingWindow.webContents.send("click-it", path);
-				break;
-			case "link":
-				console.log("loading url ...");
-				loadingWindow.loadURL(element.link);
-				break;
-			default:
-				console.log("_type doesnt match");
+		let elements, dat;
+		try {
+			switch (element._type) {
+				case "LoadData":
+					if (element.dataHeader) {
+						dat = localData[element.dataHeader];
+					} else {
+						dat = element.MenualData;
+					}
+					console.log(`sending data to load ...`);
+					if (element.type === "radio") {
+						if (element.ext.label === dat) {
+							elements = await page.$x(element.xpath, {
+								visible: true,
+							});
+							await elements[0].click();
+						} else {
+							loadingWindow.webContents.send("form-fill-up");
+							break;
+						}
+					} else {
+						elements = await page.$x(element.xpath);
+						await elements[0].type(dat);
+					}
+					loadingWindow.webContents.send("form-fill-up");
+					break;
+				case "click":
+					console.log("clicking form element ...");
+					elements = await page.$x(element.xpath);
+					await elements[0].click();
+					loadingWindow.webContents.send("click-it");
+					break;
+				case "link":
+					console.log("loading url ... " + page.url());
+					await page.goto(element.link);
+					break;
+				default:
+					console.log("_type doesnt match");
+			}
+		} catch (error) {
+			var errorGen = {
+				datatime: new Date(),
+				type: element._type,
+				DataLength: `#${data.length}`,
+				CurrentDataRow: `${JSON.stringify(localData)}`,
+				Iteration: `#${idx}`,
+				ProcCount: `#${processCounter}`,
+				ProcSeq_elem: element,
+				Error: error,
+			};
+			await page.reload();
+			ERRSTATUS.push(errorGen);
 		}
+
 		if (processCounter + 1 >= processlength) {
 			processCounter = 0;
 			if (bots.filepath) localData = data.pop();
@@ -164,11 +199,18 @@ ipcMain.on("need-process", function (e) {
 			processCounter++;
 		}
 	} else {
-		loadingWindow.hide();
+		// loadingWindow.hide();
 	}
 });
 
-app.on("ready", generateMainWindow);
+const main = async () => {
+	await pie.initialize(app);
+	browser = await pie.connect(app, puppeteer);
+};
+main();
+app.on("ready", () => {
+	generateMainWindow();
+});
 
 app.on("window-all-closed", () => {
 	if (process.platform !== "darwin") {
@@ -183,3 +225,59 @@ app.on("activate", () => {
 });
 
 conf.config();
+
+//data COM
+ipcMain.handle("bots", async (event) => {
+	const result = await botlist.listAllBots();
+	return result;
+});
+
+ipcMain.handle("bot-name", async (event, botName) => {
+	const result = await botlist.fetchBot(botName);
+	return result;
+});
+
+ipcMain.handle("add-bot", async (event, botName, botType) => {
+	const result = await botlist.addBot(botName, botType);
+	return result;
+});
+
+ipcMain.handle("remove-bot", async (event, botName) => {
+	const result = await botlist.removeBot(botName);
+	return result;
+});
+
+ipcMain.on("update-bot-process", async (event, botName, botProcess) => {
+	await botlist.updateBotProcess(botName, botProcess);
+});
+
+ipcMain.on("update-bot", async (event, botName, saveBotObj) => {
+	await botlist.editBot(
+		botName,
+		saveBotObj.filepath,
+		saveBotObj.headers,
+		saveBotObj.status,
+		saveBotObj.botIteration
+	);
+});
+
+ipcMain.handle("get-process", async (event, botName) => {
+	const result = await botlist.getProcessSequence(botName);
+	return result;
+});
+
+ipcMain.on("code-generation", async (event, file) => {
+	let options = {
+		title: "Save Generated Python File",
+		buttonLabel: "💾 Save Script",
+		filters: [
+			{ name: "Python", extensions: ["py"] },
+			{ name: "All Files", extensions: ["*"] },
+		],
+	};
+	const save = dialog.showSaveDialog(win, options);
+	fs.writeFile((await save).filePath, file, function (err) {
+		if (err) console.log("Canceled!");
+		else console.log("Saved!");
+	});
+});
