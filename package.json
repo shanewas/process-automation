@@ -38,7 +38,9 @@
       "frontend/build/**/*",
       "frontend/node_modules/**/*",
       "frontend/package.json",
-      "package.json"
+      "package.json",
+      "logo.png",
+      "icon.png"
     ],
     "extraFiles": [
       "backend/data/bots.db",
