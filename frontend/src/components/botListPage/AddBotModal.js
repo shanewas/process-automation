@@ -1,6 +1,7 @@
 import React , { useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
+import * as electron from "../../electronScript";
 
 export default function AddBotModal(props) {
 
@@ -10,16 +11,7 @@ export default function AddBotModal(props) {
   
   const handleSubmit = (evt) => {
       evt.preventDefault();
-      fetch("http://localhost:9000/api/bots/add-bot", {
-        method: "post",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          botName: name,
-          botType: category,
-        }),
-      });
+      electron.ipcRenderer.invoke("add-bot", name, category);
       props.onHide();
       window.location.reload();
 
