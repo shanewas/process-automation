@@ -107,10 +107,10 @@ import {loadHeaderAction,ChangeHeaderAction, clearDatasetAction} from '../../Sto
                     })}    
                     </div>
                     <div className="m-5">
-                    <h6>File Name : {this.state.file.name} </h6>
+                    {/* <h6>File Name : {this.state.file.name} </h6>
                     <h6>File Size : {this.state.file.size/1000} kB</h6>
                     <h6>Number of Row : {this.state.dataLength-1}</h6>
-                    <h6>File path : {this.state.file.path}</h6>
+                    <h6>File path : {this.state.file.path}</h6> */}
                     </div>
                     </Card>
                 </div>
@@ -124,7 +124,7 @@ const mapStateToProps=(state)=>{
         datasets:state.datasets,
         headers:state.headers,
         status:state.status,
-
+        // filename:state.filename
     }
 }
 const mapDispathtoProps=(dispatch)=>{

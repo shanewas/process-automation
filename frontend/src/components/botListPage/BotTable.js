@@ -28,7 +28,7 @@ buildbot = (botName) =>{
   }),
       electron.ipcRenderer.invoke("bot-name", botName)
   .then((data) => {
-    if(filepath){
+    if(data.filepath){
       filepath=data.filepath
       status=data.status
       header=data.header
