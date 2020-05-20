@@ -22,21 +22,21 @@ buildbot = (botName) =>{
   let process;
   Promise.all([
     electron.ipcRenderer.invoke("get-process", botName)
-  .then((response) => {
-    return response.json();
-  })
   .then((data) => {
-    process=data
+    if(data)process=data 
+    else process=[]
   }),
       electron.ipcRenderer.invoke("bot-name", botName)
-  .then((response) => {
-    return response.json();
-  })
   .then((data) => {
-    filepath=data.filepath
-    status=data.status
-    header=data.header
-
+    if(filepath){
+      filepath=data.filepath
+      status=data.status
+      header=data.header
+    }else{
+      filepath=null
+      status=[]
+      header=[]
+    }
   })
   ]).then(()=>{
     let bot ={}
