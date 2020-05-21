@@ -9,7 +9,10 @@ const dbFactory = (fileName) =>
 	DataStore.create({
 		filename: isDev
 			? path.join("./backend/data/", fileName)
-			: path.join(app.getAppPath("userData"), "../backend/data/", fileName),
+			: // : path.join("./backend/data/", fileName), //LINUX BUILD TILL SPRINT 2 TODO: Figure out how to handle this
+			  // : path.join("./backend/data/", fileName).replace('/app.asar', ''), //LINUX BUILD TILL SPRINT 2 TODO: Figure out how to handle this
+			  path.join(app.getAppPath("userData"), "../backend/data/", fileName), // WINDOWS BUILD
+		// : path.join(__dirname, "../data/", fileName).replace('/app.asar', ''),
 		timestampData: true,
 		autoload: true,
 	});
@@ -68,37 +71,8 @@ const removeBot = async function (botName) {
 	});
 };
 
-// change this??
 // ADD/EDIT PROCESS
 const updateBotProcess = async function (botName, process) {
-	// const docs = await db.botsList.findOne({ botName: botName }).exec();
-	// if (docs === null) console.log(`${botName} doesn't exists!`);
-	// else {
-	// 	const docs = await db.processList.find({ botName: botName }).exec();
-	// 	if (docs.length === 0) {
-	// 		bot = {
-	// 			botName: botName,
-	// 			processSequence: process,
-	// 		};
-	// 		await db.processList.insert(bot).then((err, docs) => {
-	// 			console.log(`${botName} Added!`);
-	// 		});
-	// 	} else {
-	// 		await db.processList.findOne({ botName: botName }).exec();
-	// 		let prevProcessList = docs.processSequence;
-	// 		for (let i = 0; i < process.length; i++) prevProcessList.push(process[i]);
-	// 		await db.processList
-	// 			.update(
-	// 				{ botName: botName },
-	// 				{ $set: { processSequence: prevProcessList } },
-	// 				{}
-	// 			)
-	// 			.then((err, numberReplaced) => {
-	// 				console.log(`${botName} Updated!`);
-	// 			});
-	// 	}
-	// }
-	
 	const docs = await db.botsList.findOne({botName: botName},{}).exec();
 	if(docs === null)
 		console.log(`${botName} bot does not exist`);
