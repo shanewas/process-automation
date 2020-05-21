@@ -16,3 +16,4 @@ This is the core repository for AIW Builder project. The `alpha` branch is for m
 
 For collaboration, follow the current running sprint on jira. branch based on the issue you are going to work on. Then after making the improvement, make sure nothing is broken and push to your repository. Make a Pull request.
 
+# This is a test change
