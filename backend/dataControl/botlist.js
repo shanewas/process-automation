@@ -73,32 +73,26 @@ const removeBot = async function (botName) {
 
 // ADD/EDIT PROCESS
 const updateBotProcess = async function (botName, process) {
-	const docs = await db.botsList.findOne({ botName: botName }).exec();
-	if (docs === null) console.log(`${botName} doesn't exists!`);
-	else {
-		const docs = await db.processList.find({ botName: botName }).exec();
-		if (docs.length === 0) {
+	const docs = await db.botsList.findOne({botName: botName},{}).exec();
+	if(docs === null)
+		console.log(`${botName} bot does not exist`);
+		else{
 			bot = {
 				botName: botName,
-				processSequence: process,
-			};
-			await db.processList.insert(bot).then((err, docs) => {
-				console.log(`${botName} Added!`);
-			});
-		} else {
-			await db.processList.findOne({ botName: botName }).exec();
-			let prevProcessList = docs.processSequence;
-			for (let i = 0; i < process.length; i++) prevProcessList.push(process[i]);
-			await db.processList
-				.update(
-					{ botName: botName },
-					{ $set: { processSequence: prevProcessList } },
-					{}
-				)
-				.then((err, numberReplaced) => {
-					console.log(`${botName} Updated!`);
+				processSequence: process
+			}
+			const docs = await db.processList.findOne({botName : botName},{}).exec();
+			if(docs === null){
+				await db.processList.insert(bot).then((err,doc)=>{
+					console.log(`process: ${bot.processSequence} added to ${bot.botName} bot`);
 				});
-		}
+			}else{
+				await db.processList
+				.update({botName: botName},{$set: {processSequence: bot.processSequence}}, {})
+				.then((err,doc)=>{
+					console.log(`process: ${bot.processSequence} added to ${bot.botName} bot`);
+				});
+			}				
 	}
 };
 

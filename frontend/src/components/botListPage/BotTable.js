@@ -4,14 +4,14 @@ import moment from 'moment';
 import * as electron from "../../electronScript";
 import { connect } from 'react-redux';
 import {loadBotAction} from '../../Store/actions'
-import { Link } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 
 class BotTable extends Component {
 
 
   state = {
     botList:[],
-
+    build:false
 }
 
 buildbot = (botName) =>{
@@ -22,21 +22,21 @@ buildbot = (botName) =>{
   let process;
   Promise.all([
     electron.ipcRenderer.invoke("get-process", botName)
-  .then((response) => {
-    return response.json();
-  })
   .then((data) => {
-    process=data
+    if(data)process=data 
+    else process=[]
   }),
       electron.ipcRenderer.invoke("bot-name", botName)
-  .then((response) => {
-    return response.json();
-  })
   .then((data) => {
-    filepath=data.filepath
-    status=data.status
-    header=data.header
-
+    if(data.filepath){
+      filepath=data.filepath
+      status=data.status
+      header=data.header
+    }else{
+      filepath=null
+      status=[]
+      header=[]
+    }
   })
   ]).then(()=>{
     let bot ={}
@@ -46,7 +46,9 @@ buildbot = (botName) =>{
     bot['header']=header
     bot['process']=process
     this.props.loadBot(bot)
-
+    this.setState({
+      build: true
+    })
   })
 
 }
@@ -76,6 +78,9 @@ componentDidMount(){
 
 
 render(){
+  if(this.state.build) {
+    return (<Redirect to="/build"></Redirect>)
+  } 
   return (
     
     <div className="row">
@@ -115,12 +120,12 @@ render(){
                 <td>{moment(bot.lastActive,"MMMM Do YYYY at H:mm:ss a").fromNow()}</td>
                 <td>
                   <div>
-                    <Link to="/build">
+                    {/* <Link to="/build"> */}
                     <div className="btn btn-primary mr-2 btn-sm">
                       <div onClick={()=>{this.buildbot(bot.botName)}}>
                       <i className="fas fa-hammer"></i> Build
                       </div></div>
-                      </Link>
+                      {/* </Link> */}
                       <div className="btn btn-success mr-2 btn-sm">
                         <div onClick={()=>this.startbot(bot.botName)}>
                       <i className="fas fa-running"></i> Start

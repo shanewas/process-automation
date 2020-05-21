@@ -27,10 +27,12 @@ export default class MainButtons extends Component {
                 <Row>
                 <Col xs={12} md={6} lg={3} xl={3}>
                 <Card  className="p-3">
-                <div className="mini-stat-icon mainbutton text-center" onClick={this.addbot}>
-                    <i className="mdi mdi-robot bg-primary text-white mb-2 "></i>
-                    <h2 style={{margin:"0px"}}>Add Bot</h2>
-                </div>
+                <Link to="/build">
+                    <div className="mini-stat-icon mainbutton text-center">
+                        <i className="mdi mdi-robot bg-primary text-white mb-2 "></i>
+                        <h2 style={{margin:"0px"}}>Add Bot</h2>
+                    </div>
+                </Link>
                 </Card>
                 </Col>
                 <Col xs={12} md={6} lg={3} xl={3}>
