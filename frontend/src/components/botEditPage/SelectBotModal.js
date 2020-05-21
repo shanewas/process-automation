@@ -47,7 +47,7 @@ export default function SelectBotModal(props) {
             electron.ipcRenderer.invoke("bots")
             .then((data) => {
               setBots(data)
-            }).catch(console.log("panic"));
+            });
         },[]);
 
         if(Loading)
