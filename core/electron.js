@@ -147,7 +147,7 @@ ipcMain.on("need-process", async function (e) {
 						dat = element.MenualData;
 					}
 					console.log(`sending data to load ...`);
-					if (element.type === "radio") {
+					if (element.type === "radio" || element.type === "checkbox") {
 						if (element.ext.label === dat) {
 							elements = await page.$x(element.xpath, {
 								visible: true,
