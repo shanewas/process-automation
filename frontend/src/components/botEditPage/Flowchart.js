@@ -141,6 +141,19 @@ class Flowchart extends Component {
                                     </div>
                                     )
                             }
+                            else if(step._type==="KeyBoard"){
+                                return(    
+                                    <div key={index}>
+                                    <div style={{textAlign:"center"}} >
+                                    <i className="fas fa-arrow-down fa-2x"></i> 
+                                    </div>
+                                    <i className="fas fa-window-close float-right mt-2 mr-5"  onClick={()=>{this.removeStep(index)}}></i>
+                                    <div style={{backgroundColor:"#fddb66"}} className="m-b-30 text-white text-center mr-5 ml-5 mb-2 mt-2 p-3">
+                                        {step.placeholder}
+                                    </div>
+                                    </div>
+                                    )
+                            }
                             else {
                                 return <div key={index}></div>
                             }
