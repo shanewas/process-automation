@@ -135,7 +135,7 @@ ipcMain.on("start-bot", async function (e, botName) {
 });
 
 ipcMain.on("need-process", async function (e) {
-	const page = await pie.getPage(browser, loadingWindow);
+	let page = await pie.getPage(browser, loadingWindow);
 	if (idx < iteration) {
 		console.log("*********Bot Process Number*********** " + idx);
 		element = botProcess.processSequence[processCounter];
@@ -156,26 +156,26 @@ ipcMain.on("need-process", async function (e) {
 							});
 							await elements[0].click();
 						} else {
-							loadingWindow.webContents.send("form-fill-up");
+							loadingWindow.webContents.send("next-process");
 							break;
 						}
 					} else {
 						elements = await page.$x(element.xpath);
-						await elements[0].keyboard.type(dat);
+						await elements[0].type(dat);
 					}
-					loadingWindow.webContents.send("form-fill-up");
+					loadingWindow.webContents.send("next-process");
 					break;
 				case "click":
 					console.log("clicking element ...");
 					elements = await page.$x(element.xpath);
 					await elements[0].click();
-					loadingWindow.webContents.send("click-it");
+					loadingWindow.webContents.send("next-process-state-change");
 					break;
 				case "KeyBoard":
 					console.log(`Pressing ${element.value} ...`);
 					elements = await page.$x(element.xpath);
-					await elements[0].keyboard.press(`${element.value}`);
-					loadingWindow.webContents.send("form-fill-up");
+					await elements[0].press(`${element.value}`);
+					loadingWindow.webContents.send("next-process-state-change");
 					break;
 				case "link":
 					console.log("loading url ... " + page.url());

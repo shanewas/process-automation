@@ -78,7 +78,7 @@ window.onload = function () {
 		}
 	});
 	body.addEventListener("keypress", (e) => {
-		if (e.shiftKey && e.key === "Enter") {
+		if (e.shiftKey && e.key) {
 			e.preventDefault();
 			var type, placeholder, label;
 			e.path[0].type ? (type = e.path[0].type) : (type = undefined);
