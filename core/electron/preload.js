@@ -6,9 +6,9 @@ window.onload = function () {
 	css.type = "text/css";
 
 	// var styles = `
-	// 	.highlight { 	background-color: #3FE0D0; 
+	// 	.highlight { 	background-color: #3FE0D0;
 	// 					// border-style: solid;
-	// 					border-color: coral; 
+	// 					border-color: coral;
 	// 				}`;
 
 	// if (css.styleSheet) css.styleSheet.cssText = styles;
@@ -48,10 +48,10 @@ window.onload = function () {
 		if (e.shiftKey) {
 			e.preventDefault();
 			var type, placeholder, label;
-			e.path[0].type ? (type = e.path[0].type) : (type = null);
+			e.path[0].type ? (type = e.path[0].type) : (type = undefined);
 			e.path[0].placeholder
 				? (placeholder = e.path[0].placeholder)
-				: (placeholder = null);
+				: (placeholder = undefined);
 
 			try {
 				label = e.path[0].labels[0].innerText;
@@ -66,6 +66,38 @@ window.onload = function () {
 				type: type,
 				placeholder: placeholder,
 				value: e.path[0].innerHTML,
+				xpath: xp,
+				ext: {
+					label: label,
+				},
+				// parent: e.path,
+				// parentLength: e.path.length,
+			};
+			console.log(idSeq);
+			ipcSend("idSeq", idSeq);
+		}
+	});
+	body.addEventListener("keypress", (e) => {
+		if (e.shiftKey && e.key === "Enter") {
+			e.preventDefault();
+			var type, placeholder, label;
+			e.path[0].type ? (type = e.path[0].type) : (type = undefined);
+			e.path[0].placeholder
+				? (placeholder = e.path[0].placeholder)
+				: (placeholder = undefined);
+
+			try {
+				label = e.path[0].labels[0].innerText;
+			} catch (error) {
+				label = undefined;
+			}
+			let xp = xpath.getXPath(e);
+			xp.includes("//*[@id=") ? xp : (xp = `/HTML/${xp}`);
+			let idSeq = {
+				tagName: `KeyPress`,
+				type: type,
+				placeholder: `Pressed "${e.key}"`,
+				value: e.key,
 				xpath: xp,
 				ext: {
 					label: label,

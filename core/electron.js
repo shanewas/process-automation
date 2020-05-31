@@ -84,6 +84,8 @@ ipcMain.on("idSeq", function (e, args) {
 		args.type != "submit"
 	) {
 		args["_type"] = "LoadData";
+	} else if (args.tagName === "KeyPress") {
+		args["_type"] = "KeyBoard";
 	} else {
 		args["_type"] = "click";
 	}
@@ -159,15 +161,21 @@ ipcMain.on("need-process", async function (e) {
 						}
 					} else {
 						elements = await page.$x(element.xpath);
-						await elements[0].type(dat);
+						await elements[0].keyboard.type(dat);
 					}
 					loadingWindow.webContents.send("form-fill-up");
 					break;
 				case "click":
-					console.log("clicking form element ...");
+					console.log("clicking element ...");
 					elements = await page.$x(element.xpath);
 					await elements[0].click();
 					loadingWindow.webContents.send("click-it");
+					break;
+				case "KeyBoard":
+					console.log(`Pressing ${element.value} ...`);
+					elements = await page.$x(element.xpath);
+					await elements[0].keyboard.press(`${element.value}`);
+					loadingWindow.webContents.send("form-fill-up");
 					break;
 				case "link":
 					console.log("loading url ... " + page.url());
@@ -199,7 +207,7 @@ ipcMain.on("need-process", async function (e) {
 			processCounter++;
 		}
 	} else {
-		// loadingWindow.hide();
+		loadingWindow.hide();
 	}
 });
 
