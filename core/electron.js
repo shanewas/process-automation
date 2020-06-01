@@ -18,7 +18,6 @@ const { app, Menu, ipcMain, dialog } = electron;
 let { win, contectWindow, loadingWindow } = require("./electron/windowList");
 let window = require("./electron/createWindow");
 
-let procSeq = {};
 let browser;
 
 function generateMainWindow() {
@@ -65,20 +64,34 @@ function generateMainWindow() {
 	// loadingWindow.on("closed", () => (loadingWindow = null));
 }
 
-ipcMain.on("search-link", function (event, object) {
-	procSeq["_type"] = "link";
-	if (object.includes("http://") || object.includes("https://")) {
-		procSeq["link"] = object;
-	} else {
-		procSeq["link"] = `https://${object}`;
-	}
+ipcMain.on("search-link", function (event, args) {
+	let procSeq = {
+		tagName: `Web Link`,
+		type: undefined,
+		placeholder: `Link to load "${
+			args.includes("https://") || args.includes("http://")
+				? args
+				: `https://${args}`
+		}"`,
+		value:
+			args.includes("https://") || args.includes("http://")
+				? args
+				: `https://${args}`,
+		xpath: undefined,
+		ext: {
+			label: undefined,
+		},
+		_type: `link`,
+	};
 	win.webContents.send("process-link", procSeq);
 
-	contectWindow.loadURL(procSeq["link"]);
-	contectWindow.once("ready-to-show", function () {
+	contectWindow.loadURL(procSeq.value);
+	contectWindow.webContents.on("dom-ready", function (e) {
 		contectWindow.maximize();
 		contectWindow.show();
 	});
+	//history
+	// console.log(contectWindow.webContents.history);
 });
 
 ipcMain.on("idSeq", function (e, args) {
