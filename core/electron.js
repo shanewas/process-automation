@@ -75,7 +75,12 @@ ipcMain.on("search-link", function (event, object) {
 	win.webContents.send("process-link", procSeq);
 
 	contectWindow.loadURL(procSeq["link"]);
-	contectWindow.show();
+	contectWindow.webContents.on("dom-ready", function (e) {
+		contectWindow.maximize();
+		contectWindow.show();
+	});
+	//history
+	// console.log(contectWindow.webContents.history);
 });
 
 ipcMain.on("idSeq", function (e, args) {
