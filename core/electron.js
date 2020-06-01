@@ -75,10 +75,12 @@ ipcMain.on("search-link", function (event, object) {
 	win.webContents.send("process-link", procSeq);
 
 	contectWindow.loadURL(procSeq["link"]);
-	contectWindow.once("ready-to-show", function () {
+	contectWindow.webContents.on("dom-ready", function (e) {
 		contectWindow.maximize();
 		contectWindow.show();
 	});
+	//history
+	// console.log(contectWindow.webContents.history);
 });
 
 ipcMain.on("idSeq", function (e, args) {
@@ -152,7 +154,7 @@ ipcMain.on("need-process", async function (e) {
 						dat = element.MenualData;
 					}
 					console.log(`sending data to load ...`);
-					if (element.type === "radio") {
+					if (element.type === "radio" || element.type === "checkbox") {
 						if (element.ext.label === dat) {
 							elements = await page.$x(element.xpath, {
 								visible: true,
