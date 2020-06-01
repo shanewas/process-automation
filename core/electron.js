@@ -75,7 +75,10 @@ ipcMain.on("search-link", function (event, object) {
 	win.webContents.send("process-link", procSeq);
 
 	contectWindow.loadURL(procSeq["link"]);
-	contectWindow.show();
+	contectWindow.once("ready-to-show", function () {
+		contectWindow.maximize();
+		contectWindow.show();
+	});
 });
 
 ipcMain.on("idSeq", function (e, args) {
@@ -84,6 +87,8 @@ ipcMain.on("idSeq", function (e, args) {
 		args.type != "submit"
 	) {
 		args["_type"] = "LoadData";
+	} else if (args.tagName === "KeyPress") {
+		args["_type"] = "KeyBoard";
 	} else {
 		args["_type"] = "click";
 	}
@@ -133,7 +138,7 @@ ipcMain.on("start-bot", async function (e, botName) {
 });
 
 ipcMain.on("need-process", async function (e) {
-	const page = await pie.getPage(browser, loadingWindow);
+	let page = await pie.getPage(browser, loadingWindow);
 	if (idx < iteration) {
 		console.log("*********Bot Process Number*********** " + idx);
 		element = botProcess.processSequence[processCounter];
@@ -154,20 +159,26 @@ ipcMain.on("need-process", async function (e) {
 							});
 							await elements[0].click();
 						} else {
-							loadingWindow.webContents.send("form-fill-up");
+							loadingWindow.webContents.send("next-process");
 							break;
 						}
 					} else {
 						elements = await page.$x(element.xpath);
 						await elements[0].type(dat);
 					}
-					loadingWindow.webContents.send("form-fill-up");
+					loadingWindow.webContents.send("next-process");
 					break;
 				case "click":
-					console.log("clicking form element ...");
+					console.log("clicking element ...");
 					elements = await page.$x(element.xpath);
 					await elements[0].click();
-					loadingWindow.webContents.send("click-it");
+					loadingWindow.webContents.send("next-process-state-change");
+					break;
+				case "KeyBoard":
+					console.log(`Pressing ${element.value} ...`);
+					elements = await page.$x(element.xpath);
+					await elements[0].press(`${element.value}`);
+					loadingWindow.webContents.send("next-process-state-change");
 					break;
 				case "link":
 					console.log("loading url ... " + page.url());
@@ -199,7 +210,7 @@ ipcMain.on("need-process", async function (e) {
 			processCounter++;
 		}
 	} else {
-		// loadingWindow.hide();
+		loadingWindow.hide();
 	}
 });
 

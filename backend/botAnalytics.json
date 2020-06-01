@@ -1,0 +1,8 @@
+// datatime: new Date(),
+// type: element._type,
+// DataLength: `#${data.length}`,
+// CurrentDataRow: `${JSON.stringify(localData)}`,
+// Iteration: `#${idx}`,
+// ProcCount: `#${processCounter}`,
+// ProcSeq_elem: element,
+// Error: error,
