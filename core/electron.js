@@ -73,7 +73,8 @@ ipcMain.on("search-link", function (event, args) {
 				? args
 				: `https://${args}`
 		}"`,
-		value:
+		value: undefined,
+		link:
 			args.includes("https://") || args.includes("http://")
 				? args
 				: `https://${args}`,
