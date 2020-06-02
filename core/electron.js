@@ -86,7 +86,7 @@ ipcMain.on("search-link", function (event, args) {
 	};
 	win.webContents.send("process-link", procSeq);
 
-	contectWindow.loadURL(procSeq.value);
+	contectWindow.loadURL(procSeq.link);
 	contectWindow.webContents.on("dom-ready", function (e) {
 		contectWindow.maximize();
 		contectWindow.show();
