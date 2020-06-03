@@ -17,8 +17,8 @@ export function UnselectHeaderAction(index){
 export function SendProcessAction(process){
     return{type:"SEND_PROCESS",process}
 }
-export function editProcessAction(process){
-    return{type:"SEND_PROCESS",process}
+export function editProcessAction(process,index){
+    return{type:"EDIT_PROCESS",process,index}
 }
 export function selectBotAction(bot){
     return{type:"SELECT_BOT",bot}
@@ -46,4 +46,8 @@ export function MenualEntryAction(data,processIndex){
 
 export function iterationChangeAction(iterationNumber){
     return{type:"SAVE_ITERATION",iterationNumber}
+}
+
+export function loadDatasetProperties(properties){
+    return{type:"LOADED_DATASET_PROPERTIES",properties}
 }

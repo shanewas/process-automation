@@ -3,7 +3,7 @@ import DeleteBotModal from './DeleteBotModal';
 import moment from 'moment';
 import * as electron from "../../electronScript";
 import { connect } from 'react-redux';
-import {loadBotAction} from '../../Store/actions'
+import {loadBotAction,loadDatasetProperties} from '../../Store/actions'
 import { Redirect } from "react-router-dom";
 
 class BotTable extends Component {
@@ -15,30 +15,35 @@ class BotTable extends Component {
 }
 
 buildbot = (botName) =>{
-  console.log(botName)
   let filepath;
   let status;
   let header;
   let process;
+  let datasetProperties;
   Promise.all([
     electron.ipcRenderer.invoke("get-process", botName)
   .then((data) => {
     if(data)process=data 
     else process=[]
   }),
-      electron.ipcRenderer.invoke("bot-name", botName)
+    electron.ipcRenderer.invoke("bot-name", botName)
   .then((data) => {
     if(data.filepath){
       filepath=data.filepath
       status=data.status
       header=data.header
+      let properties=electron.ipcRenderer.sendSync("file-analytics",filepath)
+      datasetProperties=properties
+      console.log("loaded properties")
     }else{
       filepath=null
       status=[]
       header=[]
     }
   })
-  ]).then(()=>{
+  ])
+  .then(()=>{
+    console.log("Changing page")
     let bot ={}
     bot['filepath']=filepath
     bot['botName']=botName
@@ -46,6 +51,7 @@ buildbot = (botName) =>{
     bot['header']=header
     bot['process']=process
     this.props.loadBot(bot)
+    this.props.loadDatasetProperties(datasetProperties)
     this.setState({
       build: true
     })
@@ -152,6 +158,8 @@ render(){
 const mapDispathtoProps=(dispatch)=>{
   return {
       loadBot:(bot)=> {dispatch(loadBotAction(bot))},
+      loadDatasetProperties:(properties)=> {dispatch(loadDatasetProperties(properties))},
+
   }
 } 
 

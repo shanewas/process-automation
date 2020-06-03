@@ -3,14 +3,9 @@ import Card from "react-bootstrap/Card"
 import Dropzone from 'react-dropzone';
 import {connect} from "react-redux"
 import * as Papa from 'papaparse';
-import {loadHeaderAction,ChangeHeaderAction, clearDatasetAction} from '../../Store/actions'
+import {loadHeaderAction,ChangeHeaderAction, clearDatasetAction,loadDatasetProperties} from '../../Store/actions'
 
  class DatasetLoader extends Component {
-
-    state = {
-        file:null,
-        dataLength:null
-    }
 
 
     changestatus = (index) =>{
@@ -21,20 +16,14 @@ import {loadHeaderAction,ChangeHeaderAction, clearDatasetAction} from '../../Sto
     fileperse = (file) =>{
         
         let data=file[0]
-        console.log(data)
-        this.setState({
-            ...this.state,
-            file:data
-        })
         let headers=null;
         Papa.parse(data, {
         complete: (results) =>{
             headers=results.data[0]
-            this.setState({
-                ...this.state,
-                dataLength:results.data.length
-            })
             this.props.loadHeaders(headers,data.path)
+            let properties=file[0]
+            properties["rowNumber"]=results.data.length-2 //papa parse adds 2 extra row
+            this.props.loadDatasetProperties(properties)
          
         }
         })
@@ -42,7 +31,8 @@ import {loadHeaderAction,ChangeHeaderAction, clearDatasetAction} from '../../Sto
         
     }
 
-    render() {  
+
+    render() { 
         if(this.props.headers.length === 0)
         {
             return(
@@ -74,7 +64,7 @@ import {loadHeaderAction,ChangeHeaderAction, clearDatasetAction} from '../../Sto
         else{
             return(
                 <div>
-                    <Card style={{height:"70vh"}}>
+                    <Card >
                     <div style={{margin:"3vh",textAlign:"center"}}>
                     <span><i className="fas fa-undo-alt float-right fa-2x" onClick={()=>{this.props.clearDataset()}}></i></span>
                     <h2 className="mb-4">DataSet Columns</h2>
@@ -106,13 +96,42 @@ import {loadHeaderAction,ChangeHeaderAction, clearDatasetAction} from '../../Sto
                         
                     })}    
                     </div>
-                    <div className="m-5">
-                    {/* <h6>File Name : {this.state.file.name} </h6>
-                    <h6>File Size : {this.state.file.size/1000} kB</h6>
-                    <h6>Number of Row : {this.state.dataLength-1}</h6>
-                    <h6>File path : {this.state.file.path}</h6> */}
-                    </div>
+                    
                     </Card>
+                    <Card>
+                    {this.props.datasetProperties?
+                    <div className="card-body">
+        
+                    <h4 className="mt-0 header-title">Dataset Properties</h4>
+                    <div className="table-responsive">
+                        <table className="table mb-0">
+                            <thead>
+                                <tr>
+                                    <th>File Type</th>
+                                    <th>File Size</th>
+                                    <th>Number of Rows</th>
+                                    <th>Path</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+
+                                    <td>{this.props.datasetProperties.type}</td>
+                                    <td>{this.props.datasetProperties.size/1000} MB</td>
+                                    <td>{this.props.datasetProperties.rowNumber}</td>
+                                    <td>{this.props.datasetProperties.path}</td>
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>:
+                    <div></div>
+                    }
+                   
+                    </Card>
+                    
                 </div>
             )
         }
@@ -124,7 +143,8 @@ const mapStateToProps=(state)=>{
         datasets:state.datasets,
         headers:state.headers,
         status:state.status,
-        // filename:state.filename
+        filepath:state.filepath,
+        datasetProperties:state.datasetProperties
     }
 }
 const mapDispathtoProps=(dispatch)=>{
@@ -132,6 +152,7 @@ const mapDispathtoProps=(dispatch)=>{
         loadHeaders:(headers,path)=> {dispatch(loadHeaderAction(headers,path))},
         changeHeader:(index)=> {dispatch(ChangeHeaderAction(index))},
         clearDataset:()=> {dispatch(clearDatasetAction())},
+        loadDatasetProperties:(properties)=> {dispatch(loadDatasetProperties(properties))},
     }
 } 
 

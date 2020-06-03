@@ -252,6 +252,7 @@ app.on("activate", () => {
 conf.config();
 
 //data COM
+
 ipcMain.handle("bots", async (event) => {
 	const result = await botlist.listAllBots();
 	return result;
@@ -289,6 +290,27 @@ ipcMain.on("update-bot", async (event, botName, saveBotObj) => {
 ipcMain.handle("get-process", async (event, botName) => {
 	const result = await botlist.getProcessSequence(botName);
 	return result;
+});
+
+ipcMain.on("file-analytics", async (event, filepath) => {
+	const {size} = fs.statSync(filepath);
+	const results = [];
+	let analytics={}
+	fs.createReadStream(filepath,{ bufferSize: 64 * 1024 })
+	.pipe(csv())
+	.on('data', (data) => results.push(data))
+	.on('end', () => {
+		 analytics={
+			"path":filepath,
+			"size":size,
+			"rowNumber":results.length,
+			"type":"text/csv"
+		}
+	event.returnValue= analytics
+	});
+	
+
+
 });
 
 ipcMain.on("code-generation", async (event, file) => {
