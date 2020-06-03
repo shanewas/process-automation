@@ -42,7 +42,10 @@
       "logo.png",
       "icon.png"
     ],
-    "extraResources": ["bots.db", "process.db"],
+    "extraResources": [
+      "bots.db",
+      "process.db"
+    ],
     "extraFiles": [
       "backend/data/bots.db",
       "backend/data/process.db"
