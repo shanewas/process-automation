@@ -4,10 +4,10 @@ const { ipcRenderer } = electron;
 function processRunner(event) {
 	ipcRenderer.send("need-process");
 }
-ipcRenderer.on("form-fill-up", function (e) {
+ipcRenderer.on("next-process", function (e) {
 	processRunner(e);
 });
-ipcRenderer.on("click-it", function (e) {
+ipcRenderer.on("next-process-state-change", function (e) {
 	if (document.readyState !== "complete") {
 		processRunner(e);
 	}
