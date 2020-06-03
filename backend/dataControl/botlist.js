@@ -181,14 +181,6 @@ async function GetBot(botName) {
 	else return [];
 }
 
-// ****************************************NO CHANGE MAIN RUN BOT PROCESS*********************************************************************//
-
-// Store BotList Function
-const saveBots = function (bots) {
-	const dataJSON = JSON.stringify(bots);
-	fs.writeFileSync(`${path.join(__dirname, "botlist.json")}`, dataJSON);
-};
-
 // getting current time and date in local format
 const getCurrentTime = () => {
 	let date = moment().format("MMMM Do YYYY");
@@ -197,92 +189,36 @@ const getCurrentTime = () => {
 	return currentDateTime;
 };
 
-const getNotification = async function (botName) {
-	const docs = await botsList.find({ botName: botName }, {}).exec();
-	if (docs === null) console.log("No such bot exists!");
-	else {
+const getNotification = async function (botName, notiNumber) {
+	const docs = await db.botsList.find({ botName: botName }, {}).exec();
+	if (docs === null) {
+		console.log(`No such bot named ${botName} found!!`);
+	} else {
 		const notificationDocs = await db.notificationList
-			.find({ botName: botName }, {})
+			.find({ botName: botName })
+			.sort({ time: -1 })
+			.limit(notiNumber)
 			.exec();
-		if (notificationDocs.length === 0) {
-			console.log(`No notifications exists for the bot ${botName}`);
-			return [];
-		} else {
-			let last = 0;
-
-			for (let i = 0; i < notificationDocs.length; i++) {
-				if (last < notificationDocs[i].serial)
-					last = notificationDocs[i].serial;
-			}
-			console.log(last);
-			let botNotification = [];
-			let lastThreeNotification = [];
-
-			for (let i = 0; i < notificationDocs.length; i++)
-				botNotification.push(notificationDocs[i]);
-
-			botNotification.sort(function (a, b) {
-				var x = a["serial"];
-				var y = b["serial"];
-				return x < y ? -1 : x > y ? 1 : 0;
-			});
-
-			botNotification.reverse();
-
-			for (let i = 0; i < 3; i++) {
-				if (i !== botNotification.length)
-					lastThreeNotification.push(botNotification[i]);
-			}
-			console.log(lastThreeNotification);
-			return lastThreeNotification;
-		}
+		return notificationDocs;
 	}
 };
 
 const setNotification = async function (botName, type, message, action) {
 	const docs = await db.botsList.findOne({ botName: botName }, {}).exec();
-	if (docs === null) console.log("No such bot exists!");
+	if (docs === null) console.log(`No such bot named ${botName} found!!`);
 	else {
-		const notificationDocs = await notificationList
-			.find({ botName: botName }, {})
-			.exec();
-		if (notificationDocs.length === 0) {
-			let currentDateTime = getCurrentTime();
-			let notification = {
-				botName: botName,
-				type: type,
-				message: message,
-				action: action,
-				time: currentDateTime,
-				serial: notificationDocs.length,
-			};
-
-			await db.notificationList.insert(notification, (err, docs) => {
-				if (err) console.log("Failed to add notification!");
-				else console.log(`Added successfully notification = ${docs}`);
-			});
-		} else {
-			getNotification(botName);
-			let last = 0;
-			for (let i = 0; i < notificationDocs.length; i++) {
-				if (last < notificationDocs[i].serial)
-					last = notificationDocs[i].serial;
-			}
-			let currentDateTime = getCurrentTime();
-			let notification = {
-				botName: botName,
-				type: type,
-				message: message,
-				action: action,
-				time: currentDateTime,
-				serial: last + 1,
-			};
-
-			await db.notificationList.insert(notification, (err, docs) => {
-				if (err) console.log("Failed to add notification!");
-				else console.log(`Added successfully notification = ${docs}`);
-			});
-		}
+		let currentDateTime = getCurrentTime();
+		let notification = {
+			botName: botName,
+			type: type,
+			message: message,
+			action: action,
+			time: currentDateTime,
+		};
+		await db.notificationList.insert(notification).then((err, doc) => {
+			console.log(`Notification ${doc} successfully added ${botName}`);
+		});
+		return notification;
 	}
 };
 
