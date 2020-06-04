@@ -1,5 +1,6 @@
 const xpath = require("../modules/xpath");
 const { ipcSend } = require("./ipcManage");
+const { ipcRenderer } = require('electron')
 var showToast = require("show-toast");
 
 document.addEventListener("click", (e) => {
@@ -69,11 +70,22 @@ document.addEventListener("keypress", (e) => {
 			// parentLength: e.path.length,
 		};
 		console.log(idSeq);
-		showToast({
-			str: "Keybord action has been recorded",
-			time: 1000,
-			position: 'bottom'
-		  })
+		
 		ipcSend("idSeq", idSeq);
 	}
 });
+
+// Checking Internet status
+  const updateOnlineStatus = () => {
+
+	showToast({
+		str: `You are ${navigator.onLine ? 'online' : 'offline'}`,
+		time: 1000,
+		position: 'bottom'
+	  })
+	
+    ipcRenderer.send('online-status-changed', navigator.onLine ? 'online' : 'offline')
+  }
+
+window.addEventListener('online',  updateOnlineStatus)
+window.addEventListener('offline',  updateOnlineStatus)

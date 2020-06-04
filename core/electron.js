@@ -327,3 +327,9 @@ ipcMain.on("code-generation", async (event, file) => {
 		else console.log("Saved!");
 	});
 });
+
+// Internet Status
+
+ipcMain.on('online-status-changed', (event, status) => {
+	console.log(status)
+  })
