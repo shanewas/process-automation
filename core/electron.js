@@ -268,9 +268,8 @@ ipcMain.handle("add-bot", async (event, botName, botType) => {
 	return result;
 });
 
-ipcMain.handle("remove-bot", async (event, botName) => {
-	const result = await botlist.removeBot(botName);
-	return result;
+ipcMain.on("remove-bot", async (event, botName) => {
+	await botlist.removeBot(botName);
 });
 
 ipcMain.on("update-bot-process", async (event, botName, botProcess) => {

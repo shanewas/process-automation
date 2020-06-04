@@ -1,5 +1,7 @@
 const xpath = require("../modules/xpath");
 const { ipcSend } = require("./ipcManage");
+var showToast = require("show-toast");
+
 document.addEventListener("click", (e) => {
 	if (e.shiftKey) {
 		e.preventDefault();
@@ -30,6 +32,11 @@ document.addEventListener("click", (e) => {
 			// parentLength: e.path.length,
 		};
 		console.log(idSeq);
+		showToast({
+			str: "Click action has been recorded",
+			time: 1000,
+			position: 'bottom'
+		  })
 		ipcSend("idSeq", idSeq);
 	}
 });
@@ -62,6 +69,11 @@ document.addEventListener("keypress", (e) => {
 			// parentLength: e.path.length,
 		};
 		console.log(idSeq);
+		showToast({
+			str: "Keybord action has been recorded",
+			time: 1000,
+			position: 'bottom'
+		  })
 		ipcSend("idSeq", idSeq);
 	}
 });
