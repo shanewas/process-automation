@@ -338,7 +338,7 @@ ipcMain.on("file-analytics", async (event, filepath) => {
 ipcMain.on("code-generation", async (event, file) => {
 	let options = {
 		title: "Save Generated Python File",
-		buttonLabel: "💾 Save Script",
+		buttonLabel: "Save Script",
 		filters: [
 			{ name: "Python", extensions: ["py"] },
 			{ name: "All Files", extensions: ["*"] },
