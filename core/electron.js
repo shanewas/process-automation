@@ -140,7 +140,7 @@ ipcMain.on("start-bot", async function (e, botName) {
 			.on("data", (row) => {
 				data.push(row);
 			})
-			.on("end", async () => {
+			.on("end", () => {
 				console.log("CSV file successfully processed");
 			});
 		//inital pop from datacsv to localdata
@@ -158,11 +158,9 @@ ipcMain.on("start-bot", async function (e, botName) {
 	idx = 0;
 });
 
-
 ipcMain.on("need-process", async function (e) {
 	let page = await pie.getPage(browser, loadingWindow);
-	if(Math.floor(iteration/2)===idx && processCounter==0)
-	{
+	if (Math.floor(iteration / 2) === idx && processCounter == 0) {
 		let notification = await botlist.setNotification(
 			bots.botName,
 			"log",
@@ -320,24 +318,21 @@ ipcMain.handle("get-process", async (event, botName) => {
 });
 
 ipcMain.on("file-analytics", async (event, filepath) => {
-	const {size} = fs.statSync(filepath);
+	const { size } = fs.statSync(filepath);
 	const results = [];
-	let analytics={}
-	fs.createReadStream(filepath,{ bufferSize: 64 * 1024 })
-	.pipe(csv())
-	.on('data', (data) => results.push(data))
-	.on('end', () => {
-		 analytics={
-			"path":filepath,
-			"size":size,
-			"rowNumber":results.length,
-			"type":"text/csv"
-		}
-	event.returnValue= analytics
-	});
-	
-
-
+	let analytics = {};
+	fs.createReadStream(filepath, { bufferSize: 64 * 1024 })
+		.pipe(csv())
+		.on("data", (data) => results.push(data))
+		.on("end", () => {
+			analytics = {
+				path: filepath,
+				size: size,
+				rowNumber: results.length,
+				type: "text/csv",
+			};
+			event.returnValue = analytics;
+		});
 });
 
 ipcMain.on("code-generation", async (event, file) => {
@@ -358,6 +353,6 @@ ipcMain.on("code-generation", async (event, file) => {
 
 // Internet Status
 
-ipcMain.on('online-status-changed', (event, status) => {
-	console.log(status)
-  })
+ipcMain.on("online-status-changed", (event, status) => {
+	console.log(status);
+});
