@@ -149,17 +149,28 @@ ipcMain.on("start-bot", async function (e, botName) {
 	let notification = await botlist.setNotification(
 		botName,
 		"log",
-		"bot has started",
+		" has started",
 		"null"
 	);
-	ipcMain.send("notification-single", notification);
+	win.webContents.send("notification-single", notification);
 	iteration = bots.botIteration;
 	console.log(`Bot is commencing ${iteration} iteration`);
 	idx = 0;
 });
 
+
 ipcMain.on("need-process", async function (e) {
 	let page = await pie.getPage(browser, loadingWindow);
+	if(Math.floor(iteration/2)===idx && processCounter==0)
+	{
+		let notification = await botlist.setNotification(
+			bots.botName,
+			"log",
+			" has completed half its task",
+			"null"
+		);
+		win.webContents.send("notification-single", notification);
+	}
 	if (idx < iteration) {
 		console.log("*********Bot Process Number*********** " + idx);
 		element = botProcess.processSequence[processCounter];
@@ -231,6 +242,13 @@ ipcMain.on("need-process", async function (e) {
 			processCounter++;
 		}
 	} else {
+		let notification = await botlist.setNotification(
+			bots.botName,
+			"log",
+			" has completed its task",
+			"null"
+		);
+		win.webContents.send("notification-single", notification);
 		loadingWindow.hide();
 	}
 });
@@ -259,8 +277,8 @@ app.on("activate", () => {
 conf.config();
 
 //data COM
-ipcMain.handle("notification-multi", async (event, botName, notiNumber) => {
-	const result = await botlist.getNotification(botName, notiNumber);
+ipcMain.handle("notification-multi", async (event, notiNumber) => {
+	const result = await botlist.getNotification(notiNumber);
 	return result;
 });
 ipcMain.handle("bots", async (event) => {

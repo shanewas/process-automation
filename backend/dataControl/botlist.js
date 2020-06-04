@@ -189,18 +189,13 @@ const getCurrentTime = () => {
 	return currentDateTime;
 };
 
-const getNotification = async function (botName, notiNumber) {
-	const docs = await db.botsList.find({ botName: botName }, {}).exec();
-	if (docs === null) {
-		console.log(`No such bot named ${botName} found!!`);
-	} else {
-		const notificationDocs = await db.notificationList
-			.find({ botName: botName })
-			.sort({ time: -1 })
-			.limit(notiNumber)
-			.exec();
-		return notificationDocs;
-	}
+const getNotification = async function (notiNumber) {
+	const notificationDocs = await db.notificationList
+		.find({})
+		.sort({ time: -1 })
+		.limit(notiNumber)
+		.exec();
+	return notificationDocs;
 };
 
 const setNotification = async function (botName, type, message, action) {

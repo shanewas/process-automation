@@ -8,6 +8,8 @@ export const startBotChannel = "start-bot";
 export const SearchLinkChannel = "search-link";
 export const ProcessLinkChannel = "process-link";
 export const SaveBotChannel = "Save-Bot";
+export const MultipleNotificationChannel = "notification-multi";
+export const SingleNotificationChannel = "notification-single";
 
 
 export function send(teleport, content) {
