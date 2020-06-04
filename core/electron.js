@@ -140,14 +140,21 @@ ipcMain.on("start-bot", async function (e, botName) {
 			.on("data", (row) => {
 				data.push(row);
 			})
-			.on("end", () => {
+			.on("end", async () => {
 				console.log("CSV file successfully processed");
 			});
 		//inital pop from datacsv to localdata
 		localData = data.pop();
 	}
+	let notification = await botlist.setNotification(
+		botName,
+		"log",
+		"bot has started",
+		"null"
+	);
+	ipcMain.send("notification-single", notification);
 	iteration = bots.botIteration;
-	console.log(iteration);
+	console.log(`Bot is commencing ${iteration} iteration`);
 	idx = 0;
 });
 
@@ -252,7 +259,10 @@ app.on("activate", () => {
 conf.config();
 
 //data COM
-
+ipcMain.handle("notification-multi", async (event, botName, notiNumber) => {
+	const result = await botlist.getNotification(botName, notiNumber);
+	return result;
+});
 ipcMain.handle("bots", async (event) => {
 	const result = await botlist.listAllBots();
 	return result;
