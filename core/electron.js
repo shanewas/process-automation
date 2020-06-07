@@ -103,6 +103,8 @@ ipcMain.on("idSeq", function (e, args) {
 		args["_type"] = "LoadData";
 	} else if (args.tagName === "KeyPress") {
 		args["_type"] = "KeyBoard";
+	} else if (args.tagName === "ScreenShot") {
+		args["_type"] = "ScreenShot";
 	} else {
 		args["_type"] = "click";
 	}
@@ -210,6 +212,21 @@ ipcMain.on("need-process", async function (e) {
 					await elements[0].press(`${element.value}`);
 					loadingWindow.webContents.send("next-process-state-change");
 					break;
+				case "ScreenShot":
+					console.log(`Taking screenshot ...`);
+					console.log(`will saving to ${element.imgpath}`);
+					if (!fs.existsSync(element.imgpath)) {
+						fs.mkdirSync(element.imgpath);
+					}
+					let pathTo = path.join(element.imgpath, element.imgname);
+					console.log(pathTo);
+					await page.screenshot({
+						path: pathTo,
+						type: "jpeg",
+						fullPage: true,
+					});
+					loadingWindow.webContents.send("next-process");
+					break;
 				case "link":
 					console.log("loading url ... " + page.url());
 					await page.goto(element.link);
@@ -228,8 +245,9 @@ ipcMain.on("need-process", async function (e) {
 				ProcSeq_elem: element,
 				Error: error,
 			};
-			await page.reload();
-			ERRSTATUS.push(errorGen);
+			// await page.reload();
+			// ERRSTATUS.push(errorGen);
+			console.log(error);
 		}
 
 		if (processCounter + 1 >= processlength) {
