@@ -144,9 +144,9 @@ ipcMain.on("start-bot", async function (e, botName) {
 			})
 			.on("end", () => {
 				console.log("CSV file successfully processed");
+				//inital pop from datacsv to localdata
+				localData = data.pop();
 			});
-		//inital pop from datacsv to localdata
-		localData = data.pop();
 	}
 	let notification = await botlist.setNotification(
 		botName,
@@ -246,8 +246,8 @@ ipcMain.on("need-process", async function (e) {
 				Error: error,
 			};
 			// await page.reload();
-			// ERRSTATUS.push(errorGen);
-			console.log(error);
+			ERRSTATUS.push(errorGen);
+			console.log(ERRSTATUS);
 		}
 
 		if (processCounter + 1 >= processlength) {
