@@ -210,8 +210,8 @@ const setNotification = async function (botName, type, message, action) {
 			action: action,
 			time: currentDateTime,
 		};
-		await db.notificationList.insert(notification).then((err, doc) => {
-			console.log(`Notification ${doc} successfully added ${botName}`);
+		await db.notificationList.insert(notification).then((err) => {
+			console.log(`Notification successfully added ${botName}`);
 		});
 		return notification;
 	}
