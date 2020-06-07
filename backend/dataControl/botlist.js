@@ -217,6 +217,27 @@ const setNotification = async function (botName, type, message, action) {
 	}
 };
 
+
+const setLastActiveTime = async function (botName) {
+
+	const docs = await db.botsList.findOne({ botName: botName }, {}).exec();
+	if(docs===null) console.log(`No such bot named ${botName} found!`);
+	else{
+		let time = getCurrentTime();
+		await db.botsList.update(
+			{ botName: botName }, 
+			{ $set: { lastActive: time } }, 
+			{}
+			
+		)
+		.then((err, numReplaced) => {
+			console.log(`Bot ${botName} was last active at: ${time}`);
+		});
+	}
+
+};
+
+
 module.exports = {
 	addBot,
 	editBot,
@@ -230,4 +251,5 @@ module.exports = {
 	removeBot,
 	setNotification,
 	updateBotProcess,
+	setLastActiveTime,
 };
