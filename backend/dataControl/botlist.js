@@ -9,9 +9,9 @@ const dbFactory = (fileName) =>
 	DataStore.create({
 		filename: isDev
 			? path.join("./backend/data/", fileName)
-			// : path.join("./backend/data/", fileName), //LINUX BUILD TILL SPRINT 2 TODO: Figure out how to handle this
+			: path.join("./backend/data/", fileName), //LINUX BUILD TILL SPRINT 2 TODO: Figure out how to handle this
 			// : path.join("./backend/data/", fileName).replace('/app.asar', ''), //LINUX BUILD TILL SPRINT 2 TODO: Figure out how to handle this
-			: path.join(app.getAppPath("userData"), "../backend/data/", fileName), // WINDOWS BUILD
+			// : path.join(app.getAppPath("userData"), "../backend/data/", fileName), // WINDOWS BUILD
 			// : path.join(__dirname, "../data/", fileName).replace('/app.asar', ''),
 		timestampData: true,
 		autoload: true,
