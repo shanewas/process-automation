@@ -38,7 +38,7 @@ function generateMainWindow() {
 	loadingWindow = window.createWindow(
 		"none",
 		win,
-		true,
+		false,
 		true,
 		true,
 		"RunningBot.js"
