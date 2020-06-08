@@ -166,6 +166,7 @@ ipcMain.on("start-bot", async function (e, botName) {
 	ITERATION = BOTS.botIteration;
 	console.log(`Bot is commencing ${ITERATION} iteration`);
 	IDX = 0;
+	botlist.setLastActiveTime(botName);
 });
 
 ipcMain.on("need-process", async function (e) {
