@@ -111,7 +111,7 @@ const updateBotProcess = async function (botName, process) {
 		if (docs === null) {
 			await db.processList.insert(bot).then((err, doc) => {
 				console.log(
-					`process: ${bot.processSequence} added to ${bot.botName} bot`
+					`process sequence added to ${bot.botName} bot`
 				);
 			});
 		} else {
