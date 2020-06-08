@@ -218,7 +218,8 @@ ipcMain.on("need-process", async function (e) {
 					if (!fs.existsSync(element.imgpath)) {
 						fs.mkdirSync(element.imgpath);
 					}
-					let pathTo = path.join(element.imgpath, element.imgname);
+					let img_filename = `${bots.botName}_${idx}${processCounter}.jpeg`;
+					let pathTo = path.join(element.imgpath, img_filename);
 					console.log(pathTo);
 					await page.screenshot({
 						path: pathTo,

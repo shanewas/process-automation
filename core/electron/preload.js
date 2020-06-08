@@ -73,11 +73,13 @@ document.addEventListener("keypress", (e) => {
 				  // : path.join("./backend/data/screenshot/", fileName).replace('/app.asar', ''), //LINUX BUILD TILL SPRINT 2 TODO: Figure out how to handle this
 				  path.join(app.getAppPath("userData"), "../backend/data/screenshot/"), // WINDOWS BUILD
 			// : path.join(__dirname, "../data/screenshot", fileName).replace('/app.asar', ''),
-			imgname: `${document.title}.jpg`,
 		};
-		console.log(isDev);
 		console.log(idSeq);
-
+		showToast({
+			str: "Screenshot action has been recorded",
+			time: 1000,
+			position: "bottom",
+		});
 		ipcRenderer.send("idSeq", idSeq);
 	} else if (e.shiftKey && e.key) {
 		e.preventDefault();
@@ -107,7 +109,11 @@ document.addEventListener("keypress", (e) => {
 			// parentLength: e.path.length,
 		};
 		console.log(idSeq);
-
+		showToast({
+			str: `pressed "${e.key}" key action has been recorded`,
+			time: 1000,
+			position: "bottom",
+		});
 		ipcRenderer.send("idSeq", idSeq);
 	}
 });
