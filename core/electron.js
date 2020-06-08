@@ -249,6 +249,14 @@ ipcMain.on("need-process", async function (e) {
 			// await page.reload();
 			ERRSTATUS.push(errorGen);
 			console.log(ERRSTATUS);
+			let notification = await botlist.setNotification(
+				bots.botName,
+				"error",
+				` is facing an issue with #${processCounter} process in #${idx} Iteration`,
+				"null"
+			);
+			win.webContents.send("notification-single", notification);
+			loadingWindow.webContents.send("next-process-state-change");
 		}
 
 		if (processCounter + 1 >= processlength) {
