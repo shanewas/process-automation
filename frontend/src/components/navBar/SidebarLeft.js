@@ -61,15 +61,9 @@ export default class SidebarLeft extends Component {
                 </div>
               </li>
               <li>
-                <div className="waves-effect p-3">
+                <div onClick={this.props.runBot} className="waves-effect p-3">
                   <i className="fas fa-rocket fa-2x mr-2" />
                   <span> Run Bot  </span>
-                </div>
-              </li>
-              <li>
-                <div className="waves-effect p-3">
-                  <i className="fas fa-history fa-2x mr-2 mb-4" />
-                  <span> Bot Iteration  <input className="form-control" onChange={this.itarationchange} type="number" min={1} defaultValue={1} id="example-number-input"/></span>
                 </div>
               </li>
             </ul>
