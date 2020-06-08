@@ -10,7 +10,7 @@ export default class BotLog extends Component {
 
     componentDidMount()
     {
-        electron.ipcRenderer.invoke(electron.MultipleNotificationChannel,4).then((result)=>{
+        electron.ipcRenderer.invoke(electron.MultipleNotificationChannel,5).then((result)=>{
             this.setState({
                 notifications:result
             })
