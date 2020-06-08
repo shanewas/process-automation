@@ -177,7 +177,8 @@ const loadBot = (state,bot) =>{
         selectedHeader:null,
         prevStatus:null,
         botName:bot.botName,
-        process:bot.process
+        process:bot.process,
+        botIteration:bot.iteration
 
     }
 }
@@ -204,7 +205,6 @@ const menualEntryData = (state,data,index) =>{
 }
 
 const changeIteration = (state,iterationNumber) =>{
-
     return {
         ...state,
         botIteration:iterationNumber
