@@ -109,7 +109,8 @@
     "moment": "^2.25.3",
     "nedb-promises": "^4.0.3",
     "puppeteer-core": "^3.1.0",
-    "puppeteer-in-electron": "^3.0.1"
+    "puppeteer-in-electron": "^3.0.1",
+    "show-toast": "^1.1.4"
   },
   "devDependencies": {
     "concurrently": "^5.2.0",

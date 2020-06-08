@@ -4,31 +4,25 @@ import * as electron from "../../electronScript";
 import { connect } from 'react-redux';
 import { UseHeaderAction, UnselectHeaderAction, SendProcessAction ,editProcessAction, clearFlowchartAction,removeStepAction, MenualEntryAction} from '../../Store/actions';
 import MenualEntryModal from "./MenualEntryModal"
-
+import ProcessConfigModal from './ProcessConfigModal';
 class Flowchart extends Component {
 
     state={
         menualEntryModalShow:false,
-        menualEntryindex:null
+        menualEntryindex:null,
+        ProcessConfigModalShow:false,
+        ProcessConfigModalIndex:null,
     }
     
     menaulEntry =(index) =>{
      
-      this.setState({menualEntryModalShow:true,menualEntryindex:index})
-     
-    }
-    componentDidMount()
-	{
-		electron.ipcRenderer.on(electron.ProcessLinkChannel,(e, content) =>{
-            
-            this.props.sendProcess(content)
-            
-        });
-    }
+      this.setState({
 
-    componentWillUnmount()
-    {
-        electron.ipcRenderer.removeAllListeners(electron.ProcessLinkChannel);
+            ...this.state,
+            menualEntryModalShow:true,
+            menualEntryindex:index
+        })
+     
     }
     
     insertHeader = (index) =>{
@@ -50,6 +44,40 @@ class Flowchart extends Component {
             this.props.removeStep(index,1)
     }
 
+    openconfigtab = (index) => {
+        this.setState({
+            ...this.state,
+            ProcessConfigModalShow:true,
+            ProcessConfigModalIndex:index,
+        })
+    }
+
+    editStep = (process) =>{
+        this.props.editProcess(process,this.state.ProcessConfigModalIndex)
+    }
+    
+    clearConfig = () =>{
+        this.setState({
+
+            ...this.state,
+            ProcessConfigModalIndex:null,
+        })
+    }
+    componentDidMount()
+	{
+		electron.ipcRenderer.on(electron.ProcessLinkChannel,(e, content) =>{
+            
+            this.props.sendProcess(content)
+            
+        });
+    }
+
+    componentWillUnmount()
+    {
+        electron.ipcRenderer.removeAllListeners(electron.ProcessLinkChannel);
+    }
+    
+
     render() {
         if(this.props.process.length===0)
         {
@@ -70,9 +98,18 @@ class Flowchart extends Component {
                         onHide={() => this.setState({menualEntryModalShow:false})}
                         insertMenualData={this.insertMenualEntry}
                         />
+                        <ProcessConfigModal show={this.state.ProcessConfigModalShow}
+                        onHide={() => this.setState({ProcessConfigModalShow:false})}
+                        editStep={this.editStep}
+                        clearConfig={this.clearConfig}
+                        step={this.props.process[this.state.ProcessConfigModalIndex]}
+                        />
                     <Card id="scrollstyle" style={{height:"70vh",maxHeight:"70vh",overflowY:"auto"}}>
                         <span className="float-left">Bot Name :{this.props.botName?this.props.botName:" Not Selected"}</span>
-                        <span><i className="fas fa-undo-alt float-right mt-3 mr-3 fa-2x" onClick={()=>{this.props.clearFlowchart()}}></i></span>
+                        <span>
+                        <i className="fas fa-undo-alt float-right mt-3 mr-3 fa-2x" onClick={()=>{this.props.clearFlowchart()}}></i>
+                        <i className="fas fa-cog float-right mt-3 mr-3 fa-2x"></i>
+                        </span>
                         {this.props.process.map((step,index)=>{
                         
                         if (index===0)
@@ -80,7 +117,10 @@ class Flowchart extends Component {
                             
                             return( 
                                 <div key={index}> 
+                                <span>
                                 <i className="fas fa-window-close float-right mt-5 mr-5" onClick={()=>{this.removeStep(index)}}></i>
+                                <i className="fas fa-cog float-right mt-5 mr-2" onClick={()=>{this.openconfigtab(index)}}></i>
+                                </span>
                                 <div className=" text-white bg-primary text-center mr-5 ml-5 mb-2 mt-5 p-3">
                                     Opened Webpage {step.link? step.link: "Not selected"}
                                 </div>
@@ -97,9 +137,12 @@ class Flowchart extends Component {
                                     <div style={{textAlign:"center"}} >
                                     <i className="fas fa-arrow-down fa-2x"></i> 
                                     </div>
+                                    <span>
                                     <i className="fas fa-window-close float-right mt-2 mr-5"  onClick={()=>{this.removeStep(index)}}></i>
+                                    <i className="fas fa-cog float-right mt-2 mr-2" onClick={()=>{this.openconfigtab(index)}}></i>
+                                    </span>                                 
                                     <div style={{backgroundColor:"#eddb66"}} className="m-b-30 text-white bg text-center mr-5 ml-5 mb-2 mt-2 p-3">
-                                       Clicked on the boutton {step.value}
+                                       Clicked on the boutton {step.placeholder}
                                     </div>
                                     </div>
                                     )
@@ -110,7 +153,10 @@ class Flowchart extends Component {
                                     <div style={{textAlign:"center"}} >
                                     <i className="fas fa-arrow-down fa-2x"></i> 
                                     </div>
+                                    <span>
                                     <i className="fas fa-window-close float-right mt-2 mr-5"  onClick={()=>{this.removeStep(index)}}></i>
+                                    <i className="fas fa-cog float-right mt-2 mr-2" onClick={()=>{this.openconfigtab(index)}}></i>
+                                    </span>  
                                     <div style={{backgroundColor:"#a044b3"}}  onClick={() => this.insertHeader(index)} className="m-b-30 text-white bg text-center mr-5 ml-5 mb-2 mt-2 p-3">
                                         Load Data {step.placeholder}
                                         <br/>
@@ -133,7 +179,10 @@ class Flowchart extends Component {
                                     <div style={{textAlign:"center"}} >
                                     <i className="fas fa-arrow-down fa-2x"></i> 
                                     </div>
+                                    <span>
                                     <i className="fas fa-window-close float-right mt-2 mr-5"  onClick={()=>{this.removeStep(index)}}></i>
+                                    <i className="fas fa-cog float-right mt-2 mr-2" onClick={()=>{this.openconfigtab(index)}}></i>
+                                    </span>  
                                     <div className="m-b-30 text-white bg-primary text-center mr-5 ml-5 mb-2 mt-2 p-3">
                                         Opened Webpage {step.link}
 
@@ -148,7 +197,7 @@ class Flowchart extends Component {
                                     <i className="fas fa-arrow-down fa-2x"></i> 
                                     </div>
                                     <i className="fas fa-window-close float-right mt-2 mr-5"  onClick={()=>{this.removeStep(index)}}></i>
-                                    <div style={{backgroundColor:"#fddb66"}} className="m-b-30 text-white text-center mr-5 ml-5 mb-2 mt-2 p-3">
+                                    <div style={{backgroundColor:"#fd1b66"}} className="m-b-30 text-white text-center mr-5 ml-5 mb-2 mt-2 p-3">
                                         {step.placeholder}
                                     </div>
                                     </div>
@@ -181,7 +230,7 @@ const mapDispathtoProps=(dispatch)=>{
     return {
         insertMenualData:(data,processIndex)=> {dispatch(MenualEntryAction(data,processIndex))},
         sendProcess:(process)=> {dispatch(SendProcessAction(process))},
-        editProcess:(process)=> {dispatch(editProcessAction(process))},
+        editProcess:(process,index)=> {dispatch(editProcessAction(process,index))},
         useHeaders:(index)=> {dispatch(UseHeaderAction(index))},
         UnselectHeader:(index)=> {dispatch(UnselectHeaderAction(index))},
         clearFlowchart:()=> {dispatch(clearFlowchartAction())},

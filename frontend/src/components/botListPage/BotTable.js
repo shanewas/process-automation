@@ -3,7 +3,7 @@ import DeleteBotModal from './DeleteBotModal';
 import moment from 'moment';
 import * as electron from "../../electronScript";
 import { connect } from 'react-redux';
-import {loadBotAction} from '../../Store/actions'
+import {loadBotAction,loadDatasetProperties} from '../../Store/actions'
 import { Redirect } from "react-router-dom";
 
 class BotTable extends Component {
@@ -11,34 +11,42 @@ class BotTable extends Component {
 
   state = {
     botList:[],
-    build:false
+    build:false,
+    deletemodalShow:false,
+    deletebotselect:null
+
 }
 
 buildbot = (botName) =>{
-  console.log(botName)
   let filepath;
   let status;
   let header;
   let process;
+  let datasetProperties;
   Promise.all([
     electron.ipcRenderer.invoke("get-process", botName)
   .then((data) => {
     if(data)process=data 
     else process=[]
   }),
-      electron.ipcRenderer.invoke("bot-name", botName)
+    electron.ipcRenderer.invoke("bot-name", botName)
   .then((data) => {
     if(data.filepath){
       filepath=data.filepath
       status=data.status
       header=data.header
+      let properties=electron.ipcRenderer.sendSync("file-analytics",filepath)
+      datasetProperties=properties
+      console.log("loaded properties")
     }else{
       filepath=null
       status=[]
       header=[]
     }
   })
-  ]).then(()=>{
+  ])
+  .then(()=>{
+    console.log("Changing page")
     let bot ={}
     bot['filepath']=filepath
     bot['botName']=botName
@@ -46,6 +54,7 @@ buildbot = (botName) =>{
     bot['header']=header
     bot['process']=process
     this.props.loadBot(bot)
+    this.props.loadDatasetProperties(datasetProperties)
     this.setState({
       build: true
     })
@@ -54,7 +63,6 @@ buildbot = (botName) =>{
 }
 startbot = (botName) =>{
   electron.ipcRenderer.send(electron.startBotChannel, botName)
-  this.setState({startmodalShow:true})
 }
 
 badgemaker =(status) =>
@@ -67,13 +75,16 @@ badgemaker =(status) =>
   }
 }
 
-
-componentDidMount(){
+updatetable =()=>{
   electron.ipcRenderer.invoke("bots").then((result) => {
     this.setState({
       botList:result
     })
-  });
+  }); 
+}
+
+componentDidMount(){
+  this.updatetable()
 }
 
 
@@ -82,13 +93,13 @@ render(){
     return (<Redirect to="/build"></Redirect>)
   } 
   return (
-    
     <div className="row">
     
       <DeleteBotModal
       bot={this.state.deletebotselect}
       show={this.state.deletemodalShow}
       onHide={() => this.setState({deletemodalShow:false})}
+      updatetable={this.updatetable}
       />
   <div className="col-xl-12">
     <div className="card">
@@ -120,15 +131,17 @@ render(){
                 <td>{moment(bot.lastActive,"MMMM Do YYYY at H:mm:ss a").fromNow()}</td>
                 <td>
                   <div>
-                    {/* <Link to="/build"> */}
                     <div className="btn btn-primary mr-2 btn-sm">
                       <div onClick={()=>{this.buildbot(bot.botName)}}>
-                      <i className="fas fa-hammer"></i> Build
+                      <i className="fas fa-hammer"></i> Edit
                       </div></div>
-                      {/* </Link> */}
                       <div className="btn btn-success mr-2 btn-sm">
                         <div onClick={()=>this.startbot(bot.botName)}>
                       <i className="fas fa-running"></i> Start
+                      </div></div>
+                      <div className="btn btn-danger mr-2 btn-sm">
+                        <div onClick={()=>{this.setState({deletemodalShow:true,deletebotselect:bot})}}>
+                      <i className="far fa-trash-alt"></i> Delete
                       </div></div>
                   </div>
                 </td>
@@ -152,6 +165,8 @@ render(){
 const mapDispathtoProps=(dispatch)=>{
   return {
       loadBot:(bot)=> {dispatch(loadBotAction(bot))},
+      loadDatasetProperties:(properties)=> {dispatch(loadDatasetProperties(properties))},
+
   }
 } 
 

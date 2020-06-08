@@ -8,7 +8,7 @@ ipcRenderer.on("next-process", function (e) {
 	processRunner(e);
 });
 ipcRenderer.on("next-process-state-change", function (e) {
-	if (document.readyState !== "complete") {
+	if (document.readyState === "complete") {
 		processRunner(e);
 	}
 });

@@ -9,10 +9,10 @@ const dbFactory = (fileName) =>
 	DataStore.create({
 		filename: isDev
 			? path.join("./backend/data/", fileName)
-			// : path.join("./backend/data/", fileName), //LINUX BUILD TILL SPRINT 2 TODO: Figure out how to handle this
-			// : path.join("./backend/data/", fileName).replace('/app.asar', ''), //LINUX BUILD TILL SPRINT 2 TODO: Figure out how to handle this
-			: path.join(app.getAppPath("userData"), "../backend/data/", fileName), // WINDOWS BUILD
-			// : path.join(__dirname, "../data/", fileName).replace('/app.asar', ''),
+			: // : path.join("./backend/data/", fileName), //LINUX BUILD TILL SPRINT 2 TODO: Figure out how to handle this
+			  // : path.join("./backend/data/", fileName).replace('/app.asar', ''), //LINUX BUILD TILL SPRINT 2 TODO: Figure out how to handle this
+			  path.join(app.getAppPath("userData"), "../backend/data/", fileName), // WINDOWS BUILD
+		// : path.join(__dirname, "../data/", fileName).replace('/app.asar', ''),
 		timestampData: true,
 		autoload: true,
 	});
@@ -20,6 +20,7 @@ const dbFactory = (fileName) =>
 const db = {
 	botsList: dbFactory("bots.db"),
 	processList: dbFactory("process.db"),
+	notificationList: dbFactory("notification.db"),
 };
 
 // GET BOTS LIST
@@ -69,30 +70,63 @@ const removeBot = async function (botName) {
 			} else console.log("Unable to remove bot, please pass a valid bot name!");
 		}
 	});
+	await db.processList
+		.remove({ botName: botName }, {})
+		.then((err, numRemoved) => {
+			if (err) console.log(`Unable to remove ${botName}, please try again!`);
+			else {
+				if (numRemoved > 0) {
+					console.log(
+						`Process List for : '${botName}' has been removed successfully!`
+					);
+				} else
+					console.log("Unable to remove bot, please pass a valid bot name!");
+			}
+		});
+	await db.notificationList
+		.remove({ botName: botName }, { multi: true })
+		.then((err, numRemoved) => {
+			if (err) console.log(`Unable to remove ${botName}, please try again!`);
+			else {
+				if (numRemoved > 0) {
+					console.log(
+						`Notification set for: '${botName}' has been removed successfully!`
+					);
+				} else
+					console.log("Unable to remove bot, please pass a valid bot name!");
+			}
+		});
 };
 
 // ADD/EDIT PROCESS
 const updateBotProcess = async function (botName, process) {
-	const docs = await db.botsList.findOne({botName: botName},{}).exec();
-	if(docs === null)
-		console.log(`${botName} bot does not exist`);
-		else{
-			bot = {
-				botName: botName,
-				processSequence: process
-			}
-			const docs = await db.processList.findOne({botName : botName},{}).exec();
-			if(docs === null){
-				await db.processList.insert(bot).then((err,doc)=>{
-					console.log(`process: ${bot.processSequence} added to ${bot.botName} bot`);
+	const docs = await db.botsList.findOne({ botName: botName }, {}).exec();
+	if (docs === null) console.log(`${botName} bot does not exist`);
+	else {
+		bot = {
+			botName: botName,
+			processSequence: process,
+		};
+		const docs = await db.processList.findOne({ botName: botName }, {}).exec();
+		if (docs === null) {
+			await db.processList.insert(bot).then((err, doc) => {
+				console.log(
+					`process: ${bot.processSequence} added to ${bot.botName} bot`
+				);
+			});
+		} else {
+			await db.processList
+				.update(
+					{ botName: botName },
+					{ $set: { processSequence: bot.processSequence } },
+					{}
+				)
+				.then((err, doc) => {
+					console.log(
+						`process: ${bot.processSequence} added to ${bot.botName} bot`
+					);
 				});
-			}else{
-				await db.processList
-				.update({botName: botName},{$set: {processSequence: bot.processSequence}}, {})
-				.then((err,doc)=>{
-					console.log(`process: ${bot.processSequence} added to ${bot.botName} bot`);
-				});
-			}				
+		}
 	}
 };
 
@@ -147,14 +181,6 @@ async function GetBot(botName) {
 	else return [];
 }
 
-// ****************************************NO CHANGE MAIN RUN BOT PROCESS*********************************************************************//
-
-// Store BotList Function
-const saveBots = function (bots) {
-	const dataJSON = JSON.stringify(bots);
-	fs.writeFileSync(`${path.join(__dirname, "botlist.json")}`, dataJSON);
-};
-
 // getting current time and date in local format
 const getCurrentTime = () => {
 	let date = moment().format("MMMM Do YYYY");
@@ -163,15 +189,45 @@ const getCurrentTime = () => {
 	return currentDateTime;
 };
 
+const getNotification = async function (notiNumber) {
+	const notificationDocs = await db.notificationList
+		.find({})
+		.sort({ time: -1 })
+		.limit(notiNumber)
+		.exec();
+	return notificationDocs;
+};
+
+const setNotification = async function (botName, type, message, action) {
+	const docs = await db.botsList.findOne({ botName: botName }, {}).exec();
+	if (docs === null) console.log(`No such bot named ${botName} found!!`);
+	else {
+		let currentDateTime = getCurrentTime();
+		let notification = {
+			botName: botName,
+			type: type,
+			message: message,
+			action: action,
+			time: currentDateTime,
+		};
+		await db.notificationList.insert(notification).then((err, doc) => {
+			console.log(`Notification ${doc} successfully added ${botName}`);
+		});
+		return notification;
+	}
+};
+
 module.exports = {
 	addBot,
 	editBot,
 	fetchBot,
 	GetBot,
 	getCurrentTime,
+	getNotification,
 	GetProcess,
 	getProcessSequence,
 	listAllBots,
 	removeBot,
+	setNotification,
 	updateBotProcess,
 };
