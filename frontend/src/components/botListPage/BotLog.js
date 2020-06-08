@@ -14,7 +14,6 @@ export default class BotLog extends Component {
             this.setState({
                 notifications:result
             })
-            console.log(result)
         })
 
         electron.ipcRenderer.on(electron.SingleNotificationChannel,(event,notification)=>{
