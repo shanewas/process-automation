@@ -18,7 +18,7 @@ const { app, Menu, ipcMain, dialog } = electron;
 let { win, contectWindow, loadingWindow } = require("./electron/windowList");
 let window = require("./electron/createWindow");
 
-let browser;
+let browser, page;
 
 var BOTS;
 var BOTPROCESS;
@@ -30,6 +30,15 @@ var LOCALDATA;
 var IDX;
 var ERRSTATUS = [];
 var RUNINGSTATUS = false;
+
+function reset_var() {
+	ITERATION = 1;
+	PROCESSLENGTH = 0;
+	PROCESSCOUNTER = 0;
+	IDX = 0;
+	ERRSTATUS = [];
+	RUNINGSTATUS = false;
+}
 
 function generateMainWindow() {
 	win = window.createWindow(
@@ -56,8 +65,8 @@ function generateMainWindow() {
 	);
 	loadingWindow.on("close", (e) => {
 		e.preventDefault();
-		RUNINGSTATUS = false;
 		loadingWindow.hide();
+		reset_var();
 		loadingWindow.loadURL(
 			isDev
 				? "http://localhost:4000/loading.html"
@@ -171,7 +180,7 @@ ipcMain.on("start-bot", async function (e, botName) {
 
 ipcMain.on("need-process", async function (e) {
 	if (RUNINGSTATUS) {
-		let page = await pie.getPage(browser, loadingWindow);
+		page = await pie.getPage(browser, loadingWindow, false);
 		if (Math.floor(ITERATION / 2) === IDX && PROCESSCOUNTER == 0) {
 			let notification = await botlist.setNotification(
 				BOTS.botName,
@@ -240,7 +249,7 @@ ipcMain.on("need-process", async function (e) {
 						break;
 					case "link":
 						console.log("loading url ... " + page.url());
-						await page.goto(element.link);
+						loadingWindow.loadURL(element.link);
 						break;
 					default:
 						console.log("_type doesnt match");
@@ -266,7 +275,7 @@ ipcMain.on("need-process", async function (e) {
 					"null"
 				);
 				win.webContents.send("notification-single", notification);
-				loadingWindow.webContents.send("next-process-state-change");
+				// loadingWindow.webContents.send("next-process-state-change");
 			}
 
 			if (PROCESSCOUNTER + 1 >= PROCESSLENGTH) {
@@ -285,7 +294,9 @@ ipcMain.on("need-process", async function (e) {
 			);
 			win.webContents.send("notification-single", notification);
 			loadingWindow.hide();
+			reset_var();
 		}
+		win.setProgressBar(IDX / ITERATION);
 	}
 });
 
