@@ -13,7 +13,7 @@ require("electron-reload")(__dirname, {
 	electron: path.join(__dirname, "node_modules", ".bin", "electron"),
 });
 
-const { app, Menu, ipcMain, dialog } = electron;
+const { app, Menu, ipcMain, dialog, Notification } = electron;
 
 let { win, contectWindow, loadingWindow } = require("./electron/windowList");
 let window = require("./electron/createWindow");
@@ -32,9 +32,13 @@ var ERRSTATUS = [];
 var RUNINGSTATUS = false;
 
 function reset_var() {
+	BOTS = null;
+	BOTPROCESS = null;
+	DATA = [];
 	ITERATION = 1;
 	PROCESSLENGTH = 0;
 	PROCESSCOUNTER = 0;
+	LOCALDATA = null;
 	IDX = 0;
 	ERRSTATUS = [];
 	RUNINGSTATUS = false;
@@ -139,13 +143,14 @@ ipcMain.on("idSeq", function (e, args) {
 });
 
 ipcMain.on("start-bot", async function (e, botName) {
-	RUNINGSTATUS = true;
+	reset_var();
 	loadingWindow.loadURL(
 		isDev
 			? "http://localhost:4000/loading.html"
 			: `file://${path.join(__dirname, "../frontend/build/loading.html")}`
 	);
 	loadingWindow.show();
+	RUNINGSTATUS = true;
 	await botlist.GetBot(botName).then((docs) => {
 		BOTS = docs;
 	});
@@ -179,6 +184,13 @@ ipcMain.on("start-bot", async function (e, botName) {
 });
 
 ipcMain.on("need-process", async function (e) {
+	let myNotification = new Notification("Title", {
+		body: "Lorem Ipsum Dolor Sit Amet",
+	});
+
+	myNotification.onclick = () => {
+		console.log("Notification clicked");
+	};
 	if (RUNINGSTATUS) {
 		page = await pie.getPage(browser, loadingWindow, false);
 		if (Math.floor(ITERATION / 2) === IDX && PROCESSCOUNTER == 0) {
@@ -293,6 +305,7 @@ ipcMain.on("need-process", async function (e) {
 				"null"
 			);
 			win.webContents.send("notification-single", notification);
+			win.setProgressBar(0.0);
 			loadingWindow.hide();
 			reset_var();
 		}
