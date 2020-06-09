@@ -1,5 +1,7 @@
 const xpath = require("../modules/xpath");
-const { ipcSend } = require("./ipcManage");
+const { ipcRenderer } = require("electron");
+const showToast = require("show-toast");
+
 document.addEventListener("click", (e) => {
 	if (e.shiftKey) {
 		e.preventDefault();
@@ -30,7 +32,12 @@ document.addEventListener("click", (e) => {
 			// parentLength: e.path.length,
 		};
 		console.log(idSeq);
-		ipcSend("idSeq", idSeq);
+		showToast({
+			str: "Click action has been recorded",
+			time: 1000,
+			position: "bottom",
+		});
+		ipcRenderer.send("idSeq", idSeq);
 	}
 });
 document.addEventListener("keypress", (e) => {
@@ -62,6 +69,24 @@ document.addEventListener("keypress", (e) => {
 			// parentLength: e.path.length,
 		};
 		console.log(idSeq);
+
 		ipcSend("idSeq", idSeq);
 	}
 });
+
+// Checking Internet status
+const updateOnlineStatus = () => {
+	showToast({
+		str: `You are ${navigator.onLine ? "online" : "offline"}`,
+		time: 1000,
+		position: "bottom",
+	});
+
+	ipcRenderer.send(
+		"online-status-changed",
+		navigator.onLine ? "online" : "offline"
+	);
+};
+
+window.addEventListener("online", updateOnlineStatus);
+window.addEventListener("offline", updateOnlineStatus);

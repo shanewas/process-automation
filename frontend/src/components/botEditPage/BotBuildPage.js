@@ -82,10 +82,10 @@ componentWillUnmount(){
           <SearchBar/>
           </Row>
           <Row style={{marginTop:"25vh",marginLeft:"30vh",marginRight:"5vh"}}>
-          <Col xs={12} md={12} lg={7} xl={7} >
+          <Col xs={12} md={12} lg={6} xl={6} >
           <Flowchart/>         
           </Col>
-          <Col xs={12} md={12} lg={5} xl={5} >
+          <Col xs={12} md={12} lg={6} xl={6} >
           <DatasetLoader/>
           </Col>
         </Row>

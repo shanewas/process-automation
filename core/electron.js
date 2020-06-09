@@ -146,13 +146,29 @@ ipcMain.on("start-bot", async function (e, botName) {
 		//inital pop from datacsv to localdata
 		localData = data.pop();
 	}
+	let notification = await botlist.setNotification(
+		botName,
+		"log",
+		" has started",
+		"null"
+	);
+	win.webContents.send("notification-single", notification);
 	iteration = bots.botIteration;
-	console.log(iteration);
+	console.log(`Bot is commencing ${iteration} iteration`);
 	idx = 0;
 });
 
 ipcMain.on("need-process", async function (e) {
 	let page = await pie.getPage(browser, loadingWindow);
+	if (Math.floor(iteration / 2) === idx && processCounter == 0) {
+		let notification = await botlist.setNotification(
+			bots.botName,
+			"log",
+			" has completed half its task",
+			"null"
+		);
+		win.webContents.send("notification-single", notification);
+	}
 	if (idx < iteration) {
 		console.log("*********Bot Process Number*********** " + idx);
 		element = botProcess.processSequence[processCounter];
@@ -224,6 +240,13 @@ ipcMain.on("need-process", async function (e) {
 			processCounter++;
 		}
 	} else {
+		let notification = await botlist.setNotification(
+			bots.botName,
+			"log",
+			" has completed its task",
+			"null"
+		);
+		win.webContents.send("notification-single", notification);
 		loadingWindow.hide();
 	}
 });
@@ -252,6 +275,10 @@ app.on("activate", () => {
 conf.config();
 
 //data COM
+ipcMain.handle("notification-multi", async (event, notiNumber) => {
+	const result = await botlist.getNotification(notiNumber);
+	return result;
+});
 ipcMain.handle("bots", async (event) => {
 	const result = await botlist.listAllBots();
 	return result;
@@ -267,9 +294,8 @@ ipcMain.handle("add-bot", async (event, botName, botType) => {
 	return result;
 });
 
-ipcMain.handle("remove-bot", async (event, botName) => {
-	const result = await botlist.removeBot(botName);
-	return result;
+ipcMain.on("remove-bot", async (event, botName) => {
+	await botlist.removeBot(botName);
 });
 
 ipcMain.on("update-bot-process", async (event, botName, botProcess) => {
@@ -291,10 +317,28 @@ ipcMain.handle("get-process", async (event, botName) => {
 	return result;
 });
 
+ipcMain.on("file-analytics", async (event, filepath) => {
+	const { size } = fs.statSync(filepath);
+	const results = [];
+	let analytics = {};
+	fs.createReadStream(filepath, { bufferSize: 64 * 1024 })
+		.pipe(csv())
+		.on("data", (data) => results.push(data))
+		.on("end", () => {
+			analytics = {
+				path: filepath,
+				size: size,
+				rowNumber: results.length,
+				type: "text/csv",
+			};
+			event.returnValue = analytics;
+		});
+});
+
 ipcMain.on("code-generation", async (event, file) => {
 	let options = {
 		title: "Save Generated Python File",
-		buttonLabel: "💾 Save Script",
+		buttonLabel: "Save Script",
 		filters: [
 			{ name: "Python", extensions: ["py"] },
 			{ name: "All Files", extensions: ["*"] },
@@ -305,4 +349,10 @@ ipcMain.on("code-generation", async (event, file) => {
 		if (err) console.log("Canceled!");
 		else console.log("Saved!");
 	});
+});
+
+// Internet Status
+
+ipcMain.on("online-status-changed", (event, status) => {
+	console.log(status);
 });

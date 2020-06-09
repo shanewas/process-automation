@@ -35,8 +35,8 @@ export default function MenualEntryModal(props) {
             className="form-control"
             onChange={e => setData(e.target.value)}
           />
-        <Button className="mt-4 mr-3 btn btn-danger" type="submit" >Cancel</Button>
-        <Button className="mt-4" type="submit" >Submit</Button>
+        <Button className="mt-4 mr-3 btn btn-danger" onClick={()=>{props.onHide()}}>Cancel</Button>
+        <Button className="mt-4" type="submit">Apply</Button>
         </form>
       </Modal.Body>
 

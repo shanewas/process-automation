@@ -7,6 +7,8 @@ const initState={
     botName:null,
     prevStatus:null,
     botIteration:1,
+    datasetProperties:null,
+    
 }
 
 const loadHeaders = (state,headers,path) =>{
@@ -113,10 +115,14 @@ const EntryProcess = (state,process) =>{
             process:newprocess,
         }
 }
-const editProcess = (state,process) =>{
+const editProcess = (state,process,index) =>{
+        var newprocess=[...state.process];
+
+        newprocess[index]=process
+        console.log(index)
         return {
             ...state,
-            process:process,
+            process:newprocess,
         }
 }
 const clearAll = (state) =>{
@@ -205,7 +211,12 @@ const changeIteration = (state,iterationNumber) =>{
     }
 }
 
-
+ const changeDatasetProperties = (state,datasetProperties) =>{
+    return {
+        ...state,
+        datasetProperties:datasetProperties,
+    }
+ }
 const rootReducer = (state=initState,action) =>{
 
     console.log(action.type)
@@ -222,7 +233,7 @@ const rootReducer = (state=initState,action) =>{
         case "SEND_PROCESS":
             return EntryProcess(state,action.process)
         case "EDIT_PROCESS":
-            return editProcess(state,action.process)
+            return editProcess(state,action.process,action.index)
         case "CLEAR_All":
             return clearAll(state)
         case "CLEAR_FLOWCHART":
@@ -237,6 +248,8 @@ const rootReducer = (state=initState,action) =>{
             return menualEntryData(state,action.data,action.processIndex)
         case "SAVE_ITERATION":
             return changeIteration(state,action.iterationNumber)
+        case "LOADED_DATASET_PROPERTIES":
+            return changeDatasetProperties(state,action.properties)    
         default:
         return state
       }
