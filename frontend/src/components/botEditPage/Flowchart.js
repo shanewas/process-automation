@@ -2,12 +2,16 @@ import React, { Component } from 'react'
 import Card from "react-bootstrap/Card"
 import * as electron from "../../electronScript";
 import { connect } from 'react-redux';
-import { UseHeaderAction, UnselectHeaderAction, SendProcessAction ,editProcessAction, clearFlowchartAction,removeStepAction, MenualEntryAction} from '../../Store/actions';
+import { UseHeaderAction, UnselectHeaderAction, SendProcessAction 
+    ,editProcessAction, clearFlowchartAction,removeStepAction,
+     MenualEntryAction ,iterationChangeAction} from '../../Store/actions';
 import MenualEntryModal from "./MenualEntryModal"
 import ProcessConfigModal from './ProcessConfigModal';
+import BotConfigModal from './BotConfigModal';
 class Flowchart extends Component {
 
     state={
+        BotConfigModalShow:false,
         menualEntryModalShow:false,
         menualEntryindex:null,
         ProcessConfigModalShow:false,
@@ -63,6 +67,10 @@ class Flowchart extends Component {
             ProcessConfigModalIndex:null,
         })
     }
+    saveIteration =(iterationNumber) =>{
+ 
+        this.props.iterationChange(iterationNumber)
+      }
     componentDidMount()
 	{
 		electron.ipcRenderer.on(electron.ProcessLinkChannel,(e, content) =>{
@@ -98,6 +106,11 @@ class Flowchart extends Component {
                         onHide={() => this.setState({menualEntryModalShow:false})}
                         insertMenualData={this.insertMenualEntry}
                         />
+                        <BotConfigModal show={this.state.BotConfigModalShow}
+                        onHide={() => this.setState({BotConfigModalShow:false})}
+                        saveIteration={this.saveIteration}
+                        botIteration={this.props.botIteration}
+                        />
                         <ProcessConfigModal show={this.state.ProcessConfigModalShow}
                         onHide={() => this.setState({ProcessConfigModalShow:false})}
                         editStep={this.editStep}
@@ -108,7 +121,7 @@ class Flowchart extends Component {
                         <span className="float-left">Bot Name :{this.props.botName?this.props.botName:" Not Selected"}</span>
                         <span>
                         <i className="fas fa-undo-alt float-right mt-3 mr-3 fa-2x" onClick={()=>{this.props.clearFlowchart()}}></i>
-                        <i className="fas fa-cog float-right mt-3 mr-3 fa-2x"></i>
+                        <i className="fas fa-cog float-right mt-3 mr-3 fa-2x" onClick={() => this.setState({BotConfigModalShow:true})}></i>
                         </span>
                         {this.props.process.map((step,index)=>{
                         
@@ -202,7 +215,28 @@ class Flowchart extends Component {
                                     </div>
                                     </div>
                                     )
-                            }
+							}
+							else if (step._type === "ScreenShot") {
+								return (
+									<div key={index}>
+										<div style={{ textAlign: "center" }}>
+											<i className='fas fa-arrow-down fa-2x'></i>
+										</div>
+										<i
+											className='fas fa-window-close float-right mt-2 mr-5'
+											onClick={() => {
+												this.removeStep(index);
+											}}
+										></i>
+										<div
+											style={{ backgroundColor: "#e4a0f7" }}
+											className='m-b-30 text-white text-center mr-5 ml-5 mb-2 mt-2 p-3'
+										>
+											{step.placeholder}
+										</div>
+									</div>
+								);
+							}
                             else {
                                 return <div key={index}></div>
                             }
@@ -223,7 +257,9 @@ const mapStateToProps=(state)=>{
         process:state.process,
         headers:state.headers,
         selectedHeaderIndex:state.selectedHeader,
-        botName:state.botName
+        botName:state.botName,
+        botIteration:state.botIteration,
+
     }
 }
 const mapDispathtoProps=(dispatch)=>{
@@ -235,6 +271,7 @@ const mapDispathtoProps=(dispatch)=>{
         UnselectHeader:(index)=> {dispatch(UnselectHeaderAction(index))},
         clearFlowchart:()=> {dispatch(clearFlowchartAction())},
         removeStep:(index,num_of_step)=> {dispatch(removeStepAction(index,num_of_step))},
+        iterationChange:(iterationNumber)=>{dispatch(iterationChangeAction(iterationNumber))},
 
 
     }

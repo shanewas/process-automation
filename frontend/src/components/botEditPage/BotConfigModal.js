@@ -1,19 +1,23 @@
-import React , { useState } from "react";
+import React, { useState }  from "react";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 
-export default function MenualEntryModal(props) {
+export default function BotConfigModal(props) {
 
+  let [iteration, setiteration] = useState(null);
 
-  const [data, setData] = useState("");
   
   const handleSubmit = (evt) => {
       evt.preventDefault();
-      props.insertMenualData(data)
-      props.onHide();
+      props.saveIteration(iteration)  
+      props.onHide()
 
   }
-  
+
+  const itarationchange = (e) =>{
+    setiteration(e.target.value)
+    console.log(e.target.value)
+    }
 
   return (
     <Modal
@@ -25,16 +29,14 @@ export default function MenualEntryModal(props) {
     >
       <Modal.Header closeButton>
         <Modal.Title id="contained-modal-title-vcenter">
-            Manual Entry Data ?
+            Bot Configuration
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <form onSubmit={handleSubmit}>
-          <input
-            type="text"
-            className="form-control"
-            onChange={e => setData(e.target.value)}
-          />
+        <span> Bot Iteration 
+        <i className="fas fa-recycle ml-2" /> 
+           <input className="form-control" onChange={itarationchange} type="number" min={1} defaultValue={props.botIteration}/></span>
         <Button className="mt-4 mr-3 btn btn-danger float-right" onClick={()=>{props.onHide()}}>Cancel</Button>
         <Button className="mt-4  mr-3 float-right" type="submit">Apply</Button>
         </form>

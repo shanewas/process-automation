@@ -22,6 +22,7 @@ buildbot = (botName) =>{
   let status;
   let header;
   let process;
+  let iteration;
   let datasetProperties;
   Promise.all([
     electron.ipcRenderer.invoke("get-process", botName)
@@ -31,13 +32,14 @@ buildbot = (botName) =>{
   }),
     electron.ipcRenderer.invoke("bot-name", botName)
   .then((data) => {
+    iteration=data.botIteration
+    // if there is dataset
     if(data.filepath){
       filepath=data.filepath
       status=data.status
       header=data.header
       let properties=electron.ipcRenderer.sendSync("file-analytics",filepath)
       datasetProperties=properties
-      console.log("loaded properties")
     }else{
       filepath=null
       status=[]
@@ -46,13 +48,13 @@ buildbot = (botName) =>{
   })
   ])
   .then(()=>{
-    console.log("Changing page")
     let bot ={}
     bot['filepath']=filepath
     bot['botName']=botName
     bot['status']=status
     bot['header']=header
     bot['process']=process
+    bot['iteration']=iteration
     this.props.loadBot(bot)
     this.props.loadDatasetProperties(datasetProperties)
     this.setState({

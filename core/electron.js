@@ -13,12 +13,36 @@ require("electron-reload")(__dirname, {
 	electron: path.join(__dirname, "node_modules", ".bin", "electron"),
 });
 
-const { app, Menu, ipcMain, dialog } = electron;
+const { app, Menu, ipcMain, dialog, Notification } = electron;
 
 let { win, contectWindow, loadingWindow } = require("./electron/windowList");
 let window = require("./electron/createWindow");
 
-let browser;
+let browser, page;
+
+var BOTS;
+var BOTPROCESS;
+var DATA = [];
+var ITERATION = 1;
+var PROCESSLENGTH = 0;
+var PROCESSCOUNTER = 0;
+var LOCALDATA;
+var IDX;
+var ERRSTATUS = [];
+var RUNINGSTATUS = false;
+
+function reset_var() {
+	BOTS = null;
+	BOTPROCESS = null;
+	DATA = [];
+	ITERATION = 1;
+	PROCESSLENGTH = 0;
+	PROCESSCOUNTER = 0;
+	LOCALDATA = null;
+	IDX = 0;
+	ERRSTATUS = [];
+	RUNINGSTATUS = false;
+}
 
 function generateMainWindow() {
 	win = window.createWindow(
@@ -38,7 +62,7 @@ function generateMainWindow() {
 	loadingWindow = window.createWindow(
 		"none",
 		win,
-		true,
+		false,
 		true,
 		true,
 		"RunningBot.js"
@@ -46,6 +70,12 @@ function generateMainWindow() {
 	loadingWindow.on("close", (e) => {
 		e.preventDefault();
 		loadingWindow.hide();
+		reset_var();
+		loadingWindow.loadURL(
+			isDev
+				? "http://localhost:4000/loading.html"
+				: `file://${path.join(__dirname, "../frontend/build/loading.html")}`
+		);
 	});
 	win.once("ready-to-show", function () {
 		win.maximize();
@@ -103,6 +133,8 @@ ipcMain.on("idSeq", function (e, args) {
 		args["_type"] = "LoadData";
 	} else if (args.tagName === "KeyPress") {
 		args["_type"] = "KeyBoard";
+	} else if (args.tagName === "ScreenShot") {
+		args["_type"] = "ScreenShot";
 	} else {
 		args["_type"] = "click";
 	}
@@ -110,41 +142,33 @@ ipcMain.on("idSeq", function (e, args) {
 	win.webContents.send("process-link", args);
 });
 
-var bots;
-var botProcess;
-var data = [];
-var iteration = 1;
-var processlength;
-var processCounter = 0;
-var localData;
-var idx;
-var ERRSTATUS = [];
-
 ipcMain.on("start-bot", async function (e, botName) {
+	reset_var();
 	loadingWindow.loadURL(
 		isDev
 			? "http://localhost:4000/loading.html"
 			: `file://${path.join(__dirname, "../frontend/build/loading.html")}`
 	);
 	loadingWindow.show();
+	RUNINGSTATUS = true;
 	await botlist.GetBot(botName).then((docs) => {
-		bots = docs;
+		BOTS = docs;
 	});
 	await botlist.GetProcess(botName).then((docs) => {
-		botProcess = docs;
-		processlength = botProcess.processSequence.length;
+		BOTPROCESS = docs;
+		PROCESSLENGTH = BOTPROCESS.processSequence.length;
 	});
-	if (bots.filepath) {
-		fs.createReadStream(bots.filepath, { bufferSize: 64 * 1024 })
+	if (BOTS.filepath) {
+		fs.createReadStream(BOTS.filepath, { bufferSize: 64 * 1024 })
 			.pipe(csv())
 			.on("data", (row) => {
-				data.push(row);
+				DATA.push(row);
 			})
 			.on("end", () => {
 				console.log("CSV file successfully processed");
+				//inital pop from datacsv to LOCALDATA
+				LOCALDATA = DATA.pop();
 			});
-		//inital pop from datacsv to localdata
-		localData = data.pop();
 	}
 	let notification = await botlist.setNotification(
 		botName,
@@ -153,101 +177,139 @@ ipcMain.on("start-bot", async function (e, botName) {
 		"null"
 	);
 	win.webContents.send("notification-single", notification);
-	iteration = bots.botIteration;
-	console.log(`Bot is commencing ${iteration} iteration`);
-	idx = 0;
+	ITERATION = BOTS.botIteration;
+	console.log(`Bot is commencing ${ITERATION} iteration`);
+	IDX = 0;
+	botlist.setLastActiveTime(botName);
 });
 
 ipcMain.on("need-process", async function (e) {
-	let page = await pie.getPage(browser, loadingWindow);
-	if (Math.floor(iteration / 2) === idx && processCounter == 0) {
-		let notification = await botlist.setNotification(
-			bots.botName,
-			"log",
-			" has completed half its task",
-			"null"
-		);
-		win.webContents.send("notification-single", notification);
-	}
-	if (idx < iteration) {
-		console.log("*********Bot Process Number*********** " + idx);
-		element = botProcess.processSequence[processCounter];
-		let elements, dat;
-		try {
-			switch (element._type) {
-				case "LoadData":
-					if (element.dataHeader) {
-						dat = localData[element.dataHeader];
-					} else {
-						dat = element.MenualData;
-					}
-					console.log(`sending data to load ...`);
-					if (element.type === "radio" || element.type === "checkbox") {
-						if (element.ext.label === dat) {
-							elements = await page.$x(element.xpath, {
-								visible: true,
-							});
-							await elements[0].click();
-						} else {
-							loadingWindow.webContents.send("next-process");
-							break;
-						}
-					} else {
-						elements = await page.$x(element.xpath);
-						await elements[0].type(dat);
-					}
-					loadingWindow.webContents.send("next-process");
-					break;
-				case "click":
-					console.log("clicking element ...");
-					elements = await page.$x(element.xpath);
-					await elements[0].click();
-					loadingWindow.webContents.send("next-process-state-change");
-					break;
-				case "KeyBoard":
-					console.log(`Pressing ${element.value} ...`);
-					elements = await page.$x(element.xpath);
-					await elements[0].press(`${element.value}`);
-					loadingWindow.webContents.send("next-process-state-change");
-					break;
-				case "link":
-					console.log("loading url ... " + page.url());
-					await page.goto(element.link);
-					break;
-				default:
-					console.log("_type doesnt match");
-			}
-		} catch (error) {
-			var errorGen = {
-				datatime: new Date(),
-				type: element._type,
-				DataLength: `#${data.length}`,
-				CurrentDataRow: `${JSON.stringify(localData)}`,
-				Iteration: `#${idx}`,
-				ProcCount: `#${processCounter}`,
-				ProcSeq_elem: element,
-				Error: error,
-			};
-			await page.reload();
-			ERRSTATUS.push(errorGen);
-		}
+	let myNotification = new Notification("Title", {
+		body: "Lorem Ipsum Dolor Sit Amet",
+	});
 
-		if (processCounter + 1 >= processlength) {
-			processCounter = 0;
-			if (bots.filepath) localData = data.pop();
-			idx++;
-		} else {
-			processCounter++;
+	myNotification.onclick = () => {
+		console.log("Notification clicked");
+	};
+	if (RUNINGSTATUS) {
+		page = await pie.getPage(browser, loadingWindow, false);
+		if (Math.floor(ITERATION / 2) === IDX && PROCESSCOUNTER == 0) {
+			let notification = await botlist.setNotification(
+				BOTS.botName,
+				"log",
+				" has completed half its task",
+				"null"
+			);
+			win.webContents.send("notification-single", notification);
 		}
-	} else {
-		let notification = await botlist.setNotification(
-			bots.botName,
-			"log",
-			" has completed its task",
-			"null"
-		);
-		win.webContents.send("notification-single", notification);
-		loadingWindow.hide();
+		if (IDX < ITERATION) {
+			console.log("*********Bot Process Number*********** " + IDX);
+			element = BOTPROCESS.processSequence[PROCESSCOUNTER];
+			let elements, dat;
+			try {
+				switch (element._type) {
+					case "LoadData":
+						if (element.dataHeader) {
+							dat = LOCALDATA[element.dataHeader];
+						} else {
+							dat = element.MenualData;
+						}
+						console.log(`sending data to load ...`);
+						if (element.type === "radio" || element.type === "checkbox") {
+							if (element.ext.label === dat) {
+								elements = await page.$x(element.xpath, {
+									visible: true,
+								});
+								await elements[0].click();
+							} else {
+								loadingWindow.webContents.send("next-process");
+								break;
+							}
+						} else {
+							elements = await page.$x(element.xpath);
+							await elements[0].type(dat);
+						}
+						loadingWindow.webContents.send("next-process");
+						break;
+					case "click":
+						console.log("clicking element ...");
+						elements = await page.$x(element.xpath);
+						await elements[0].click();
+						loadingWindow.webContents.send("next-process-state-change");
+						break;
+					case "KeyBoard":
+						console.log(`Pressing ${element.value} ...`);
+						elements = await page.$x(element.xpath);
+						await elements[0].press(`${element.value}`);
+						loadingWindow.webContents.send("next-process-state-change");
+						break;
+					case "ScreenShot":
+						console.log(`Taking screenshot ...`);
+						console.log(`will saving to ${element.imgpath}`);
+						if (!fs.existsSync(element.imgpath)) {
+							fs.mkdirSync(element.imgpath);
+						}
+						let img_filename = `${BOTS.botName}_${IDX}${PROCESSCOUNTER}.jpeg`;
+						let pathTo = path.join(element.imgpath, img_filename);
+						console.log(pathTo);
+						await page.screenshot({
+							path: pathTo,
+							type: "jpeg",
+							fullPage: true,
+						});
+						loadingWindow.webContents.send("next-process");
+						break;
+					case "link":
+						console.log("loading url ... " + page.url());
+						loadingWindow.loadURL(element.link);
+						break;
+					default:
+						console.log("_type doesnt match");
+				}
+			} catch (error) {
+				var errorGen = {
+					datatime: new Date(),
+					type: element._type,
+					DataLength: `#${DATA.length}`,
+					CurrentDataRow: `${JSON.stringify(LOCALDATA)}`,
+					Iteration: `#${IDX}`,
+					ProcCount: `#${PROCESSCOUNTER}`,
+					ProcSeq_elem: element,
+					Error: error,
+				};
+				// await page.reload();
+				ERRSTATUS.push(errorGen);
+				console.log(ERRSTATUS);
+				let notification = await botlist.setNotification(
+					BOTS.botName,
+					"error",
+					` is facing an issue with #${PROCESSCOUNTER} process in #${IDX} Iteration`,
+					"null"
+				);
+				win.webContents.send("notification-single", notification);
+				// loadingWindow.webContents.send("next-process-state-change");
+			}
+
+			if (PROCESSCOUNTER + 1 >= PROCESSLENGTH) {
+				PROCESSCOUNTER = 0;
+				if (BOTS.filepath) LOCALDATA = DATA.pop();
+				IDX++;
+			} else {
+				PROCESSCOUNTER++;
+			}
+		} else {
+			let notification = await botlist.setNotification(
+				BOTS.botName,
+				"log",
+				" has completed its task",
+				"null"
+			);
+			win.webContents.send("notification-single", notification);
+			win.setProgressBar(0.0);
+			loadingWindow.hide();
+			reset_var();
+		}
+		win.setProgressBar(IDX / ITERATION);
 	}
 });
 
@@ -298,8 +360,8 @@ ipcMain.on("remove-bot", async (event, botName) => {
 	await botlist.removeBot(botName);
 });
 
-ipcMain.on("update-bot-process", async (event, botName, botProcess) => {
-	await botlist.updateBotProcess(botName, botProcess);
+ipcMain.on("update-bot-process", async (event, botName, BOTPROCESS) => {
+	await botlist.updateBotProcess(botName, BOTPROCESS);
 });
 
 ipcMain.on("update-bot", async (event, botName, saveBotObj) => {

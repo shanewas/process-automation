@@ -29,7 +29,8 @@
     "recharts": "^2.0.0-beta.1",
     "redux": "^4.0.5",
     "redux-cookies-middleware": "^0.2.1",
-    "redux-thunk": "^2.3.0"
+    "redux-thunk": "^2.3.0",
+    "react-toastify": "^6.0.5"
   },
   "homepage": "./",
   "scripts": {

@@ -111,7 +111,7 @@ const updateBotProcess = async function (botName, process) {
 		if (docs === null) {
 			await db.processList.insert(bot).then((err, doc) => {
 				console.log(
-					`process: ${bot.processSequence} added to ${bot.botName} bot`
+					`process sequence added to ${bot.botName} bot`
 				);
 			});
 		} else {
@@ -210,12 +210,33 @@ const setNotification = async function (botName, type, message, action) {
 			action: action,
 			time: currentDateTime,
 		};
-		await db.notificationList.insert(notification).then((err, doc) => {
-			console.log(`Notification ${doc} successfully added ${botName}`);
+		await db.notificationList.insert(notification).then((err) => {
+			console.log(`Notification successfully added ${botName}`);
 		});
 		return notification;
 	}
 };
+
+
+const setLastActiveTime = async function (botName) {
+
+	const docs = await db.botsList.findOne({ botName: botName }, {}).exec();
+	if(docs===null) console.log(`No such bot named ${botName} found!`);
+	else{
+		let time = getCurrentTime();
+		await db.botsList.update(
+			{ botName: botName }, 
+			{ $set: { lastActive: time } }, 
+			{}
+			
+		)
+		.then((err, numReplaced) => {
+			console.log(`Bot ${botName} was last active at: ${time}`);
+		});
+	}
+
+};
+
 
 module.exports = {
 	addBot,
@@ -230,4 +251,5 @@ module.exports = {
 	removeBot,
 	setNotification,
 	updateBotProcess,
+	setLastActiveTime,
 };
