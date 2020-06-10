@@ -18,7 +18,7 @@ const { app, Menu, ipcMain, dialog, Notification } = electron;
 let { win, contectWindow, loadingWindow } = require("./electron/windowList");
 let window = require("./electron/createWindow");
 
-let browser, page;
+let browser;
 
 var BOTS;
 var BOTPROCESS;
@@ -184,6 +184,10 @@ ipcMain.on("start-bot", async function (e, botName) {
 });
 
 ipcMain.on("need-process", async function (e) {
+	let isLoading = false;
+	let page = await pie.getPage(browser, loadingWindow, false).catch((err) => {
+		isLoading = true;
+	});
 	let myNotification = new Notification("Title", {
 		body: "Lorem Ipsum Dolor Sit Amet",
 	});
@@ -191,8 +195,7 @@ ipcMain.on("need-process", async function (e) {
 	myNotification.onclick = () => {
 		console.log("Notification clicked");
 	};
-	if (RUNINGSTATUS) {
-		page = await pie.getPage(browser, loadingWindow, false);
+	if (RUNINGSTATUS && !isLoading) {
 		if (Math.floor(ITERATION / 2) === IDX && PROCESSCOUNTER == 0) {
 			let notification = await botlist.setNotification(
 				BOTS.botName,
@@ -203,7 +206,8 @@ ipcMain.on("need-process", async function (e) {
 			win.webContents.send("notification-single", notification);
 		}
 		if (IDX < ITERATION) {
-			console.log("*********Bot Process Number*********** " + IDX);
+			console.log(`*** Iteration No. #${IDX} running ***`);
+			console.log(`*** Currently on No. #${PROCESSCOUNTER} flowchart item ***`);
 			element = BOTPROCESS.processSequence[PROCESSCOUNTER];
 			let elements, dat;
 			try {
