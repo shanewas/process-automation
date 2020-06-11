@@ -19,7 +19,7 @@ let { win, contectWindow, loadingWindow } = require("./electron/windowList");
 let window = require("./electron/createWindow");
 
 let browser;
-
+let LINKALREADYOPENED = false;
 var BOTS;
 var BOTPROCESS;
 var DATA = [];
@@ -54,11 +54,6 @@ function generateMainWindow() {
 		true,
 		false
 	);
-	contectWindow = window.createWindow("none", win, false, true, true);
-	contectWindow.on("close", (e) => {
-		e.preventDefault();
-		contectWindow.hide();
-	});
 	loadingWindow = window.createWindow(
 		"none",
 		win,
@@ -90,11 +85,9 @@ function generateMainWindow() {
 		"closed",
 		() => ((window = null), (loadingWindow = null), (contectWindow = null))
 	);
-	// contectWindow.on("closed", () => (contectWindow = null));
-	// loadingWindow.on("closed", () => (loadingWindow = null));
 }
-
 ipcMain.on("search-link", function (event, args) {
+	LINKALREADYOPENED = true;
 	let procSeq = {
 		tagName: `Web Link`,
 		type: undefined,
@@ -114,15 +107,23 @@ ipcMain.on("search-link", function (event, args) {
 		},
 		_type: `link`,
 	};
-	win.webContents.send("process-link", procSeq);
-
-	contectWindow.loadURL(procSeq.link);
+	if (!LINKALREADYOPENED) {
+		contectWindow = window.createWindow(procSeq.link, win, false, true, true);
+	} else {
+		contectWindow.destroy();
+		contectWindow = window.createWindow(procSeq.link, win, false, true, true);
+	}
+	contectWindow.on("close", (e) => {
+		LINKALREADYOPENED = false;
+		e.preventDefault();
+		contectWindow.hide();
+		contectWindow.destroy();
+	});
 	contectWindow.webContents.on("dom-ready", function (e) {
 		contectWindow.maximize();
 		contectWindow.show();
 	});
-	//history
-	// console.log(contectWindow.webContents.history);
+	win.webContents.send("process-link", procSeq);
 });
 
 ipcMain.on("idSeq", function (e, args) {
@@ -138,7 +139,6 @@ ipcMain.on("idSeq", function (e, args) {
 	} else {
 		args["_type"] = "click";
 	}
-	// console.log(args);
 	win.webContents.send("process-link", args);
 });
 
@@ -265,7 +265,7 @@ ipcMain.on("need-process", async function (e) {
 						break;
 					case "link":
 						console.log("loading url ... " + page.url());
-						loadingWindow.loadURL(element.link);
+						await page.goto(element.link);
 						break;
 					default:
 						console.log("_type doesnt match");
@@ -281,7 +281,6 @@ ipcMain.on("need-process", async function (e) {
 					ProcSeq_elem: element,
 					Error: error,
 				};
-				// await page.reload();
 				ERRSTATUS.push(errorGen);
 				console.log(ERRSTATUS);
 				let notification = await botlist.setNotification(
