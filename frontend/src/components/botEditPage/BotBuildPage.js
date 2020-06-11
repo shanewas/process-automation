@@ -21,7 +21,7 @@ class BotBuildPage extends Component {
     selectmodalShow:false,
     codeGenerationModal:false,
     code:"",
-    saved:false
+    changed:false
 }
 
 savebot =() =>{
@@ -56,13 +56,15 @@ selectBot = (botName) =>{
   let process=this.props.process
   electron.ipcRenderer.send("update-bot-process", botName, process);
   electron.ipcRenderer.send("update-bot", botName, saveBotObject);
+  this.botChanged(false)
+}
+botChanged = (change) =>{
   this.setState({
-    saved:true
+    saved:change
   })
 }
-
 runBot = () =>{
-  if(this.state.saved)
+  if(!this.state.changed)
   {
   electron.ipcRenderer.send(electron.startBotChannel, this.props.botName)
   }

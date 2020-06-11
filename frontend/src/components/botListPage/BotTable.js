@@ -65,6 +65,7 @@ buildbot = (botName) =>{
 }
 startbot = (botName) =>{
   electron.ipcRenderer.send(electron.startBotChannel, botName)
+  this.updatetable()
 }
 
 badgemaker =(status) =>
