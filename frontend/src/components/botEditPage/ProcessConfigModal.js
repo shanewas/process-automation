@@ -88,11 +88,11 @@ export default function ProcessConfigModal(props) {
                         <input className="form-control"defaultValue={process.placeholder} onChange={handleChange} name="placeholder"/>
                         <label htmlFor="Link">Label:</label> 
                         {/* change this when ext is removed */}
-                        {process.ext?
+                        {/* {process.ext? */}
                         <input className="form-control"defaultValue={process.ext.label} onChange={handleChange} name="ext-label"/>
-                        :
+                        {/* // : */}
                         <input className="form-control"defaultValue={process.label}onChange={handleChange} name="label"/>
-                        }
+                        {/* } */}
                     </div>:<div></div>
                 }
                 {
