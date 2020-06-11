@@ -202,7 +202,7 @@ const setNotification = async function (botName, type, message, action) {
 	const docs = await db.botsList.findOne({ botName: botName }, {}).exec();
 	if (docs === null) console.log(`No such bot named ${botName} found!!`);
 	else {
-		let currentDateTime = getCurrentTime();
+		let currentDateTime = Date.now();
 		let notification = {
 			botName: botName,
 			type: type,
