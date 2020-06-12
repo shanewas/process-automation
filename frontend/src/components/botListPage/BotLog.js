@@ -37,7 +37,7 @@ export default class BotLog extends Component {
                         return(
                             <li className="feed-item" key={index}>
                                 <div className="feed-item-list">
-                                <p className="text-muted mb-1">{moment(notification.time,"MMMM Do YYYY at H:mm:ss a").fromNow()}</p>
+                                <p className="text-muted mb-1">{moment(notification.time).fromNow()}</p>
                                 <p className="font-15 mt-0 mb-0"><b className="text-primary">{notification.botName}</b> {notification.message} </p>
                                 </div>
                             </li>
