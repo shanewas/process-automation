@@ -66,11 +66,7 @@ function generateMainWindow() {
 		e.preventDefault();
 		loadingWindow.hide();
 		reset_var();
-		loadingWindow.loadURL(
-			isDev
-				? "http://localhost:4000/loading.html"
-				: `file://${path.join(__dirname, "../frontend/build/loading.html")}`
-		);
+		win.setProgressBar(0.0);
 	});
 	win.once("ready-to-show", function () {
 		win.maximize();
@@ -87,7 +83,6 @@ function generateMainWindow() {
 	);
 }
 ipcMain.on("search-link", function (event, args) {
-	LINKALREADYOPENED = true;
 	let procSeq = {
 		tagName: `Web Link`,
 		type: undefined,
@@ -108,6 +103,7 @@ ipcMain.on("search-link", function (event, args) {
 		_type: `link`,
 	};
 	if (!LINKALREADYOPENED) {
+		LINKALREADYOPENED = true;
 		contectWindow = window.createWindow(procSeq.link, win, false, true, true);
 	} else {
 		contectWindow.destroy();
@@ -150,7 +146,6 @@ ipcMain.on("start-bot", async function (e, botName) {
 			: `file://${path.join(__dirname, "../frontend/build/loading.html")}`
 	);
 	loadingWindow.show();
-	RUNINGSTATUS = true;
 	await botlist.GetBot(botName).then((docs) => {
 		BOTS = docs;
 	});
@@ -181,10 +176,12 @@ ipcMain.on("start-bot", async function (e, botName) {
 	console.log(`Bot is commencing ${ITERATION} iteration`);
 	IDX = 0;
 	botlist.setLastActiveTime(botName);
+	RUNINGSTATUS = true;
 });
 
 ipcMain.on("need-process", async function (e) {
 	let isLoading = false;
+	let autoLoad = false;
 	let page = await pie.getPage(browser, loadingWindow, false).catch((err) => {
 		isLoading = true;
 	});
@@ -239,13 +236,17 @@ ipcMain.on("need-process", async function (e) {
 						console.log("clicking element ...");
 						elements = await page.$x(element.xpath);
 						await elements[0].click();
-						loadingWindow.webContents.send("next-process-state-change");
+						loadingWindow.webContents.on("will-navigate", (event, url) => {
+							autoLoad = true;
+						});
 						break;
 					case "KeyBoard":
 						console.log(`Pressing ${element.value} ...`);
 						elements = await page.$x(element.xpath);
 						await elements[0].press(`${element.value}`);
-						loadingWindow.webContents.send("next-process-state-change");
+						loadingWindow.webContents.on("will-navigate", (event, url) => {
+							autoLoad = true;
+						});
 						break;
 					case "ScreenShot":
 						console.log(`Taking screenshot ...`);
@@ -292,13 +293,15 @@ ipcMain.on("need-process", async function (e) {
 				win.webContents.send("notification-single", notification);
 				// loadingWindow.webContents.send("next-process-state-change");
 			}
-
 			if (PROCESSCOUNTER + 1 >= PROCESSLENGTH) {
 				PROCESSCOUNTER = 0;
 				if (BOTS.filepath) LOCALDATA = DATA.pop();
 				IDX++;
 			} else {
 				PROCESSCOUNTER++;
+				if (!autoLoad) {
+					loadingWindow.webContents.send("next-process");
+				}
 			}
 		} else {
 			let notification = await botlist.setNotification(
