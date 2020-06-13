@@ -5,6 +5,8 @@ import * as electron from "../../electronScript";
 import { connect } from 'react-redux';
 import {loadBotAction,loadDatasetProperties} from '../../Store/actions'
 import { Redirect } from "react-router-dom";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 class BotTable extends Component {
 
@@ -64,8 +66,22 @@ buildbot = (botName) =>{
 
 }
 startbot = (botName) =>{
+  if(navigator.onLine)
+  {
   electron.ipcRenderer.send(electron.startBotChannel, botName)
   this.updatetable()
+  }
+  else{
+    toast.warning('No internet connection', {
+      position: "top-right",
+      autoClose: 1500,
+      hideProgressBar: true,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      });
+  }
 }
 
 badgemaker =(status) =>
@@ -97,7 +113,7 @@ render(){
   } 
   return (
     <div className="row">
-    
+      <ToastContainer style={{fontWeight:"bolder"}} />
       <DeleteBotModal
       bot={this.state.deletebotselect}
       show={this.state.deletemodalShow}
