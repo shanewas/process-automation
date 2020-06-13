@@ -106,6 +106,18 @@ export default function ProcessConfigModal(props) {
                         <input className="form-control"defaultValue={process.placeholder} onChange={handleChange} name="placeholder"/>
                         <label htmlFor="Link">Label:</label> 
                         <input className="form-control"defaultValue={process.ext.label} onChange={handleChange} name="ext-label"/>
+                        <label htmlFor="Link">Input Type:</label> 
+                        {process.type}
+                        <select className="form-control" defaultValue={process.type} onChange={handleChange} name="type" >
+                            <option value="">NULL</option>
+                            <option value="radio">radio</option>
+                            <option value="password">password</option>
+                            <option value="text">text</option>
+                            <option value="checkbox">checkbox</option>
+                            <option value="email">email</option>
+
+                            
+                        </select>
                         { process.dataHeader? <div>
                         <label htmlFor="Link">Data Collumn:</label>
                         <input className="form-control"defaultValue={process.dataHeader} onChange={handleChange} name="dataHeader"/>
