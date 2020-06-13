@@ -1,9 +1,39 @@
+const path = require("path");
 const electron = require("electron");
+const { app, Menu, ipcMain, dialog, Notification, BrowserWindow } = electron;
+let splashWindow;
+function splashScreen() {
+	splashWindow = new BrowserWindow({
+		width: 500,
+		height: 300,
+		modal: true,
+		frame: false,
+		show: false,
+		title: "AIW Core",
+		icon: path.join(__dirname, "../logo.png"),
+		alwaysOnTop: true,
+		fullscreen: false,
+		fullscreenable: false,
+		opacity: 1.0,
+		transparent: true,
+		skipTaskbar: true,
+		autoHideMenuBar: true,
+		resizable: false,
+		movable: false,
+	});
+	splashWindow.loadURL(
+		isDev
+			? "http://localhost:4000/splash.html"
+			: `file://${path.join(__dirname, "../frontend/build/splash.html")}`
+	);
+	splashWindow.setIgnoreMouseEvents(true);
+	splashWindow.setFocusable(false);
+	splashWindow.show();
+}
 const csv = require("csv-parser");
 const isDev = require("electron-is-dev");
 const pie = require("puppeteer-in-electron");
 const puppeteer = require("puppeteer-core");
-const path = require("path");
 const fs = require("fs");
 const botlist = require("../backend/dataControl/botlist");
 const conf = require("./electron/config");
@@ -12,8 +42,6 @@ const menu = require("./electron/menu");
 require("electron-reload")(__dirname, {
 	electron: path.join(__dirname, "node_modules", ".bin", "electron"),
 });
-
-const { app, Menu, ipcMain, dialog, Notification } = electron;
 
 let { win, contectWindow, loadingWindow } = require("./electron/windowList");
 let window = require("./electron/createWindow");
@@ -69,8 +97,12 @@ function generateMainWindow() {
 		win.setProgressBar(0.0);
 	});
 	win.once("ready-to-show", function () {
-		win.maximize();
-		win.show();
+		setTimeout(() => {
+			win.maximize();
+			win.show();
+			splashWindow.hide();
+			splashWindow.destroy();
+		}, 1000);
 	});
 	// Build menu
 	const mainMenu = Menu.buildFromTemplate(menu.mainMenuTempate);
@@ -139,6 +171,9 @@ ipcMain.on("idSeq", function (e, args) {
 });
 
 ipcMain.on("start-bot", async function (e, botName) {
+	let botsReady = false;
+	let procSeqReady = false;
+	let fileReady = false;
 	reset_var();
 	loadingWindow.loadURL(
 		isDev
@@ -146,13 +181,23 @@ ipcMain.on("start-bot", async function (e, botName) {
 			: `file://${path.join(__dirname, "../frontend/build/loading.html")}`
 	);
 	loadingWindow.show();
-	await botlist.GetBot(botName).then((docs) => {
-		BOTS = docs;
-	});
-	await botlist.GetProcess(botName).then((docs) => {
-		BOTPROCESS = docs;
-		PROCESSLENGTH = BOTPROCESS.processSequence.length;
-	});
+	await botlist
+		.GetBot(botName)
+		.then((docs) => {
+			BOTS = docs;
+		})
+		.then(() => {
+			botsReady = true;
+		});
+	await botlist
+		.GetProcess(botName)
+		.then((docs) => {
+			BOTPROCESS = docs;
+			PROCESSLENGTH = BOTPROCESS.processSequence.length;
+		})
+		.then(() => {
+			procSeqReady = true;
+		});
 	if (BOTS.filepath) {
 		fs.createReadStream(BOTS.filepath, { bufferSize: 64 * 1024 })
 			.pipe(csv())
@@ -163,7 +208,10 @@ ipcMain.on("start-bot", async function (e, botName) {
 				console.log("CSV file successfully processed");
 				//inital pop from datacsv to LOCALDATA
 				LOCALDATA = DATA.pop();
+				fileReady = true;
 			});
+	} else {
+		fileReady = true;
 	}
 	let notification = await botlist.setNotification(
 		botName,
@@ -176,7 +224,7 @@ ipcMain.on("start-bot", async function (e, botName) {
 	console.log(`Bot is commencing ${ITERATION} iteration`);
 	IDX = 0;
 	botlist.setLastActiveTime(botName);
-	RUNINGSTATUS = true;
+	if (botsReady && procSeqReady && fileReady) RUNINGSTATUS = true;
 });
 
 ipcMain.on("need-process", async function (e) {
@@ -325,6 +373,7 @@ const main = async () => {
 };
 main();
 app.on("ready", () => {
+	splashScreen();
 	generateMainWindow();
 });
 
