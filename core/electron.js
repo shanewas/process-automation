@@ -180,6 +180,7 @@ ipcMain.on("start-bot", async function (e, botName) {
 			? "http://localhost:4000/loading.html"
 			: `file://${path.join(__dirname, "../frontend/build/loading.html")}`
 	);
+	loadingWindow.maximize();
 	loadingWindow.show();
 	await botlist
 		.GetBot(botName)
@@ -304,7 +305,11 @@ ipcMain.on("need-process", async function (e) {
 						}
 						let img_filename = `${BOTS.botName}_${IDX}${PROCESSCOUNTER}.jpeg`;
 						let pathTo = path.join(element.imgpath, img_filename);
-						console.log(pathTo);
+						await page.setViewport({
+							width: 1920,
+							height: 1080,
+							deviceScaleFactor: 1,
+						});
 						await page.screenshot({
 							path: pathTo,
 							type: "jpeg",
