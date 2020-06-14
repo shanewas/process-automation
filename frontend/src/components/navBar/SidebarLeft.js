@@ -14,35 +14,35 @@ export default class SidebarLeft extends Component {
 
   render() {
     return (
-      <div className="left side-menu">
+      <div className="left side-menu" style={{width:"260px"}}>
         <div className="slimscroll-menu" id="remove-scroll">
           <div id="sidebar-menu">
             <ul className="metismenu" id="side-menu">
               <li className="menu-title">Functions</li>
               <li>
                 <a href="index.html" className="waves-effect">
-                  <i className="fas fa-mouse-pointer fa-2x mr-2" />
-                  <span> Click  </span>
+                  <i className="fas fa-mouse-pointer fa-2x" />
+                  <span>Click <kbd><kbd>shift</kbd> + <kbd>click</kbd></kbd>  </span>
                 </a>
               </li>
               <li>
                 <a href="index.html" className="waves-effect">
-                  <i className="fas fa-clipboard fa-2x mr-2" />
-                  <span> Load Data  </span>
-                </a>
-              </li>
-
-              <li>
-                <a href="index.html" className="waves-effect">
-                  <i className="fas fa-question fa-2x mr-2" />
-                  <span> If condition  </span>
+                  <i className="fas fa-clipboard fa-2x mr-1" />
+                  <span>Load Data <kbd><kbd>shift</kbd> + <kbd>click</kbd></kbd> </span>
                 </a>
               </li>
 
               <li>
                 <a href="index.html" className="waves-effect">
-                  <i className="fas fa-redo-alt fa-2x mr-2" />
-                  <span> Loop  </span>
+                  <i className="far fa-keyboard mr-3 fa-2x" />
+                  <span>Keyboard <kbd><kbd>shift</kbd> + <kbd>key</kbd></kbd> </span>
+                </a>
+              </li>
+
+              <li>
+                <a href="index.html" className="waves-effect">
+                  <i className="fas fa-camera mr-1 fa-2x" />
+                  <span> ScreenShot <kbd><kbd>shift</kbd> + <kbd>T</kbd></kbd></span>
                 </a>
               </li>
               
@@ -50,19 +50,19 @@ export default class SidebarLeft extends Component {
 
               <li>
                 <div onClick={this.save} className="waves-effect p-3">
-                  <i className="fas fa-save fa-2x mr-2" />
+                  <i className="fas fa-save mr-1 fa-2x" />
                   <span> Save Bot  </span>
                 </div>
               </li>
               <li>
                 <div onClick={this.generateCode} className="waves-effect p-3">
-                  <i className="fas fa-code fa-2x mr-2" />
+                  <i className="fas fa-code mr-1 fa-2x" />
                   <span> Generate Code  </span>
                 </div>
               </li>
               <li>
                 <div onClick={this.props.runBot} className="waves-effect p-3">
-                  <i className="fas fa-rocket fa-2x mr-2" />
+                  <i className="fas fa-rocket mr-1 fa-2x" />
                   <span> Run Bot  </span>
                 </div>
               </li>

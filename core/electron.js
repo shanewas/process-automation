@@ -1,9 +1,39 @@
+const path = require("path");
 const electron = require("electron");
+const { app, Menu, ipcMain, dialog, Notification, BrowserWindow } = electron;
+let splashWindow;
+function splashScreen() {
+	splashWindow = new BrowserWindow({
+		width: 500,
+		height: 300,
+		modal: true,
+		frame: false,
+		show: false,
+		title: "AIW Core",
+		icon: path.join(__dirname, "../logo.png"),
+		alwaysOnTop: true,
+		fullscreen: false,
+		fullscreenable: false,
+		opacity: 1.0,
+		transparent: true,
+		skipTaskbar: true,
+		autoHideMenuBar: true,
+		resizable: false,
+		movable: false,
+	});
+	splashWindow.loadURL(
+		isDev
+			? "http://localhost:4000/splash.html"
+			: `file://${path.join(__dirname, "../frontend/build/splash.html")}`
+	);
+	splashWindow.setIgnoreMouseEvents(true);
+	splashWindow.setFocusable(false);
+	splashWindow.show();
+}
 const csv = require("csv-parser");
 const isDev = require("electron-is-dev");
 const pie = require("puppeteer-in-electron");
 const puppeteer = require("puppeteer-core");
-const path = require("path");
 const fs = require("fs");
 const botlist = require("../backend/dataControl/botlist");
 const conf = require("./electron/config");
@@ -13,13 +43,11 @@ require("electron-reload")(__dirname, {
 	electron: path.join(__dirname, "node_modules", ".bin", "electron"),
 });
 
-const { app, Menu, ipcMain, dialog, Notification } = electron;
-
 let { win, contectWindow, loadingWindow } = require("./electron/windowList");
 let window = require("./electron/createWindow");
 
 let browser;
-
+let LINKALREADYOPENED = false;
 var BOTS;
 var BOTPROCESS;
 var DATA = [];
@@ -54,11 +82,6 @@ function generateMainWindow() {
 		true,
 		false
 	);
-	contectWindow = window.createWindow("none", win, false, true, true);
-	contectWindow.on("close", (e) => {
-		e.preventDefault();
-		contectWindow.hide();
-	});
 	loadingWindow = window.createWindow(
 		"none",
 		win,
@@ -71,15 +94,15 @@ function generateMainWindow() {
 		e.preventDefault();
 		loadingWindow.hide();
 		reset_var();
-		loadingWindow.loadURL(
-			isDev
-				? "http://localhost:4000/loading.html"
-				: `file://${path.join(__dirname, "../frontend/build/loading.html")}`
-		);
+		win.setProgressBar(0.0);
 	});
 	win.once("ready-to-show", function () {
-		win.maximize();
-		win.show();
+		setTimeout(() => {
+			win.maximize();
+			win.show();
+			splashWindow.hide();
+			splashWindow.destroy();
+		}, 1000);
 	});
 	// Build menu
 	const mainMenu = Menu.buildFromTemplate(menu.mainMenuTempate);
@@ -90,10 +113,7 @@ function generateMainWindow() {
 		"closed",
 		() => ((window = null), (loadingWindow = null), (contectWindow = null))
 	);
-	// contectWindow.on("closed", () => (contectWindow = null));
-	// loadingWindow.on("closed", () => (loadingWindow = null));
 }
-
 ipcMain.on("search-link", function (event, args) {
 	let procSeq = {
 		tagName: `Web Link`,
@@ -114,15 +134,24 @@ ipcMain.on("search-link", function (event, args) {
 		},
 		_type: `link`,
 	};
-	win.webContents.send("process-link", procSeq);
-
-	contectWindow.loadURL(procSeq.link);
+	if (!LINKALREADYOPENED) {
+		LINKALREADYOPENED = true;
+		contectWindow = window.createWindow(procSeq.link, win, false, true, true);
+	} else {
+		contectWindow.destroy();
+		contectWindow = window.createWindow(procSeq.link, win, false, true, true);
+	}
+	contectWindow.on("close", (e) => {
+		LINKALREADYOPENED = false;
+		e.preventDefault();
+		contectWindow.hide();
+		contectWindow.destroy();
+	});
 	contectWindow.webContents.on("dom-ready", function (e) {
 		contectWindow.maximize();
 		contectWindow.show();
 	});
-	//history
-	// console.log(contectWindow.webContents.history);
+	win.webContents.send("process-link", procSeq);
 });
 
 ipcMain.on("idSeq", function (e, args) {
@@ -138,26 +167,38 @@ ipcMain.on("idSeq", function (e, args) {
 	} else {
 		args["_type"] = "click";
 	}
-	// console.log(args);
 	win.webContents.send("process-link", args);
 });
 
 ipcMain.on("start-bot", async function (e, botName) {
+	let botsReady = false;
+	let procSeqReady = false;
+	let fileReady = false;
 	reset_var();
 	loadingWindow.loadURL(
 		isDev
 			? "http://localhost:4000/loading.html"
 			: `file://${path.join(__dirname, "../frontend/build/loading.html")}`
 	);
+	loadingWindow.maximize();
 	loadingWindow.show();
-	RUNINGSTATUS = true;
-	await botlist.GetBot(botName).then((docs) => {
-		BOTS = docs;
-	});
-	await botlist.GetProcess(botName).then((docs) => {
-		BOTPROCESS = docs;
-		PROCESSLENGTH = BOTPROCESS.processSequence.length;
-	});
+	await botlist
+		.GetBot(botName)
+		.then((docs) => {
+			BOTS = docs;
+		})
+		.then(() => {
+			botsReady = true;
+		});
+	await botlist
+		.GetProcess(botName)
+		.then((docs) => {
+			BOTPROCESS = docs;
+			PROCESSLENGTH = BOTPROCESS.processSequence.length;
+		})
+		.then(() => {
+			procSeqReady = true;
+		});
 	if (BOTS.filepath) {
 		fs.createReadStream(BOTS.filepath, { bufferSize: 64 * 1024 })
 			.pipe(csv())
@@ -168,7 +209,10 @@ ipcMain.on("start-bot", async function (e, botName) {
 				console.log("CSV file successfully processed");
 				//inital pop from datacsv to LOCALDATA
 				LOCALDATA = DATA.pop();
+				fileReady = true;
 			});
+	} else {
+		fileReady = true;
 	}
 	let notification = await botlist.setNotification(
 		botName,
@@ -181,10 +225,12 @@ ipcMain.on("start-bot", async function (e, botName) {
 	console.log(`Bot is commencing ${ITERATION} iteration`);
 	IDX = 0;
 	botlist.setLastActiveTime(botName);
+	if (botsReady && procSeqReady && fileReady) RUNINGSTATUS = true;
 });
 
 ipcMain.on("need-process", async function (e) {
 	let isLoading = false;
+	let autoLoad = false;
 	let page = await pie.getPage(browser, loadingWindow, false).catch((err) => {
 		isLoading = true;
 	});
@@ -239,13 +285,17 @@ ipcMain.on("need-process", async function (e) {
 						console.log("clicking element ...");
 						elements = await page.$x(element.xpath);
 						await elements[0].click();
-						loadingWindow.webContents.send("next-process-state-change");
+						loadingWindow.webContents.on("will-navigate", (event, url) => {
+							autoLoad = true;
+						});
 						break;
 					case "KeyBoard":
 						console.log(`Pressing ${element.value} ...`);
 						elements = await page.$x(element.xpath);
 						await elements[0].press(`${element.value}`);
-						loadingWindow.webContents.send("next-process-state-change");
+						loadingWindow.webContents.on("will-navigate", (event, url) => {
+							autoLoad = true;
+						});
 						break;
 					case "ScreenShot":
 						console.log(`Taking screenshot ...`);
@@ -255,7 +305,11 @@ ipcMain.on("need-process", async function (e) {
 						}
 						let img_filename = `${BOTS.botName}_${IDX}${PROCESSCOUNTER}.jpeg`;
 						let pathTo = path.join(element.imgpath, img_filename);
-						console.log(pathTo);
+						await page.setViewport({
+							width: 1920,
+							height: 1080,
+							deviceScaleFactor: 1,
+						});
 						await page.screenshot({
 							path: pathTo,
 							type: "jpeg",
@@ -265,7 +319,7 @@ ipcMain.on("need-process", async function (e) {
 						break;
 					case "link":
 						console.log("loading url ... " + page.url());
-						loadingWindow.loadURL(element.link);
+						await page.goto(element.link);
 						break;
 					default:
 						console.log("_type doesnt match");
@@ -281,7 +335,6 @@ ipcMain.on("need-process", async function (e) {
 					ProcSeq_elem: element,
 					Error: error,
 				};
-				// await page.reload();
 				ERRSTATUS.push(errorGen);
 				console.log(ERRSTATUS);
 				let notification = await botlist.setNotification(
@@ -293,13 +346,15 @@ ipcMain.on("need-process", async function (e) {
 				win.webContents.send("notification-single", notification);
 				// loadingWindow.webContents.send("next-process-state-change");
 			}
-
 			if (PROCESSCOUNTER + 1 >= PROCESSLENGTH) {
 				PROCESSCOUNTER = 0;
 				if (BOTS.filepath) LOCALDATA = DATA.pop();
 				IDX++;
 			} else {
 				PROCESSCOUNTER++;
+				if (!autoLoad) {
+					loadingWindow.webContents.send("next-process");
+				}
 			}
 		} else {
 			let notification = await botlist.setNotification(
@@ -323,6 +378,7 @@ const main = async () => {
 };
 main();
 app.on("ready", () => {
+	splashScreen();
 	generateMainWindow();
 });
 
