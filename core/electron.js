@@ -1,5 +1,7 @@
 const path = require("path");
 const electron = require("electron");
+const Tesseract = require("tesseract.js");
+
 const { app, Menu, ipcMain, dialog, Notification, BrowserWindow } = electron;
 let splashWindow;
 function splashScreen() {
@@ -527,6 +529,44 @@ ipcMain.on("code-generation", async (event, file) => {
 	fs.writeFile((await save).filePath, file, function (err) {
 		if (err) console.log("Canceled!");
 		else console.log("Saved!");
+	});
+});
+
+//OCR botOcr expects and [] array of imagepath
+// insideBotOcr is mendetory, ocrpath is optional
+ipcMain.on("ocr-engine", async (event, insideBotOcr = false, ocrpath) => {
+	let upload_options = {
+		title: "Optical character recognition",
+		buttonLabel: "Upload",
+		filters: [{ name: "Images", extensions: ["jpg", "png"] }],
+	};
+	let save_options = {
+		title: "Save OCR results",
+		buttonLabel: "Save",
+		filters: [
+			{ name: "Text", extensions: ["txt"] },
+			{ name: "All Files", extensions: ["*"] },
+		],
+	};
+	let paths = insideBotOcr
+		? ocrpath
+		: (await dialog.showOpenDialog(win, upload_options)).filePaths;
+	let writePath = insideBotOcr
+		? isDev
+			? path.join("./backend/data/ocr/")
+			: `file://${path.join(__dirname, "../backend/data/ocr/")}`
+		: (await dialog.showSaveDialog(win, save_options)).filePath;
+
+	paths.forEach((path) => {
+		Tesseract.recognize(path, "eng", { logger: (m) => console.log(m) }).then(
+			({ data: { text } }) => {
+				console.log(text);
+				fs.writeFile(writePath, text, function (err) {
+					if (err) console.log("Canceled!");
+					else console.log("Saved!");
+				});
+			}
+		);
 	});
 });
 
