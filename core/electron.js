@@ -48,6 +48,7 @@ let window = require("./electron/createWindow");
 
 let browser;
 let LINKALREADYOPENED = false;
+let BOTALREADYOPENED = false;
 var BOTS;
 var BOTPROCESS;
 var DATA = [];
@@ -82,20 +83,6 @@ function generateMainWindow() {
 		true,
 		false
 	);
-	loadingWindow = window.createWindow(
-		"none",
-		win,
-		false,
-		true,
-		true,
-		"RunningBot.js"
-	);
-	loadingWindow.on("close", (e) => {
-		e.preventDefault();
-		loadingWindow.hide();
-		reset_var();
-		win.setProgressBar(0.0);
-	});
 	win.once("ready-to-show", function () {
 		setTimeout(() => {
 			win.maximize();
@@ -175,11 +162,39 @@ ipcMain.on("start-bot", async function (e, botName) {
 	let procSeqReady = false;
 	let fileReady = false;
 	reset_var();
-	loadingWindow.loadURL(
-		isDev
-			? "http://localhost:4000/loading.html"
-			: `file://${path.join(__dirname, "../frontend/build/loading.html")}`
-	);
+	if (!BOTALREADYOPENED) {
+		console.log("om here#0");
+		BOTALREADYOPENED = true;
+		loadingWindow = window.createWindow(
+			isDev
+				? "http://localhost:4000/loading.html"
+				: `file://${path.join(__dirname, "../frontend/build/loading.html")}`,
+			win,
+			false,
+			true,
+			true,
+			"RunningBot.js"
+		);
+	} else {
+		loadingWindow.destroy();
+		loadingWindow = window.createWindow(
+			isDev
+				? "http://localhost:4000/loading.html"
+				: `file://${path.join(__dirname, "../frontend/build/loading.html")}`,
+			win,
+			false,
+			true,
+			true
+		);
+	}
+	loadingWindow.on("close", (e) => {
+		BOTALREADYOPENED = false;
+		e.preventDefault();
+		reset_var();
+		win.setProgressBar(0.0);
+		loadingWindow.hide();
+		loadingWindow.destroy();
+	});
 	loadingWindow.maximize();
 	loadingWindow.show();
 	await botlist
@@ -187,17 +202,15 @@ ipcMain.on("start-bot", async function (e, botName) {
 		.then((docs) => {
 			BOTS = docs;
 		})
-		.then(() => {
+		.then(async () => {
 			botsReady = true;
-		});
-	await botlist
-		.GetProcess(botName)
-		.then((docs) => {
-			BOTPROCESS = docs;
-			PROCESSLENGTH = BOTPROCESS.processSequence.length;
-		})
-		.then(() => {
-			procSeqReady = true;
+			let notification = await botlist.setNotification(
+				botName,
+				"log",
+				" initiated",
+				"null"
+			);
+			win.webContents.send("notification-single", notification);
 		});
 	if (BOTS.filepath) {
 		fs.createReadStream(BOTS.filepath, { bufferSize: 64 * 1024 })
@@ -205,27 +218,69 @@ ipcMain.on("start-bot", async function (e, botName) {
 			.on("data", (row) => {
 				DATA.push(row);
 			})
-			.on("end", () => {
+			.on("end", async () => {
 				console.log("CSV file successfully processed");
 				//inital pop from datacsv to LOCALDATA
 				LOCALDATA = DATA.pop();
 				fileReady = true;
+				let notification = await botlist.setNotification(
+					botName,
+					"log",
+					" is file ready",
+					"null"
+				);
+				win.webContents.send("notification-single", notification);
 			});
 	} else {
 		fileReady = true;
 	}
-	let notification = await botlist.setNotification(
-		botName,
-		"log",
-		" has started",
-		"null"
-	);
-	win.webContents.send("notification-single", notification);
+	await botlist
+		.GetProcess(botName)
+		.then((docs) => {
+			BOTPROCESS = docs;
+			PROCESSLENGTH = BOTPROCESS.processSequence.length;
+		})
+		.then(async () => {
+			procSeqReady = true;
+			let notification = await botlist.setNotification(
+				botName,
+				"log",
+				"'s process sequence is initiated",
+				"null"
+			);
+			win.webContents.send("notification-single", notification);
+		});
 	ITERATION = BOTS.botIteration;
 	console.log(`Bot is commencing ${ITERATION} iteration`);
 	IDX = 0;
 	botlist.setLastActiveTime(botName);
-	if (botsReady && procSeqReady && fileReady) RUNINGSTATUS = true;
+	if (botsReady && procSeqReady && fileReady) {
+		RUNINGSTATUS = true;
+		let notification = await botlist.setNotification(
+			botName,
+			"log",
+			" is starting",
+			"null"
+		);
+		win.webContents.send("notification-single", notification);
+	} else {
+		console.log(
+			`Bots Ready Status : ${botsReady} - Process Ready Status : ${[
+				procSeqReady,
+			]} ${BOTS.filepath ? `- File Ready Status : ${fileReady}` : null}`
+		);
+		let notification = await botlist.setNotification(
+			botName,
+			"log",
+			`Bots : ${botsReady ? "Ready" : "Not Ready"} \n Process : ${
+				procSeqReady ? "Ready" : "Not Ready"
+			} ${
+				BOTS.filepath ? `\n File : ${fileReady ? "Ready" : "Not Ready"}` : null
+			}`,
+			"null"
+		);
+		win.webContents.send("notification-single", notification);
+	}
 });
 
 ipcMain.on("need-process", async function (e) {
@@ -365,8 +420,10 @@ ipcMain.on("need-process", async function (e) {
 			);
 			win.webContents.send("notification-single", notification);
 			win.setProgressBar(0.0);
-			loadingWindow.hide();
 			reset_var();
+			BOTALREADYOPENED = false;
+			loadingWindow.hide();
+			loadingWindow.destroy();
 		}
 		win.setProgressBar(IDX / ITERATION);
 	}
