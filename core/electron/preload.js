@@ -67,6 +67,7 @@ document.addEventListener("keypress", (e) => {
 			ext: {
 				label: label,
 			},
+			ocr: false,
 			imgpath: isDev
 				? path.join("./backend/data/screenshot/")
 				: // : path.join("./backend/data/screenshot/", fileName), //LINUX BUILD TILL SPRINT 2 TODO: Figure out how to handle this

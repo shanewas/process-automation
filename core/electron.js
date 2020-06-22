@@ -548,26 +548,28 @@ ipcMain.on("ocr-engine", async (event, insideBotOcr = false, ocrpath) => {
 			{ name: "All Files", extensions: ["*"] },
 		],
 	};
-	let paths = insideBotOcr
+	insideBotOcr
 		? ocrpath
-		: (await dialog.showOpenDialog(win, upload_options)).filePaths;
-	let writePath = insideBotOcr
-		? isDev
-			? path.join("./backend/data/ocr/")
-			: `file://${path.join(__dirname, "../backend/data/ocr/")}`
-		: (await dialog.showSaveDialog(win, save_options)).filePath;
-
-	paths.forEach((path) => {
-		Tesseract.recognize(path, "eng", { logger: (m) => console.log(m) }).then(
-			({ data: { text } }) => {
-				console.log(text);
-				fs.writeFile(writePath, text, function (err) {
-					if (err) console.log("Canceled!");
-					else console.log("Saved!");
-				});
-			}
-		);
-	});
+		: (await dialog.showOpenDialog(win, upload_options)).filePaths.forEach(
+				(path) => {
+					Tesseract.recognize(path, "eng", {
+						logger: (m) => console.log(m),
+					}).then(async ({ data: { text } }) => {
+						console.log(text);
+						fs.writeFile(
+							insideBotOcr
+								? isDev
+									? path.join("./backend/data/ocr/")
+									: `file://${path.join(__dirname, "../backend/data/ocr/")}`
+								: (await dialog.showSaveDialog(win, save_options)).filePath,
+							text,
+							(err) => {
+								err ? console.log("Canceled!") : console.log("Saved!");
+							}
+						);
+					});
+				}
+		  );
 });
 
 // Internet Status
