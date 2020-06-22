@@ -367,12 +367,33 @@ ipcMain.on("need-process", async function (e) {
 							height: 1080,
 							deviceScaleFactor: 1,
 						});
-						await page.screenshot({
-							path: pathTo,
-							type: "jpeg",
-							fullPage: true,
-						});
-						loadingWindow.webContents.send("next-process");
+						await page
+							.screenshot({
+								path: pathTo,
+								type: "jpeg",
+								fullPage: true,
+							})
+							.then(() => {
+								if (element.ocr) {
+									if (!fs.existsSync(element.ocrpath)) {
+										fs.mkdirSync(element.ocrpath);
+									}
+									let ocr_filename = `${BOTS.botName}_${IDX}${PROCESSCOUNTER}.txt`;
+									let saveTo = path.join(element.ocrpath, ocr_filename);
+									Tesseract.recognize(pathTo, "eng", {
+										logger: (m) => console.log(m),
+									})
+										.then(async ({ data: { text } }) => {
+											console.log(text);
+											fs.writeFile(saveTo, text, (err) => {
+												err ? console.log("Canceled!") : console.log("Saved!");
+											});
+										})
+										.then(() => {
+											loadingWindow.webContents.send("next-process");
+										});
+								}
+							});
 						break;
 					case "link":
 						console.log("loading url ... " + page.url());
@@ -532,9 +553,9 @@ ipcMain.on("code-generation", async (event, file) => {
 	});
 });
 
-//OCR botOcr expects and [] array of imagepath
-// insideBotOcr is mendetory, ocrpath is optional
-ipcMain.on("ocr-engine", async (event, insideBotOcr = false, ocrpath) => {
+//OCR Module
+
+ipcMain.on("ocr-engine", async (event) => {
 	let upload_options = {
 		title: "Optical character recognition",
 		buttonLabel: "Upload",
@@ -548,28 +569,22 @@ ipcMain.on("ocr-engine", async (event, insideBotOcr = false, ocrpath) => {
 			{ name: "All Files", extensions: ["*"] },
 		],
 	};
-	insideBotOcr
-		? ocrpath
-		: (await dialog.showOpenDialog(win, upload_options)).filePaths.forEach(
-				(path) => {
-					Tesseract.recognize(path, "eng", {
-						logger: (m) => console.log(m),
-					}).then(async ({ data: { text } }) => {
-						console.log(text);
-						fs.writeFile(
-							insideBotOcr
-								? isDev
-									? path.join("./backend/data/ocr/")
-									: `file://${path.join(__dirname, "../backend/data/ocr/")}`
-								: (await dialog.showSaveDialog(win, save_options)).filePath,
-							text,
-							(err) => {
-								err ? console.log("Canceled!") : console.log("Saved!");
-							}
-						);
-					});
-				}
-		  );
+	(await dialog.showOpenDialog(win, upload_options)).filePaths.forEach(
+		async (path) => {
+			Tesseract.recognize(path, "eng", {
+				logger: (m) => console.log(m),
+			}).then(async ({ data: { text } }) => {
+				console.log(text);
+				fs.writeFile(
+					(await dialog.showSaveDialog(win, save_options)).filePath,
+					text,
+					(err) => {
+						err ? console.log("Canceled!") : console.log("Saved!");
+					}
+				);
+			});
+		}
+	);
 });
 
 // Internet Status
