@@ -15,7 +15,11 @@ import {
 import MenualEntryModal from "./MenualEntryModal";
 import ProcessConfigModal from "./ProcessConfigModal";
 import BotConfigModal from "./BotConfigModal";
+import { ModalContext } from "../../context/ModalContext";
+
 class Flowchart extends Component {
+  static contextType = ModalContext;
+
   state = {
     BotConfigModalShow: false,
     menualEntryModalShow: false,
@@ -78,8 +82,14 @@ class Flowchart extends Component {
     electron.ipcRenderer.removeAllListeners(electron.ProcessLinkChannel);
   }
 
+  dcModalHandleClose = (_) => {
+    this.setState({
+      dataConditionsModalShow: false,
+    });
+  };
+
   render() {
-    console.log(this.props.process);
+    const { setCurrentModal } = this.context;
     if (this.props.process.length === 0) {
       return (
         <div>
@@ -207,6 +217,15 @@ class Flowchart extends Component {
                             this.openconfigtab(index);
                           }}
                         ></i>
+                        <i
+                          className="fas fa-edit float-right mt-2 mr-2"
+                          onClick={() => {
+                            setCurrentModal({
+                              name: "DataConditionModal",
+                              props: { headers: this.props.headers },
+                            });
+                          }}
+                        ></i>
                       </span>
                       <div
                         style={{ backgroundColor: "#a044b3" }}
@@ -301,7 +320,7 @@ class Flowchart extends Component {
                           }}
                         ></i>
                         <i
-                          className="fas fa-cog float-right mt-2 mr-2"
+                          className="fas fa-eye float-right mt-2 mr-2"
                           onClick={() => {
                             this.openconfigtab(index);
                           }}

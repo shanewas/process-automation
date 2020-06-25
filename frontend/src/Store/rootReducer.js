@@ -93,9 +93,7 @@ const UnselectHeader = (state, index) => {
   };
 };
 const EntryProcess = (state, process) => {
-  const tProcess = { ...process };
-  // if (tProcess.tagName === "ScreenShot") tProcess.ocr = false;
-  const newprocess = [...state.process, tProcess];
+  const newprocess = [...state.process, process];
   return {
     ...state,
     process: newprocess,
