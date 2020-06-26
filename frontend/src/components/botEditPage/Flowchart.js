@@ -89,6 +89,7 @@ class Flowchart extends Component {
   };
 
   render() {
+    console.log(this.props.process);
     const { setCurrentModal } = this.context;
     if (this.props.process.length === 0) {
       return (
@@ -222,7 +223,12 @@ class Flowchart extends Component {
                           onClick={() => {
                             setCurrentModal({
                               name: "DataConditionModal",
-                              props: { headers: this.props.headers },
+                              props: {
+                                headers: this.props.headers,
+                                process: this.props.process[index],
+                                editProcess: (process) =>
+                                  this.props.editProcess(process, index),
+                              },
                             });
                           }}
                         ></i>
@@ -232,6 +238,15 @@ class Flowchart extends Component {
                         onClick={() => this.insertHeader(index)}
                         className="m-b-30 text-white bg text-center mr-5 ml-5 mb-2 mt-2 p-3"
                       >
+                        <span
+                          style={{
+                            color: "#fff",
+                            fontSize: "12px !important",
+                            display: "block",
+                          }}
+                        >
+                          {step.conditions?.length ?? 0} Condition(s)
+                        </span>
                         Load Data {step.placeholder}
                         <br />
                         {"dataHeader" in step ? (
