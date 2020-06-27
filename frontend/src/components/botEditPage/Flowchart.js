@@ -82,12 +82,6 @@ class Flowchart extends Component {
     electron.ipcRenderer.removeAllListeners(electron.ProcessLinkChannel);
   }
 
-  dcModalHandleClose = (_) => {
-    this.setState({
-      dataConditionsModalShow: false,
-    });
-  };
-
   render() {
     console.log(this.props.process);
     const { setCurrentModal } = this.context;
@@ -222,7 +216,7 @@ class Flowchart extends Component {
                           className="fas fa-edit float-right mt-2 mr-2"
                           onClick={() => {
                             setCurrentModal({
-                              name: "DataConditionModal",
+                              name: "DataConditionsModal",
                               props: {
                                 headers: this.props.headers,
                                 process: this.props.process[index],

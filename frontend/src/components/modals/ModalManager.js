@@ -1,9 +1,9 @@
 import React, { useContext } from "react";
 import { ModalContext } from "../../context/ModalContext";
-import DataConditionModal from "./DataConditionModal";
+import DataConditionsModal from "./DataConditionsModal/DataConditionsModal";
 
 const Modals = {
-  DataConditionModal,
+  DataConditionsModal,
 };
 
 const ModalManager = (props) => {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Button,
   Dialog,
@@ -6,22 +6,17 @@ import {
   DialogContent,
   DialogTitle,
   TextField,
-  MenuItem,
   Grid,
-  Select,
-  Paper,
   IconButton,
-  TableContainer,
-  Table,
-  TableHead,
-  TableRow,
-  TableBody,
-  TableCell,
   Box,
 } from "@material-ui/core/";
 import shortId from "shortid";
 
-import { Edit as EditIcon, Close as CloseIcon } from "@material-ui/icons/";
+import { Close as CloseIcon } from "@material-ui/icons/";
+import HeaderSelector from "./HeaderSelector";
+import OperatorSelector from "./OperatorSelector";
+import ConditionsTable from "./ConditionsTable";
+import ElTypeHeader from "./ElTypeHeader";
 
 const initState = {
   el1: "",
@@ -208,82 +203,6 @@ const DataConditionModal = ({
         </Button>
       </DialogActions>
     </Dialog>
-  );
-};
-
-const ElTypeHeader = ({ isManual, toggle }) => (
-  <div onClick={toggle} style={{ cursor: "pointer" }}>
-    <span style={{ fontWeight: isManual ? 700 : 400 }}>Manual</span> /{" "}
-    <span style={{ fontWeight: isManual ? 400 : 700 }}>Header</span>
-  </div>
-);
-
-const ConditionsTable = ({ conditions, editCondition }) => (
-  <TableContainer component={Paper}>
-    <Table>
-      <TableHead>
-        <TableRow>
-          <TableCell>Element 1</TableCell>
-          <TableCell align="right">Operator</TableCell>
-          <TableCell align="right">Element 2</TableCell>
-          <TableCell align="right">Edit</TableCell>
-        </TableRow>
-      </TableHead>
-      <TableBody>
-        {conditions.map((condition) => (
-          <TableRow key={condition.id}>
-            <TableCell>{condition.el1}</TableCell>
-            <TableCell align="right">{condition.operator}</TableCell>
-            <TableCell align="right">{condition.el2}</TableCell>
-            <TableCell align="right">
-              <IconButton onClick={() => editCondition(condition.id)}>
-                <EditIcon style={{ fontSize: "16px" }} />
-              </IconButton>
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
-  </TableContainer>
-);
-
-const OperatorSelector = ({ value = "", handleChange, error }) => (
-  <Select
-    variant="outlined"
-    style={{ width: "100%" }}
-    value={value}
-    error={error}
-    onChange={handleChange}
-    placeholder="Operator"
-  >
-    <MenuItem value={">"}>{">"}</MenuItem>
-    <MenuItem value={"="}>{"="}</MenuItem>
-    <MenuItem value={"<"}>{"<"}</MenuItem>
-  </Select>
-);
-
-const HeaderSelector = ({ value = "", handleChange, headers = [], error }) => {
-  return (
-    <Select
-      variant="outlined"
-      style={{ width: "100%" }}
-      value={value}
-      error={error}
-      onChange={handleChange}
-      placeholder="Header"
-    >
-      {headers.length === 0 ? (
-        <MenuItem disabled aria-label="None" value="">
-          No Header found
-        </MenuItem>
-      ) : (
-        headers.map((header) => (
-          <MenuItem key={header} value={header}>
-            {header}
-          </MenuItem>
-        ))
-      )}
-    </Select>
   );
 };
 
