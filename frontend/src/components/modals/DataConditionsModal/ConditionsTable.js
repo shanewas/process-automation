@@ -9,9 +9,9 @@ import {
   TableBody,
   TableCell,
 } from "@material-ui/core";
-import { Edit as EditIcon } from "@material-ui/icons/";
+import { Edit as EditIcon, Delete as DeleteIcon } from "@material-ui/icons/";
 
-export default ({ conditions, editCondition }) => (
+export default ({ conditions, editCondition, removeCondition }) => (
   <TableContainer component={Paper}>
     <Table>
       <TableHead>
@@ -20,6 +20,7 @@ export default ({ conditions, editCondition }) => (
           <TableCell align="right">Operator</TableCell>
           <TableCell align="right">Element 2</TableCell>
           <TableCell align="right">Edit</TableCell>
+          <TableCell align="right">Remove</TableCell>
         </TableRow>
       </TableHead>
       <TableBody>
@@ -31,6 +32,11 @@ export default ({ conditions, editCondition }) => (
             <TableCell align="right">
               <IconButton onClick={() => editCondition(condition.id)}>
                 <EditIcon style={{ fontSize: "16px" }} />
+              </IconButton>
+            </TableCell>
+            <TableCell align="right">
+              <IconButton onClick={() => removeCondition(condition.id)}>
+                <DeleteIcon style={{ fontSize: "16px" }} />
               </IconButton>
             </TableCell>
           </TableRow>

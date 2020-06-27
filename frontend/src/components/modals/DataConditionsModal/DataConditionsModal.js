@@ -40,7 +40,7 @@ const DataConditionModal = ({
   const [tConditions, setTConditions] = useState(process.conditions || []);
   const [errors, setErrors] = useState({});
 
-  const editCondition = (id) => {
+  const handleEditCondition = (id) => {
     const condition = tConditions.find((c) => c.id === id);
     setErrors({});
     setValues(condition);
@@ -75,6 +75,12 @@ const DataConditionModal = ({
     setValues((v) => ({ ...v, [e.target.name]: e.target.value }));
   };
 
+  const handleRemoveCondition = id => {
+    const conditions = tConditions.filter(c => c.id !== id);
+    updateProcessWithConditions(conditions);
+
+  }
+
   const handleSubmit = (_) => {
     setErrors({});
     // add
@@ -92,20 +98,22 @@ const DataConditionModal = ({
       setErrors(err);
       if (Object.keys(err).length > 0) return;
       const conditions = [...tConditions, { ...values, id: shortId() }];
-      updateProcessWithCondition(conditions);
+      updateProcessWithConditions(conditions);
     } else {
       const conditions = tConditions.map((c) =>
         c.id === values.id ? { ...values } : c
       );
-      updateProcessWithCondition(conditions);
+      updateProcessWithConditions(conditions);
     }
   };
 
-  const updateProcessWithCondition = (conditions) => {
+  const updateProcessWithConditions = (conditions) => {
     setTConditions(conditions);
     setValues(initState);
     editProcess({ ...process, conditions });
   };
+
+  
 
   return (
     <Dialog open={open} fullWidth>
@@ -187,7 +195,8 @@ const DataConditionModal = ({
         </Grid>
         <Box mt={2}>
           <ConditionsTable
-            editCondition={editCondition}
+            editCondition={handleEditCondition}
+            removeCondition={handleRemoveCondition}
             conditions={tConditions}
           />
         </Box>
