@@ -592,3 +592,59 @@ ipcMain.on("ocr-engine", async (event) => {
 ipcMain.on("online-status-changed", (event, status) => {
 	console.log(status);
 });
+
+// for bot export
+
+ipcMain.on("export-bot",async (event, botName) => {
+	let options = {
+		title: "Export AIW Project",
+		buttonLabel: "Export",
+		filters: [
+			{ name: "AIW Project", extensions: ["aiw"] },
+		],
+	};
+	const bot = await botlist.fetchBot(botName);
+	const process = await botlist.getProcessSequence(botName);
+	let project = {
+		bot:bot,
+		process:process
+	}
+	project=JSON.stringify(project)
+	const save = dialog.showSaveDialog(win, options);
+	fs.writeFile((await save).filePath, project, function (err) {
+		if (err) console.log("Canceled!");
+		else console.log("Exported!");
+	});
+});
+
+// for bot import
+
+ipcMain.on("import-bot",async (event) => {
+	let options = {
+		title: "Export AIW Project",
+		buttonLabel: "Export",
+		filters: [
+			{ name: "AIW Project", extensions: ["aiw"] },
+		],
+		// properties: ['openFile', 'multiSelections']
+	};
+	const save = dialog.showOpenDialog(win, options);
+	let paths=(await save).filePaths
+	for (const file of paths) {
+			const contents = await fs.readFile(file, async (err,data)=>{
+			if (err) console.log("Canceled!");
+			else 
+			{	
+			obj = JSON.parse(data);
+			await botlist.addBot(obj.bot.botName, obj.bot.botType)
+			await botlist.editBot(obj.bot.botName,obj.bot.filepath,obj.bot.header,obj.bot.status,obj.bot.botIteration);
+			await botlist.updateBotProcess(obj.bot.botName, obj.process);
+			event.reply('import-complete')
+			
+			}
+			});
+	  }
+	
+});
+
+
