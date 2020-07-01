@@ -162,12 +162,7 @@ class BotTable extends Component {
                 <td>{bot.category}</td>
                 <td>{bot.runTime}</td> */}
                           {/* MMMM Do YYYY at H:mm:ss a */}
-                          <td>
-                            {moment(
-                              bot.lastActive,
-                              "MMMM Do YYYY at H:mm:ss a"
-                            ).fromNow()}
-                          </td>
+                          <td>{moment(bot.lastActive).fromNow()}</td>
                           <td>
                             <div>
                               <div className="btn btn-primary mr-2 btn-sm">
