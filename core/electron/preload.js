@@ -67,6 +67,13 @@ document.addEventListener("keypress", (e) => {
 			ext: {
 				label: label,
 			},
+			ocr: false,
+			ocrpath: isDev
+				? path.join("./backend/data/ocr/")
+				: // : path.join("./backend/data/screenshot/", fileName), //LINUX BUILD TILL SPRINT 2 TODO: Figure out how to handle this
+				  // : path.join("./backend/data/screenshot/", fileName).replace('/app.asar', ''), //LINUX BUILD TILL SPRINT 2 TODO: Figure out how to handle this
+				  path.join(app.getAppPath("userData"), "../backend/data/ocr/"), // WINDOWS BUILD
+			// : path.join(__dirname, "../data/screenshot", fileName).replace('/app.asar', ''),
 			imgpath: isDev
 				? path.join("./backend/data/screenshot/")
 				: // : path.join("./backend/data/screenshot/", fileName), //LINUX BUILD TILL SPRINT 2 TODO: Figure out how to handle this

@@ -1,5 +1,7 @@
 const path = require("path");
 const electron = require("electron");
+const Tesseract = require("tesseract.js");
+
 const { app, Menu, ipcMain, dialog, Notification, BrowserWindow } = electron;
 let splashWindow;
 function splashScreen() {
@@ -365,12 +367,33 @@ ipcMain.on("need-process", async function (e) {
 							height: 1080,
 							deviceScaleFactor: 1,
 						});
-						await page.screenshot({
-							path: pathTo,
-							type: "jpeg",
-							fullPage: true,
-						});
-						loadingWindow.webContents.send("next-process");
+						await page
+							.screenshot({
+								path: pathTo,
+								type: "jpeg",
+								fullPage: true,
+							})
+							.then(() => {
+								if (element.ocr) {
+									if (!fs.existsSync(element.ocrpath)) {
+										fs.mkdirSync(element.ocrpath);
+									}
+									let ocr_filename = `${BOTS.botName}_${IDX}${PROCESSCOUNTER}.txt`;
+									let saveTo = path.join(element.ocrpath, ocr_filename);
+									Tesseract.recognize(pathTo, "eng", {
+										logger: (m) => console.log(m),
+									})
+										.then(async ({ data: { text } }) => {
+											console.log(text);
+											fs.writeFile(saveTo, text, (err) => {
+												err ? console.log("Canceled!") : console.log("Saved!");
+											});
+										})
+										.then(() => {
+											loadingWindow.webContents.send("next-process");
+										});
+								}
+							});
 						break;
 					case "link":
 						console.log("loading url ... " + page.url());
@@ -528,6 +551,40 @@ ipcMain.on("code-generation", async (event, file) => {
 		if (err) console.log("Canceled!");
 		else console.log("Saved!");
 	});
+});
+
+//OCR Module
+
+ipcMain.on("ocr-engine", async (event) => {
+	let upload_options = {
+		title: "Optical character recognition",
+		buttonLabel: "Upload",
+		filters: [{ name: "Images", extensions: ["jpg", "png"] }],
+	};
+	let save_options = {
+		title: "Save OCR results",
+		buttonLabel: "Save",
+		filters: [
+			{ name: "Text", extensions: ["txt"] },
+			{ name: "All Files", extensions: ["*"] },
+		],
+	};
+	(await dialog.showOpenDialog(win, upload_options)).filePaths.forEach(
+		async (path) => {
+			Tesseract.recognize(path, "eng", {
+				logger: (m) => console.log(m),
+			}).then(async ({ data: { text } }) => {
+				console.log(text);
+				fs.writeFile(
+					(await dialog.showSaveDialog(win, save_options)).filePath,
+					text,
+					(err) => {
+						err ? console.log("Canceled!") : console.log("Saved!");
+					}
+				);
+			});
+		}
+	);
 });
 
 // Internet Status

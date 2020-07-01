@@ -110,7 +110,8 @@
     "nedb-promises": "^4.0.3",
     "puppeteer-core": "^3.1.0",
     "puppeteer-in-electron": "^3.0.1",
-    "show-toast": "^1.1.4"
+    "show-toast": "^1.1.4",
+    "tesseract.js": "^2.1.1"
   },
   "devDependencies": {
     "concurrently": "^5.2.0",
