@@ -448,17 +448,16 @@ ipcMain.on("need-process", async function (e) {
 									let saveTo = path.join(element.ocrpath, ocr_filename);
 									Tesseract.recognize(pathTo, "eng", {
 										logger: (m) => console.log(m),
-									})
-										.then(async ({ data: { text } }) => {
-											console.log(text);
-											fs.writeFile(saveTo, text, (err) => {
-												err ? console.log("Canceled!") : console.log("Saved!");
-											});
-										})
-										.then(() => {
-											loadingWindow.webContents.send("next-process");
+									}).then(async ({ data: { text } }) => {
+										console.log(text);
+										fs.writeFile(saveTo, text, (err) => {
+											err ? console.log("Canceled!") : console.log("Saved!");
 										});
+									});
 								}
+							})
+							.finally(() => {
+								loadingWindow.webContents.send("next-process");
 							});
 						break;
 					case "link":
