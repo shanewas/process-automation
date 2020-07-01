@@ -102,6 +102,7 @@
   ],
   "peerDependencies": {},
   "dependencies": {
+    "@material-ui/lab": "^4.0.0-alpha.56",
     "csv-parser": "^2.3.2",
     "electron-is-dev": "^1.2.0",
     "electron-reload": "^1.5.0",
@@ -111,13 +112,15 @@
     "puppeteer-core": "^3.1.0",
     "puppeteer-in-electron": "^3.0.1",
     "show-toast": "^1.1.4",
-    "tesseract.js": "^2.1.1"
+    "tesseract.js": "^2.1.1",
+    "uuid": "^8.2.0"
   },
   "devDependencies": {
     "concurrently": "^5.2.0",
     "cross-env": "^7.0.2",
     "electron": "^9.0.0",
     "electron-builder": "^22.6.1",
+    "electron-devtools-installer": "^3.0.0",
     "wait-on": "^5.0.0"
   },
   "scripts": {
