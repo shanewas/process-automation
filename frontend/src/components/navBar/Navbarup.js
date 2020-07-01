@@ -19,14 +19,13 @@ class Navbar extends Component {
           </div>
           <nav className="navbar-custom">
             <ul className="navbar-right list-inline float-right mb-0">
-
-            <li className="dropdown notification-list list-inline-item d-none d-md-inline-block">
+              <li className="dropdown notification-list list-inline-item d-none d-md-inline-block">
                 <Link className="nav-link waves-effect" to="/list">
-                <i className="fas fa-home h2 pt-3" />
+                  <i className="fas fa-home h2 pt-3" />
                 </Link>
               </li>
-            
-            <li className="dropdown notification-list list-inline-item">
+
+              <li className="dropdown notification-list list-inline-item">
                 <a
                   className="nav-link dropdown-toggle arrow-none waves-effect"
                   data-toggle="dropdown"
@@ -107,9 +106,13 @@ class Navbar extends Component {
                   </a>
                 </div>
               </li>
-             
+
               <li className="dropdown notification-list list-inline-item d-none d-md-inline-block">
-                <Link className="nav-link waves-effect" to="/build/" onClick={this.props.clearProcess}>
+                <Link
+                  className="nav-link waves-effect"
+                  to="/build/"
+                  onClick={this.props.clearProcess}
+                >
                   <i className="fas fa-lg fa-lightbulb mr-2"></i>Create New
                 </Link>
               </li>
@@ -118,8 +121,6 @@ class Navbar extends Component {
                   <i className="fas fa-sign-out-alt mr-2"></i>Logout
                 </Link>
               </li>
-              
-              
             </ul>
           </nav>
         </div>
@@ -127,10 +128,11 @@ class Navbar extends Component {
     );
   }
 }
-const mapDispathtoProps=(dispatch)=>{
+const mapDispathtoProps = (dispatch) => {
   return {
-      clearProcess:()=>{dispatch(clearAllAction())},
-
-  }
-} 
-export default connect(null,mapDispathtoProps)(Navbar)
+    clearProcess: () => {
+      dispatch(clearAllAction());
+    },
+  };
+};
+export default connect(null, mapDispathtoProps)(Navbar);

@@ -10,19 +10,19 @@ import MainButtons from "./MainButtons";
 export default class BotListPage extends Component {
   render() {
     return (
-     <div>
+      <div>
         <Navbarup></Navbarup>
-        <div style={{margin:"13vh 10vh"}}>
-        <MainButtons/>
-        <Row>
-          <Col xs={12} md={12} lg={9} xl={9}>
-            <BotTable />
-          </Col>
-          <Col xs={12} md={12} lg={3} xl={3}>
-            <BotLog />
-          </Col>
-        </Row>
-      </div>
+        <div style={{ margin: "13vh 10vh" }}>
+          <MainButtons />
+          <Row>
+            <Col xs={12} md={12} lg={9} xl={9}>
+              <BotTable />
+            </Col>
+            <Col xs={12} md={12} lg={3} xl={3}>
+              <BotLog />
+            </Col>
+          </Row>
+        </div>
       </div>
     );
   }
