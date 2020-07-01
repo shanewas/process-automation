@@ -102,8 +102,22 @@ updatetable =()=>{
   }); 
 }
 
+exportBot = (botName) =>{
+  electron.ipcRenderer.send(electron.exportBot, botName)
+}
+
+importBot = () =>{
+  electron.ipcRenderer.send(electron.importBot)
+  
+}
+
 componentDidMount(){
+
   this.updatetable()
+  electron.ipcRenderer.on('import-complete', (event) => {
+    this.updatetable()
+  })
+
 }
 
 
@@ -123,8 +137,9 @@ render(){
   <div className="col-xl-12">
     <div className="card">
       <div className="card-body">
-        <h4 className="mt-0 header-title mb-4">Bot List
-        </h4>
+      <button className="btn btn-primary btn-sm ml-3" style={{float:"right"}} onClick={()=>{ this.importBot()}}><i className="fas fa-upload"></i> Import</button>
+        <h4 className="mt-0 header-title mb-4 ">Bot List<span> 
+          </span></h4>
         <div className="table-responsive">
           <table className="table table-hover" >
             <thead>
@@ -161,6 +176,10 @@ render(){
                       <div className="btn btn-danger mr-2 btn-sm">
                         <div onClick={()=>{this.setState({deletemodalShow:true,deletebotselect:bot})}}>
                       <i className="far fa-trash-alt"></i> Delete
+                      </div></div>
+                      <div className="btn btn-warning mr-2 btn-sm">
+                        <div onClick={()=>{this.exportBot(bot.botName)}}>
+                      <i className="fa fa-download"></i> Export
                       </div></div>
                   </div>
                 </td>

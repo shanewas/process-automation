@@ -11,6 +11,8 @@ export const SaveBotChannel = "Save-Bot";
 export const MultipleNotificationChannel = "notification-multi";
 export const SingleNotificationChannel = "notification-single";
 export const ocrEngineChannel = "ocr-engine";
+export const exportBot = "export-bot";
+export const importBot = "import-bot";
 
 export function send(teleport, content) {
   ipcRenderer.send(teleport, content);
