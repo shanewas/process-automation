@@ -102,26 +102,24 @@
   ],
   "peerDependencies": {},
   "dependencies": {
-    "@material-ui/lab": "^4.0.0-alpha.56",
-    "csv-parser": "^2.3.2",
+    "csv-parser": "^2.3.3",
     "electron-is-dev": "^1.2.0",
     "electron-reload": "^1.5.0",
     "jquery": "^3.5.1",
-    "moment": "^2.25.3",
+    "moment": "^2.27.0",
     "nedb-promises": "^4.0.3",
-    "puppeteer-core": "^3.1.0",
-    "puppeteer-in-electron": "^3.0.1",
+    "puppeteer-core": "^4.0.1",
+    "puppeteer-in-electron": "^3.0.3",
     "show-toast": "^1.1.4",
-    "tesseract.js": "^2.1.1",
-    "uuid": "^8.2.0"
+    "tesseract.js": "^2.1.1"
   },
   "devDependencies": {
     "concurrently": "^5.2.0",
     "cross-env": "^7.0.2",
-    "electron": "^9.0.0",
-    "electron-builder": "^22.6.1",
-    "electron-devtools-installer": "^3.0.0",
-    "wait-on": "^5.0.0"
+    "electron": "^9.0.5",
+    "electron-builder": "^22.7.0",
+    "electron-devtools-installer": "^3.1.0",
+    "wait-on": "^5.0.1"
   },
   "scripts": {
     "install-all": "npm install && cd frontend && npm install",
