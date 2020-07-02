@@ -4312,3 +4312,10 @@ table.focus-on tbody tr.focused td {
 .custom-control-label::before {
   border-color: #fff;
 }
+
+.input-field {
+  background-color: transparent;
+  border: 1px solid rgb(201, 201, 201);
+  color: rgb(201, 201, 201);
+  padding: 10px 20px;
+}
