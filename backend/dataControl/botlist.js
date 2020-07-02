@@ -183,10 +183,10 @@ async function GetBot(botName) {
 
 // getting current time and date in local format
 const getCurrentTime = () => {
-	let date = moment().format("MMMM Do YYYY");
-	let time = moment().format("h:mm:ss a");
-	let currentDateTime = date + " at " + time;
-	return currentDateTime;
+	// let date = moment().format("MMMM Do YYYY");
+	let time = moment().valueOf();
+	// let currentDateTime = date + " at " + time;
+	return time;
 };
 
 const getNotification = async function (notiNumber) {
