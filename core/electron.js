@@ -439,14 +439,14 @@ ipcMain.on("need-process", async function (e) {
 								type: "jpeg",
 								fullPage: true,
 							})
-							.then(() => {
+							.then(async () => {
 								if (element.ocr) {
 									if (!fs.existsSync(element.ocrpath)) {
 										fs.mkdirSync(element.ocrpath);
 									}
 									let ocr_filename = `${BOTS.botName}_${IDX}${PROCESSCOUNTER}.txt`;
 									let saveTo = path.join(element.ocrpath, ocr_filename);
-									Tesseract.recognize(pathTo, "eng", {
+									await Tesseract.recognize(pathTo, "eng", {
 										logger: (m) => console.log(m),
 									}).then(async ({ data: { text } }) => {
 										console.log(text);
