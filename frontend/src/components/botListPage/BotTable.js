@@ -31,20 +31,20 @@ class BotTable extends Component {
       electron.ipcRenderer.invoke("bot-name", botName).then((data) => {
         iteration = data.botIteration;
         // if there is dataset
-        if (data.filepath) {
-          filepath = data.filepath;
-          status = data.status;
-          header = data.header;
-          let properties = electron.ipcRenderer.sendSync(
-            "file-analytics",
-            filepath
-          );
-          datasetProperties = properties;
-        } else {
-          filepath = null;
-          status = [];
-          header = [];
-        }
+        let properties = electron.ipcRenderer.sendSync("file-analytics", data.filepath);
+        console.log(properties);
+        if(properties)
+          {
+            filepath = data.filepath;
+            status = data.status;
+            header = data.header;
+            this.props.loadDatasetProperties(datasetProperties);
+          }
+          else{
+            filepath = null;
+            status = [];
+            header = [];
+          }
       }),
     ]).then(() => {
       let bot = {};
@@ -55,7 +55,6 @@ class BotTable extends Component {
       bot["process"] = process;
       bot["iteration"] = iteration;
       this.props.loadBot(bot);
-      this.props.loadDatasetProperties(datasetProperties);
       this.setState({
         build: true,
       });
