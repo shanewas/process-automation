@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import DeleteBotModal from "./DeleteBotModal";
 import moment from "moment";
 import * as electron from "../../electronScript";
 import { connect } from "react-redux";
@@ -7,13 +6,13 @@ import { loadBotAction, loadDatasetProperties } from "../../Store/actions";
 import { Redirect } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { ModalContext } from "../../context/ModalContext";
 
 class BotTable extends Component {
+  static contextType = ModalContext;
   state = {
     botList: [],
     build: false,
-    deletemodalShow: false,
-    deletebotselect: null,
     botSearch: "",
     sortDesc: false,
   };
@@ -120,19 +119,19 @@ class BotTable extends Component {
   handleSearchSort = (_) =>
     this.setState((prev) => ({ sortDesc: !prev.sortDesc }));
 
+  handleBotDelete = (botName) => {
+    electron.ipcRenderer.send(electron.deleteBotChannel, botName);
+    this.updatetable();
+  };
+
   render() {
     if (this.state.build) {
       return <Redirect to="/build"></Redirect>;
     }
+    const { setCurrentModal } = this.context;
     return (
       <div className="row">
         <ToastContainer style={{ fontWeight: "bolder" }} />
-        <DeleteBotModal
-          bot={this.state.deletebotselect}
-          show={this.state.deletemodalShow}
-          onHide={() => this.setState({ deletemodalShow: false })}
-          updatetable={this.updatetable}
-        />
         <div className="col-xl-12">
           <div className="card">
             <div className="card-body">
@@ -198,6 +197,9 @@ class BotTable extends Component {
                           : -1;
                       })
                       .map((bot, i) => {
+                        {
+                          console.log(bot);
+                        }
                         return (
                           <tr key={i}>
                             <td>{bot.botName}</td>
@@ -228,12 +230,16 @@ class BotTable extends Component {
                                 </div>
                                 <div className="btn btn-danger mr-2 btn-sm">
                                   <div
-                                    onClick={() => {
-                                      this.setState({
-                                        deletemodalShow: true,
-                                        deletebotselect: bot,
-                                      });
-                                    }}
+                                    onClick={() =>
+                                      setCurrentModal({
+                                        name: "BotDeleteModal",
+                                        props: {
+                                          onBotDelete: () =>
+                                            this.handleBotDelete(bot.botName),
+                                          bot,
+                                        },
+                                      })
+                                    }
                                   >
                                     <i className="far fa-trash-alt"></i> Delete
                                   </div>
