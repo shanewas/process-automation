@@ -14,14 +14,14 @@ import {
 } from "../../Store/actions";
 // import MenualEntryModal from "./MenualEntryModal";
 import ProcessConfigModal from "./ProcessConfigModal";
-import BotConfigModal from "./BotConfigModal";
+// import BotConfigModal from "./BotConfigModal";
 import { ModalContext } from "../../context/ModalContext";
 
 class Flowchart extends Component {
   static contextType = ModalContext;
 
   state = {
-    BotConfigModalShow: false,
+    // BotConfigModalShow: false,
     // menualEntryModalShow: false,
     // menualEntryindex: null,
     ProcessConfigModalShow: false,
@@ -49,6 +49,15 @@ class Flowchart extends Component {
       name: "ManualEntryModal",
       props: {
         saveData: (data) => this.props.insertMenualData(data, index),
+      },
+    });
+
+  openBotConfigModal = () =>
+    this.context.setCurrentModal({
+      name: "BotConfigModal",
+      props: {
+        saveIteration: this.saveIteration,
+        botIteration: this.props.botIteration,
       },
     });
 
@@ -112,12 +121,12 @@ class Flowchart extends Component {
             onHide={() => this.setState({ menualEntryModalShow: false })}
             insertMenualData={this.insertMenualData}
           /> */}
-          <BotConfigModal
+          {/* <BotConfigModal
             show={this.state.BotConfigModalShow}
             onHide={() => this.setState({ BotConfigModalShow: false })}
             saveIteration={this.saveIteration}
             botIteration={this.props.botIteration}
-          />
+          /> */}
           <ProcessConfigModal
             show={this.state.ProcessConfigModalShow}
             onHide={() => this.setState({ ProcessConfigModalShow: false })}
@@ -142,7 +151,7 @@ class Flowchart extends Component {
               ></i>
               <i
                 className="fas fa-cog float-right mt-3 mr-3 fa-2x"
-                onClick={() => this.setState({ BotConfigModalShow: true })}
+                onClick={this.openBotConfigModal}
               ></i>
             </span>
             {this.props.process.map((step, index) => {
