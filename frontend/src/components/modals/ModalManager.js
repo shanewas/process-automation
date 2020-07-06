@@ -2,10 +2,16 @@ import React, { useContext } from "react";
 import { ModalContext } from "../../context/ModalContext";
 import DataConditionsModal from "./DataConditionsModal/";
 import BotDeleteModal from "./BotDeleteModal";
+import BotSaveModal from "./BotSaveModal";
+import GenerateCodeModal from "./GenerateCodeModal";
+import ManualEntryModal from "./ManualEntryModal";
 
 const Modals = {
   DataConditionsModal,
   BotDeleteModal,
+  BotSaveModal,
+  GenerateCodeModal,
+  ManualEntryModal,
 };
 
 const ModalManager = (props) => {

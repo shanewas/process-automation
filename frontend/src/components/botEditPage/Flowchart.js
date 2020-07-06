@@ -12,7 +12,7 @@ import {
   MenualEntryAction,
   iterationChangeAction,
 } from "../../Store/actions";
-import MenualEntryModal from "./MenualEntryModal";
+// import MenualEntryModal from "./MenualEntryModal";
 import ProcessConfigModal from "./ProcessConfigModal";
 import BotConfigModal from "./BotConfigModal";
 import { ModalContext } from "../../context/ModalContext";
@@ -22,30 +22,35 @@ class Flowchart extends Component {
 
   state = {
     BotConfigModalShow: false,
-    menualEntryModalShow: false,
-    menualEntryindex: null,
+    // menualEntryModalShow: false,
+    // menualEntryindex: null,
     ProcessConfigModalShow: false,
     ProcessConfigModalIndex: null,
   };
 
-  menaulEntry = (index) => {
-    this.setState({
-      ...this.state,
-      menualEntryModalShow: true,
-      menualEntryindex: index,
-    });
-  };
+  // menaulEntry = (index) => {
+  //   this.setState({
+  //     ...this.state,
+  //     menualEntryModalShow: true,
+  //     menualEntryindex: index,
+  //   });
+  // };
 
   insertHeader = (index) => {
     if (this.props.selectedHeaderIndex !== null) {
       this.props.useHeaders(index);
     } else {
-      this.menaulEntry(index);
+      this.openManualEntryModal(index);
     }
   };
-  insertMenualEntry = (data) => {
-    this.props.insertMenualData(data, this.state.menualEntryindex);
-  };
+
+  openManualEntryModal = (index) =>
+    this.context.setCurrentModal({
+      name: "ManualEntryModal",
+      props: {
+        saveData: (data) => this.props.insertMenualData(data, index),
+      },
+    });
 
   removeStep = (index) => {
     this.props.removeStep(index, 1);
@@ -83,7 +88,6 @@ class Flowchart extends Component {
   }
 
   render() {
-    console.log(this.props.process);
     const { setCurrentModal } = this.context;
     if (this.props.process.length === 0) {
       return (
@@ -103,11 +107,11 @@ class Flowchart extends Component {
     } else {
       return (
         <div>
-          <MenualEntryModal
+          {/* <MenualEntryModal
             show={this.state.menualEntryModalShow}
             onHide={() => this.setState({ menualEntryModalShow: false })}
-            insertMenualData={this.insertMenualEntry}
-          />
+            insertMenualData={this.insertMenualData}
+          /> */}
           <BotConfigModal
             show={this.state.BotConfigModalShow}
             onHide={() => this.setState({ BotConfigModalShow: false })}
@@ -214,7 +218,7 @@ class Flowchart extends Component {
                         ></i>
                         <i
                           className="fas fa-edit float-right mt-2 mr-2"
-                          onClick={() => {
+                          onClick={() =>
                             setCurrentModal({
                               name: "DataConditionsModal",
                               props: {
@@ -223,8 +227,8 @@ class Flowchart extends Component {
                                 editProcess: (process) =>
                                   this.props.editProcess(process, index),
                               },
-                            });
-                          }}
+                            })
+                          }
                         ></i>
                       </span>
                       <div

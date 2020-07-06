@@ -8,14 +8,16 @@ import Flowchart from "./Flowchart";
 import DatasetLoader from "./DatasetLoader";
 import { connect } from "react-redux";
 import SelectBotModal from "./SelectBotModal";
-import GenerateCodeModal from "./GenerateCodeModal";
+// import GenerateCodeModal from "./GenerateCodeModal";
 import { selectBotAction, clearAllAction } from "../../Store/actions";
 import { SeleniumCode } from "../../CodeGeneration";
 import * as electron from "../../electronScript";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { ModalContext } from "../../context/ModalContext";
 
 class BotBuildPage extends Component {
+  static contextType = ModalContext;
   state = {
     selectmodalShow: false,
     codeGenerationModal: false,
@@ -27,29 +29,21 @@ class BotBuildPage extends Component {
     this.setState({ selectmodalShow: true });
   };
 
-  generateCode = () => {
+  openGenerateCodeModal = () => {
     var code = SeleniumCode(
       this.props.process,
       this.props.botIteration,
       this.props.filepath
     );
-
-    this.setState(
-      {
-        ...this.state,
-        code: code,
+    this.context.setCurrentModal({
+      name: "GenerateCodeModal",
+      props: {
+        code,
+        saveCode: () => electron.ipcRenderer.send("code-generation", code),
       },
-      () => {
-        this.showCodeModal();
-      }
-    );
-  };
-  showCodeModal = () => {
-    this.setState({
-      ...this.state,
-      codeGenerationModal: true,
     });
   };
+
   selectBot = (botName) => {
     let saveBotObject = {};
     saveBotObject.botName = botName;
@@ -95,17 +89,17 @@ class BotBuildPage extends Component {
           onHide={() => this.setState({ selectmodalShow: false })}
           selectbot={this.selectBot}
         />
-        <GenerateCodeModal
+        {/* <GenerateCodeModal
           show={this.state.codeGenerationModal}
           onHide={() => this.setState({ codeGenerationModal: false })}
           code={this.state.code}
-        />
+        /> */}
         <Navbarup />
         <SidebarLeft
           runBot={this.runBot}
           savebot={this.savebot}
           saveIteration={this.saveIteration}
-          generateCode={this.generateCode}
+          openGenerateCodeModal={this.openGenerateCodeModal}
         ></SidebarLeft>
 
         <div>
