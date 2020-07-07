@@ -14,6 +14,8 @@ class BotTable extends Component {
     build: false,
     deletemodalShow: false,
     deletebotselect: null,
+    botSearch: "",
+    sortDesc: false,
   };
 
   buildbot = (botName) => {
@@ -113,6 +115,10 @@ class BotTable extends Component {
     });
   }
 
+  handleSearchChange = (e) => this.setState({ botSearch: e.target.value });
+  handleSearchSort = (_) =>
+    this.setState((prev) => ({ sortDesc: !prev.sortDesc }));
+
   render() {
     if (this.state.build) {
       return <Redirect to="/build"></Redirect>;
@@ -141,6 +147,19 @@ class BotTable extends Component {
               <h4 className="mt-0 header-title mb-4 ">
                 Bot List<span></span>
               </h4>
+              <input
+                className="input-field mr-4"
+                onChange={this.handleSearchChange}
+                placeholder="Search Bot"
+              />
+              <span className="flex">
+                <span className="mr-2">Sort by Last</span>
+                <input
+                  type="checkbox"
+                  onChange={this.handleSearchSort}
+                  checked={this.state.sortDesc}
+                />
+              </span>
               <div className="table-responsive">
                 <table className="table table-hover">
                   <thead>
@@ -151,64 +170,87 @@ class BotTable extends Component {
                     </tr>
                   </thead>
                   <tbody>
-                    {this.state.botList.map((bot, i) => {
-                      return (
-                        <tr key={i}>
-                          <td>{bot.botName}</td>
-                          {/* <td>
+                    {this.state.botList
+                      .filter(
+                        (b) =>
+                          this.state.botSearch === "" ||
+                          b.botName
+                            .toLowerCase()
+                            .includes(this.state.botSearch.toLowerCase())
+                      )
+                      .sort((a, b) => {
+                        const f = moment(
+                          a.lastActive,
+                          "MMMM Do YYYY at H:mm:ss a"
+                        );
+                        const s = moment(
+                          b.lastActive,
+                          "MMMM Do YYYY at H:mm:ss a"
+                        );
+                        const isSorted = this.state.sortDesc;
+                        return moment(f).isBefore(s)
+                          ? isSorted
+                            ? -1
+                            : 1
+                          : isSorted
+                          ? 1
+                          : -1;
+                      })
+                      .map((bot, i) => {
+                        return (
+                          <tr key={i}>
+                            <td>{bot.botName}</td>
+                            {/* <td>
                   <span className={this.badgemaker(bot.status)}>{bot.status}</span>
                 </td>
                 <td>{bot.category}</td>
                 <td>{bot.runTime}</td> */}
-                          {/* MMMM Do YYYY at H:mm:ss a */}
-                          <td>
-                            {moment(
-                              bot.lastActive,
-                              "MMMM Do YYYY at H:mm:ss a"
-                            ).fromNow()}
-                          </td>
-                          <td>
-                            <div>
-                              <div className="btn btn-primary mr-2 btn-sm">
-                                <div
-                                  onClick={() => {
-                                    this.buildbot(bot.botName);
-                                  }}
-                                >
-                                  <i className="fas fa-hammer"></i> Edit
+                            {/* MMMM Do YYYY at H:mm:ss a */}
+                            <td>{moment(bot.lastActive).fromNow()}</td>
+                            <td>
+                              <div>
+                                <div className="btn btn-primary mr-2 btn-sm">
+                                  <div
+                                    onClick={() => {
+                                      this.buildbot(bot.botName);
+                                    }}
+                                  >
+                                    <i className="fas fa-hammer"></i> Edit
+                                  </div>
+                                </div>
+                                <div className="btn btn-success mr-2 btn-sm">
+                                  <div
+                                    onClick={() => this.startbot(bot.botName)}
+                                  >
+                                    <i className="fas fa-running"></i> Start
+                                  </div>
+                                </div>
+                                <div className="btn btn-danger mr-2 btn-sm">
+                                  <div
+                                    onClick={() => {
+                                      this.setState({
+                                        deletemodalShow: true,
+                                        deletebotselect: bot,
+                                      });
+                                    }}
+                                  >
+                                    <i className="far fa-trash-alt"></i> Delete
+                                  </div>
+                                </div>
+                                <div className="btn btn-warning mr-2 btn-sm">
+                                  <div
+                                    onClick={() => {
+                                      this.exportBot(bot.botName);
+                                    }}
+                                  >
+                                    <i className="fa fa-download"></i> Export
+                                  </div>
                                 </div>
                               </div>
-                              <div className="btn btn-success mr-2 btn-sm">
-                                <div onClick={() => this.startbot(bot.botName)}>
-                                  <i className="fas fa-running"></i> Start
-                                </div>
-                              </div>
-                              <div className="btn btn-danger mr-2 btn-sm">
-                                <div
-                                  onClick={() => {
-                                    this.setState({
-                                      deletemodalShow: true,
-                                      deletebotselect: bot,
-                                    });
-                                  }}
-                                >
-                                  <i className="far fa-trash-alt"></i> Delete
-                                </div>
-                              </div>
-                              <div className="btn btn-warning mr-2 btn-sm">
-                                <div
-                                  onClick={() => {
-                                    this.exportBot(bot.botName);
-                                  }}
-                                >
-                                  <i className="fa fa-download"></i> Export
-                                </div>
-                              </div>
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    })}
+                            </td>
+                          </tr>
+                        );
+                      })}
                   </tbody>
                 </table>
               </div>
