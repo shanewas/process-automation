@@ -75,7 +75,10 @@ export default class SidebarLeft extends Component {
               <li className="menu-title">Actions</li>
 
               <li>
-                <div onClick={this.props.savebot} className="waves-effect p-3">
+                <div
+                  onClick={this.props.openBotSaveModal}
+                  className="waves-effect p-3"
+                >
                   <i className="fas fa-save mr-1 fa-2x" />
                   <span> Save Bot </span>
                 </div>

@@ -10,11 +10,11 @@ import {
   Button,
 } from "@material-ui/core";
 import { Close as CloseIcon } from "@material-ui/icons";
-import SelectorInput from "./SelectorInput";
 import TypeScreenshot from "./TypeScreenshot";
 import TypeLink from "./TypeLink";
 import TypeClick from "./TypeClick";
 import TypeLoadData from "./TypeLoadData";
+import SelectorInput from "../../layout/input/SelectorInput";
 
 const initFields = {
   ocr: false,
@@ -48,11 +48,6 @@ export default ({
 
   const handleTypeChange = (type) => (e) => {
     setProcess((p) => ({ ...p, [type]: e.target.value }));
-  };
-
-  // temp
-  const handle_typeChange = (e) => {
-    setProcess((p) => ({ ...p, _type: e.target.value }));
   };
 
   const handleChange = (e) => {

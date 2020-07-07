@@ -7,7 +7,7 @@ import Col from "react-bootstrap/Col";
 import Flowchart from "./Flowchart";
 import DatasetLoader from "./DatasetLoader";
 import { connect } from "react-redux";
-import SelectBotModal from "./SelectBotModal";
+// import SelectBotModal from "./SelectBotModal";
 // import GenerateCodeModal from "./GenerateCodeModal";
 import { selectBotAction, clearAllAction } from "../../Store/actions";
 import { SeleniumCode } from "../../CodeGeneration";
@@ -44,6 +44,23 @@ class BotBuildPage extends Component {
     });
   };
 
+  openBotSaveModal = async () => {
+    // currently we're saving bots with name attr, [FUTURE] need to change it to Id
+    const tBots = await electron.ipcRenderer.invoke("bots");
+    const bots = tBots.map((b) => b.botName);
+    this.context.setCurrentModal({
+      name: "BotSaveModal",
+      props: {
+        bots,
+        addBot: async ({ name, category }) => {
+          await electron.ipcRenderer.invoke("add-bot", name, category);
+          await this.selectBot(name);
+        },
+        saveExisting: this.selectBot,
+      },
+    });
+  };
+
   selectBot = (botName) => {
     let saveBotObject = {};
     saveBotObject.botName = botName;
@@ -56,6 +73,7 @@ class BotBuildPage extends Component {
     electron.ipcRenderer.send("update-bot", botName, saveBotObject);
     this.botChanged(false);
   };
+
   botChanged = (change) => {
     this.setState({
       saved: change,
@@ -84,11 +102,11 @@ class BotBuildPage extends Component {
     return (
       <div>
         <ToastContainer />
-        <SelectBotModal
+        {/* <SelectBotModal
           show={this.state.selectmodalShow}
           onHide={() => this.setState({ selectmodalShow: false })}
           selectbot={this.selectBot}
-        />
+        /> */}
         {/* <GenerateCodeModal
           show={this.state.codeGenerationModal}
           onHide={() => this.setState({ codeGenerationModal: false })}
@@ -97,7 +115,7 @@ class BotBuildPage extends Component {
         <Navbarup />
         <SidebarLeft
           runBot={this.runBot}
-          savebot={this.savebot}
+          openBotSaveModal={this.openBotSaveModal}
           saveIteration={this.saveIteration}
           openGenerateCodeModal={this.openGenerateCodeModal}
         ></SidebarLeft>

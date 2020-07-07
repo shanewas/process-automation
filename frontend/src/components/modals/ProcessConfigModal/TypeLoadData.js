@@ -1,6 +1,6 @@
 import React, { useMemo, useCallback } from "react";
 import { TextField, Grid } from "@material-ui/core";
-import SelectorInput from "./SelectorInput";
+import SelectorInput from "../../layout/input/SelectorInput";
 
 export default ({ onChange, value, onSelectorChange, inputTypes }) => {
   console.log("%c TYPE LOAD DATA ", "background: #222; color: #bada55");
@@ -50,8 +50,6 @@ export default ({ onChange, value, onSelectorChange, inputTypes }) => {
         <SelectorInput
           value={useMemo(() => value.type, [value.type])}
           onChange={useCallback((e) => onSelectorChange(e), [])}
-          // value={value.type}
-          // onChange={onSelectorChange}
           options={inputTypes}
           placeholder="Input Type"
         />
