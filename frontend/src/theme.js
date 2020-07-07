@@ -12,5 +12,10 @@ export default createMuiTheme({
         height: 40,
       },
     },
+    MuiInputLabel: {
+      outlined: {
+        transform: "translate(14px, 13px) scale(1)",
+      },
+    },
   },
 });

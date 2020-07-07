@@ -32,10 +32,10 @@ export default ({ open, handleClose, botIteration, saveIteration }) => {
       </DialogTitle>
       <DialogContent>
         <TextField
+          label="Bot Iteration"
           onChange={handleIterationChange}
           value={iteration}
           variant="outlined"
-          placeholder="Bot Iteration"
           fullWidth
         />
       </DialogContent>

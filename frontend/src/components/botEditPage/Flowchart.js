@@ -73,9 +73,19 @@ class Flowchart extends Component {
     });
   };
 
-  editStep = (process) => {
-    this.props.editProcess(process, this.state.ProcessConfigModalIndex);
-  };
+  openProcessConfigModal = (index) =>
+    this.context.setCurrentModal({
+      name: "ProcessConfigModal",
+      props: {
+        editStep: (process) => this.props.editProcess(process, index),
+        clearConfig: this.clearConfig,
+        currentProcess: this.props.process[index],
+      },
+    });
+
+  // editStep = (process) => {
+
+  // };
 
   clearConfig = () => {
     this.setState({
@@ -88,6 +98,7 @@ class Flowchart extends Component {
   };
   componentDidMount() {
     electron.ipcRenderer.on(electron.ProcessLinkChannel, (e, content) => {
+      console.log(content);
       this.props.sendProcess(content);
     });
   }
@@ -127,13 +138,13 @@ class Flowchart extends Component {
             saveIteration={this.saveIteration}
             botIteration={this.props.botIteration}
           /> */}
-          <ProcessConfigModal
+          {/* <ProcessConfigModal
             show={this.state.ProcessConfigModalShow}
             onHide={() => this.setState({ ProcessConfigModalShow: false })}
             editStep={this.editStep}
             clearConfig={this.clearConfig}
             step={this.props.process[this.state.ProcessConfigModalIndex]}
-          />
+          /> */}
           <Card
             id="scrollstyle"
             style={{ height: "70vh", maxHeight: "70vh", overflowY: "auto" }}
@@ -167,9 +178,7 @@ class Flowchart extends Component {
                       ></i>
                       <i
                         className="fas fa-cog float-right mt-5 mr-2"
-                        onClick={() => {
-                          this.openconfigtab(index);
-                        }}
+                        onClick={() => this.openProcessConfigModal(index)}
                       ></i>
                     </span>
                     <div className=" text-white bg-primary text-center mr-5 ml-5 mb-2 mt-5 p-3">
@@ -194,7 +203,8 @@ class Flowchart extends Component {
                         <i
                           className="fas fa-cog float-right mt-2 mr-2"
                           onClick={() => {
-                            this.openconfigtab(index);
+                            this.openProcessConfigModal(index);
+                            // this.openconfigtab(index);
                           }}
                         ></i>
                       </span>
@@ -222,7 +232,8 @@ class Flowchart extends Component {
                         <i
                           className="fas fa-cog float-right mt-2 mr-2"
                           onClick={() => {
-                            this.openconfigtab(index);
+                            this.openProcessConfigModal(index);
+                            // this.openconfigtab(index);
                           }}
                         ></i>
                         <i
@@ -299,7 +310,8 @@ class Flowchart extends Component {
                         <i
                           className="fas fa-cog float-right mt-2 mr-2"
                           onClick={() => {
-                            this.openconfigtab(index);
+                            this.openProcessConfigModal(index);
+                            // this.openconfigtab(index);
                           }}
                         ></i>
                       </span>
@@ -344,7 +356,8 @@ class Flowchart extends Component {
                         <i
                           className="fas fa-eye float-right mt-2 mr-2"
                           onClick={() => {
-                            this.openconfigtab(index);
+                            this.openProcessConfigModal(index);
+                            // this.openconfigtab(index);
                           }}
                         ></i>
                       </span>
