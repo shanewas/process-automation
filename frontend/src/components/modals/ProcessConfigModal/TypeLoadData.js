@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo, useCallback } from "react";
 import { TextField, Grid } from "@material-ui/core";
 import SelectorInput from "./SelectorInput";
 
@@ -48,8 +48,10 @@ export default ({ onChange, value, onSelectorChange, inputTypes }) => {
       </Grid>
       <Grid item>
         <SelectorInput
-          value={value.type}
-          onChange={onSelectorChange}
+          value={useMemo(() => value.type, [value.type])}
+          onChange={useCallback((e) => onSelectorChange(e), [])}
+          // value={value.type}
+          // onChange={onSelectorChange}
           options={inputTypes}
           placeholder="Input Type"
         />

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -22,7 +22,6 @@ const initFields = {
   label: "",
   link: "",
 };
-
 const types = ["LoadData", "link", "click", "ScreenShot"];
 const inputTypes = ["null", "radio", "password", "text", "checkbox", "email"];
 
@@ -47,8 +46,14 @@ export default ({
     setProcess(tProcess);
   }, []);
 
-  const handleTypeChange = (type) => (e) =>
+  const handleTypeChange = (type) => (e) => {
     setProcess((p) => ({ ...p, [type]: e.target.value }));
+  };
+
+  // temp
+  const handle_typeChange = (e) => {
+    setProcess((p) => ({ ...p, _type: e.target.value }));
+  };
 
   const handleChange = (e) => {
     e.persist();
@@ -78,8 +83,8 @@ export default ({
       <DialogContent>
         <Box mb={1}>
           <SelectorInput
-            value={process._type}
-            onChange={handleTypeChange("_type")}
+            value={useMemo(() => process._type, [process._type])}
+            onChange={useCallback((e) => handleTypeChange("_type")(e), [])}
             options={types}
             placeholder="Process Type"
           />
