@@ -433,16 +433,16 @@ ipcMain.on("need-process", async function (e) {
 						}
 						let img_filename = `${BOTS.botName}_${IDX}${PROCESSCOUNTER}.jpeg`;
 						let pathTo = path.join(element.imgpath, img_filename);
-						await page.setViewport({
-							width: 1920,
-							height: 1080,
-							deviceScaleFactor: 1,
-						});
 						await page
 							.screenshot({
 								path: pathTo,
 								type: "jpeg",
-								fullPage: true,
+								clip: {
+									x: element.param.Xaxis,
+									y: element.param.Yaxis,
+									width: element.param.width,
+									height: element.param.height,
+								},
 							})
 							.then(async () => {
 								if (element.ocr) {
