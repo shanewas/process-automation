@@ -166,7 +166,6 @@ ipcMain.on("start-bot", async function (e, botName) {
 	let fileReady = false;
 	reset_var();
 	if (!BOTALREADYOPENED) {
-		console.log("om here#0");
 		BOTALREADYOPENED = true;
 		loadingWindow = window.createWindow(
 			isDev
@@ -283,6 +282,12 @@ ipcMain.on("start-bot", async function (e, botName) {
 			"null"
 		);
 		win.webContents.send("notification-single", notification);
+		BOTALREADYOPENED = false;
+		e.preventDefault();
+		reset_var();
+		win.setProgressBar(0.0);
+		loadingWindow.hide();
+		loadingWindow.destroy();
 	}
 });
 
@@ -585,21 +590,25 @@ ipcMain.handle("get-process", async (event, botName) => {
 });
 
 ipcMain.on("file-analytics", async (event, filepath) => {
-	const { size } = fs.statSync(filepath);
-	const results = [];
-	let analytics = {};
-	fs.createReadStream(filepath, { bufferSize: 64 * 1024 })
-		.pipe(csv())
-		.on("data", (data) => results.push(data))
-		.on("end", () => {
-			analytics = {
-				path: filepath,
-				size: size,
-				rowNumber: results.length,
-				type: "text/csv",
-			};
-			event.returnValue = analytics;
-		});
+	if (fs.existsSync(filepath)) {
+		const { size } = fs.statSync(filepath);
+		const results = [];
+		let analytics = {};
+		fs.createReadStream(filepath, { bufferSize: 64 * 1024 })
+			.pipe(csv())
+			.on("data", (data) => results.push(data))
+			.on("end", () => {
+				analytics = {
+					path: filepath,
+					size: size,
+					rowNumber: results.length,
+					type: "text/csv",
+				};
+				event.returnValue = analytics;
+			});
+	} else {
+		event.returnValue = null;
+	}
 });
 
 ipcMain.on("code-generation", async (event, file) => {
