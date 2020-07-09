@@ -22,10 +22,13 @@ const initFields = {
   MenualData: "",
   label: "",
   link: "",
+  variableField: "",
+  variableValue: "",
+  variableUsed: "",
 };
 const types = ["LoadData", "link", "click", "ScreenShot", "Extract Data"];
 const inputTypes = ["null", "radio", "password", "text", "checkbox", "email"];
-const extractDataFields = ["xpath", "label", "value"];
+const extractDataFields = ["xpath", "label", "placeholder", "value"];
 
 export default ({
   open,
@@ -33,25 +36,23 @@ export default ({
   editStep,
   clearConfig,
   currentProcess,
+  assignVariable,
   variables,
 }) => {
   const [process, setProcess] = useState({});
-  const [ocr, setOcr] = useState(false);
-  const [extractField, setExtractField] = useState("");
 
-  // [TODO] temp solution - Need to fix in electron to set default value as empty string
-  // [TODO] add default label property
   useEffect(() => {
     const tProcess = { ...initFields, ...currentProcess };
     for (const v in tProcess) {
       if (typeof tProcess[v] === "undefined") tProcess[v] = "";
     }
-    if (tProcess._type === "ScreenShot") setOcr(tProcess.ocr);
     setProcess(tProcess);
   }, []);
 
-  const handleExtractFieldChange = (e) => setExtractField(e.target.value);
-
+  const handleSwitch = (e) => {
+    e.persist();
+    setProcess((p) => ({ ...p, [e.target.name]: e.target.checked }));
+  };
   const handleTypeChange = (type) => (e) => {
     setProcess((p) => ({ ...p, [type]: e.target.value }));
   };
@@ -63,11 +64,12 @@ export default ({
 
   const handleSubmit = () => {
     const tProcess = { ...process };
-    if (tProcess._type === "ScreenShot") tProcess.ocr = ocr;
+
     editStep(tProcess);
     handleClose();
   };
-  console.log(extractField);
+
+  console.log(process);
 
   return (
     <Dialog open={open} fullWidth>
@@ -91,7 +93,13 @@ export default ({
           />
         </Box>
         {process._type === "ScreenShot" && (
-          <TypeScreenshot onChange={() => setOcr((o) => !o)} value={ocr} />
+          <TypeScreenshot
+            onSwitch={handleSwitch}
+            value={process.ocr}
+            variables={variables}
+            variableUsed={process.variableUsed}
+            onChange={handleChange}
+          />
         )}
         {process._type === "link" && (
           <TypeLink onChange={handleChange} value={process.link} />
@@ -109,10 +117,11 @@ export default ({
         )}
         {process._type === "Extract Data" && (
           <TypeExtractData
-            extractField={extractField}
             extractDataFields={extractDataFields}
-            onExtractFieldChange={handleExtractFieldChange}
             variables={variables}
+            extractField={process.variableField}
+            variable={process.variableValue}
+            onChange={handleChange}
           />
         )}
       </DialogContent>

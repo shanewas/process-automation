@@ -6,11 +6,11 @@ const SelectorInput = ({
   placeholder,
   onChange,
   options = [],
+  name,
   error,
   optionsConfigure,
 }) => (
   <Grid container nopad="true" alignItems="center" spacing={2}>
-    {console.log(optionsConfigure)}
     <Grid item>
       <Typography>{placeholder}:</Typography>
     </Grid>
@@ -18,6 +18,7 @@ const SelectorInput = ({
       <Select
         variant="outlined"
         fullWidth
+        name={name}
         error={!!error}
         value={value}
         onChange={onChange}

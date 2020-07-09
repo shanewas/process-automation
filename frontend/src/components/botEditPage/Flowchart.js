@@ -12,6 +12,7 @@ import {
   MenualEntryAction,
   iterationChangeAction,
   saveVariables,
+  assignVariable,
 } from "../../Store/actions";
 // import MenualEntryModal from "./MenualEntryModal";
 import ProcessConfigModal from "./ProcessConfigModal";
@@ -51,6 +52,7 @@ class Flowchart extends Component {
       props: {
         variables: this.props.variables,
         saveVariables: this.props.saveVariables,
+        assignVariable: this.props.assignVariable,
       },
     });
 
@@ -369,7 +371,7 @@ class Flowchart extends Component {
                           }}
                         ></i>
                         <i
-                          className="fas fa-eye float-right mt-2 mr-2"
+                          className="fas fa-cog float-right mt-2 mr-2"
                           onClick={() => {
                             this.openProcessConfigModal(index);
                             // this.openconfigtab(index);
@@ -381,6 +383,35 @@ class Flowchart extends Component {
                         className="m-b-30 text-white text-center mr-5 ml-5 mb-2 mt-2 p-3"
                       >
                         {step.placeholder}
+                      </div>
+                    </div>
+                  );
+                } else if (step._type === "Extract Data") {
+                  return (
+                    <div key={index}>
+                      <div style={{ textAlign: "center" }}>
+                        <i className="fas fa-arrow-down fa-2x"></i>
+                      </div>
+                      <span>
+                        <i
+                          className="fas fa-window-close float-right mt-2 mr-5"
+                          onClick={() => {
+                            this.removeStep(index);
+                          }}
+                        ></i>
+                        <i
+                          className="fas fa-cog float-right mt-2 mr-2"
+                          onClick={() => {
+                            this.openProcessConfigModal(index);
+                            // this.openconfigtab(index);
+                          }}
+                        ></i>
+                      </span>
+                      <div
+                        style={{ backgroundColor: "#70cee4" }}
+                        className="m-b-30 text-white text-center mr-5 ml-5 mb-2 mt-2 p-3"
+                      >
+                        Extracting Data - {step.placeholder}
                       </div>
                     </div>
                   );
@@ -408,6 +439,7 @@ const mapStateToProps = (state) => {
 };
 const mapDispathtoProps = (dispatch) => {
   return {
+    assignVariable: (id, value) => dispatch(assignVariable(id, value)),
     saveVariables: (variables) => dispatch(saveVariables(variables)),
     insertMenualData: (data, processIndex) => {
       dispatch(MenualEntryAction(data, processIndex));

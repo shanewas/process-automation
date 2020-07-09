@@ -56,3 +56,8 @@ export const saveVariables = (variables) => ({
   type: "SAVE_VARIABLES",
   variables,
 });
+export const assignVariable = (id, value) => ({
+  type: "ASSIGN_VARIABLE",
+  id,
+  value,
+});

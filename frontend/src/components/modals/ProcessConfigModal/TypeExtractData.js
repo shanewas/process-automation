@@ -3,18 +3,20 @@ import { Grid } from "@material-ui/core";
 import SelectorInput from "../../layout/input/SelectorInput";
 
 export default ({
+  onChange,
   extractField,
   extractDataFields,
-  onExtractFieldChange,
+  variable,
   variables,
 }) => {
-  console.log("%c TYPE LOAD DATA ", "background: #222; color: #bada55");
+  console.log("%c TYPE EXTRACT DATA ", "background: #222; color: #bada55");
   return (
     <Grid container direction="column" spacing={3}>
       <Grid item>
         <SelectorInput
           value={extractField}
-          onChange={onExtractFieldChange}
+          onChange={onChange}
+          name="variableField"
           options={extractDataFields}
           placeholder="Save"
         />
@@ -22,6 +24,9 @@ export default ({
       <Grid item>
         <SelectorInput
           options={variables}
+          name="variableValue"
+          value={variable}
+          onChange={onChange}
           optionsConfigure={{ id: "id", label: "name", value: "name" }}
           placeholder="Variable"
         />

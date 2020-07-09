@@ -16,6 +16,11 @@ const saveVariables = (state, variables) => ({
   variables,
 });
 
+const assignVariable = (state, id, value) => ({
+  ...state,
+  variables: state.variables.map((v) => (v.id === id ? { ...v, value } : v)),
+});
+
 const loadHeaders = (state, headers, path) => {
   const headerExample = headers;
   const status = new Array(headerExample.length).fill("notSelected");
@@ -118,6 +123,7 @@ const clearAll = (state) => {
   return {
     ...state,
     headers: [],
+    variables: [],
     selectedHeader: null,
     status: [],
     filepath: null,
@@ -206,6 +212,8 @@ const rootReducer = (state = initState, action) => {
   switch (action.type) {
     case "SAVE_VARIABLES":
       return saveVariables(state, action.variables);
+    case "ASSIGN_VARIABLE":
+      return assignVariable(state, action.id, action.value);
     case "LOAD_HEADERS":
       return loadHeaders(state, action.headers, action.path);
     case "CHANGE_HEADER":
