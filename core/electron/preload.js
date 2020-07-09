@@ -3,13 +3,16 @@ const { app, ipcRenderer } = require("electron");
 const isDev = require("electron-is-dev");
 const path = require("path");
 const showToast = require("show-toast");
-window.onload = () => {
-	var style = document.createElement("style");
-	style.type = "text/css";
-	style.innerHTML = "#div { border: 1px dotted #000; position: absolute;}";
-	document.getElementsByTagName("head")[0].appendChild(style);
-	document.body.innerHTML += '<div id="div" hidden></div>';
-};
+
+document.addEventListener("readystatechange", (event) => {
+	if (event.target.readyState === "complete") {
+		var style = document.createElement("style");
+		style.type = "text/css";
+		style.innerHTML = "#div { border: 1px dotted #000; position: absolute;}";
+		document.getElementsByTagName("head")[0].appendChild(style);
+		document.body.innerHTML += '<div id="div" hidden></div>';
+	}
+});
 let Xaxis, Yaxis;
 let width, height;
 
@@ -154,7 +157,6 @@ document.addEventListener("keypress", (e) => {
 				onmouseup = null;
 			}
 		};
-		// screenshot.hidden = 0;
 	} else if (e.shiftKey && e.key) {
 		e.preventDefault();
 		var type, placeholder, label;

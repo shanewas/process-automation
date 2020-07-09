@@ -1,6 +1,7 @@
 const path = require("path");
 const electron = require("electron");
 const Tesseract = require("tesseract.js");
+const Jimp = require("jimp");
 
 const { app, Menu, ipcMain, dialog, Notification, BrowserWindow } = electron;
 
@@ -131,6 +132,7 @@ ipcMain.on("search-link", function (event, args) {
 		contectWindow.destroy();
 		contectWindow = window.createWindow(procSeq.link, win, false, true, true);
 	}
+	contectWindow.setResizable(false);
 	contectWindow.on("close", (e) => {
 		LINKALREADYOPENED = false;
 		e.preventDefault();
@@ -189,6 +191,7 @@ ipcMain.on("start-bot", async function (e, botName) {
 			true
 		);
 	}
+	loadingWindow.setResizable(false);
 	loadingWindow.on("close", (e) => {
 		BOTALREADYOPENED = false;
 		e.preventDefault();
@@ -445,21 +448,38 @@ ipcMain.on("need-process", async function (e) {
 								},
 							})
 							.then(async () => {
-								if (element.ocr) {
-									if (!fs.existsSync(element.ocrpath)) {
-										fs.mkdirSync(element.ocrpath);
-									}
-									let ocr_filename = `${BOTS.botName}_${IDX}${PROCESSCOUNTER}.txt`;
-									let saveTo = path.join(element.ocrpath, ocr_filename);
-									await Tesseract.recognize(pathTo, "eng", {
-										logger: (m) => console.log(m),
-									}).then(async ({ data: { text } }) => {
-										console.log(text);
-										fs.writeFile(saveTo, text, (err) => {
-											err ? console.log("Canceled!") : console.log("Saved!");
-										});
+								await Jimp.read(pathTo)
+									.then((screenshot) => {
+										return screenshot
+											.quality(100)
+											.brightness(.5)
+											.contrast(.5)
+											.greyscale()
+											.invert()
+											.write(pathTo);
+									})
+									.then(async () => {
+										if (element.ocr) {
+											if (!fs.existsSync(element.ocrpath)) {
+												fs.mkdirSync(element.ocrpath);
+											}
+											let ocr_filename = `${BOTS.botName}_${IDX}${PROCESSCOUNTER}.txt`;
+											let saveTo = path.join(element.ocrpath, ocr_filename);
+											await Tesseract.recognize(pathTo, "eng", {
+												logger: (m) => console.log(m),
+											}).then(async ({ data: { text } }) => {
+												console.log(text);
+												fs.writeFile(saveTo, text, (err) => {
+													err
+														? console.log("Canceled!")
+														: console.log("Saved!");
+												});
+											});
+										}
+									})
+									.catch((err) => {
+										throw err;
 									});
-								}
 							})
 							.finally(() => {
 								loadingWindow.webContents.send("next-process");
