@@ -65,6 +65,7 @@ class BotBuildPage extends Component {
     let saveBotObject = {};
     saveBotObject.botName = botName;
     saveBotObject.filepath = this.props.filepath;
+    saveBotObject.variables = this.props.variables;
     saveBotObject.headers = this.props.headers;
     saveBotObject.status = this.props.status;
     saveBotObject.botIteration = this.props.botIteration;
@@ -151,6 +152,7 @@ const mapStateToProps = (state) => {
     headers: state.headers,
     status: state.status,
     filepath: state.filepath,
+    variables: state.variables,
     botIteration: state.botIteration,
   };
 };

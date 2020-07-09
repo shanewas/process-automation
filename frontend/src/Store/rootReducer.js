@@ -1,5 +1,6 @@
 const initState = {
   headers: [],
+  variables: [],
   selectedHeader: null,
   status: [],
   filepath: null,
@@ -9,6 +10,11 @@ const initState = {
   botIteration: 1,
   datasetProperties: null,
 };
+
+const saveVariables = (state, variables) => ({
+  ...state,
+  variables,
+});
 
 const loadHeaders = (state, headers, path) => {
   const headerExample = headers;
@@ -148,8 +154,10 @@ const removeStep = (state, index, num_of_step) => {
 };
 
 const loadBot = (state, bot) => {
+  console.log(bot);
   return {
     ...state,
+    variables: bot.variables,
     headers: bot.header,
     status: bot.status,
     filepath: bot.filepath,
@@ -196,6 +204,8 @@ const rootReducer = (state = initState, action) => {
   console.log(action.type);
 
   switch (action.type) {
+    case "SAVE_VARIABLES":
+      return saveVariables(state, action.variables);
     case "LOAD_HEADERS":
       return loadHeaders(state, action.headers, action.path);
     case "CHANGE_HEADER":

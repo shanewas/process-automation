@@ -21,6 +21,7 @@ class BotTable extends Component {
     let filepath;
     let status;
     let header;
+    let variables;
     let process;
     let iteration;
     let datasetProperties;
@@ -31,6 +32,7 @@ class BotTable extends Component {
       }),
       electron.ipcRenderer.invoke("bot-name", botName).then((data) => {
         iteration = data.botIteration;
+        variables = data.variables;
         // if there is dataset
         if (data.filepath) {
           filepath = data.filepath;
@@ -53,6 +55,7 @@ class BotTable extends Component {
       bot["botName"] = botName;
       bot["status"] = status;
       bot["header"] = header;
+      bot["variables"] = variables;
       bot["process"] = process;
       bot["iteration"] = iteration;
       this.props.loadBot(bot);

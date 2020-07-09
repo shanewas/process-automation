@@ -51,3 +51,8 @@ export function iterationChangeAction(iterationNumber) {
 export function loadDatasetProperties(properties) {
   return { type: "LOADED_DATASET_PROPERTIES", properties };
 }
+
+export const saveVariables = (variables) => ({
+  type: "SAVE_VARIABLES",
+  variables,
+});

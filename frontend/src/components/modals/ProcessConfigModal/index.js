@@ -15,6 +15,7 @@ import TypeLink from "./TypeLink";
 import TypeClick from "./TypeClick";
 import TypeLoadData from "./TypeLoadData";
 import SelectorInput from "../../layout/input/SelectorInput";
+import TypeExtractData from "./TypeExtractData";
 
 const initFields = {
   ocr: false,
@@ -22,8 +23,9 @@ const initFields = {
   label: "",
   link: "",
 };
-const types = ["LoadData", "link", "click", "ScreenShot"];
+const types = ["LoadData", "link", "click", "ScreenShot", "Extract Data"];
 const inputTypes = ["null", "radio", "password", "text", "checkbox", "email"];
+const extractDataFields = ["xpath", "label", "value"];
 
 export default ({
   open,
@@ -31,9 +33,11 @@ export default ({
   editStep,
   clearConfig,
   currentProcess,
+  variables,
 }) => {
-  let [process, setProcess] = useState({});
-  let [ocr, setOcr] = useState(false);
+  const [process, setProcess] = useState({});
+  const [ocr, setOcr] = useState(false);
+  const [extractField, setExtractField] = useState("");
 
   // [TODO] temp solution - Need to fix in electron to set default value as empty string
   // [TODO] add default label property
@@ -45,6 +49,8 @@ export default ({
     if (tProcess._type === "ScreenShot") setOcr(tProcess.ocr);
     setProcess(tProcess);
   }, []);
+
+  const handleExtractFieldChange = (e) => setExtractField(e.target.value);
 
   const handleTypeChange = (type) => (e) => {
     setProcess((p) => ({ ...p, [type]: e.target.value }));
@@ -61,7 +67,7 @@ export default ({
     editStep(tProcess);
     handleClose();
   };
-  console.log(process);
+  console.log(extractField);
 
   return (
     <Dialog open={open} fullWidth>
@@ -99,6 +105,14 @@ export default ({
             value={process}
             onSelectorChange={handleTypeChange("type")}
             inputTypes={inputTypes}
+          />
+        )}
+        {process._type === "Extract Data" && (
+          <TypeExtractData
+            extractField={extractField}
+            extractDataFields={extractDataFields}
+            onExtractFieldChange={handleExtractFieldChange}
+            variables={variables}
           />
         )}
       </DialogContent>

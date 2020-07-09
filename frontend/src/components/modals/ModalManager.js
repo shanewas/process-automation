@@ -7,6 +7,7 @@ import GenerateCodeModal from "./GenerateCodeModal";
 import ManualEntryModal from "./ManualEntryModal";
 import BotConfigModal from "./BotConfigModal";
 import ProcessConfigModal from "./ProcessConfigModal";
+import VariableAddModal from "./VariableAddModal";
 
 const Modals = {
   DataConditionsModal,
@@ -16,6 +17,7 @@ const Modals = {
   ManualEntryModal,
   BotConfigModal,
   ProcessConfigModal,
+  VariableAddModal,
 };
 
 const ModalManager = (props) => {

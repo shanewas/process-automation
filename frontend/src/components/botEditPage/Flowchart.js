@@ -11,6 +11,7 @@ import {
   removeStepAction,
   MenualEntryAction,
   iterationChangeAction,
+  saveVariables,
 } from "../../Store/actions";
 // import MenualEntryModal from "./MenualEntryModal";
 import ProcessConfigModal from "./ProcessConfigModal";
@@ -43,6 +44,15 @@ class Flowchart extends Component {
       this.openManualEntryModal(index);
     }
   };
+
+  openVariableModal = () =>
+    this.context.setCurrentModal({
+      name: "VariableAddModal",
+      props: {
+        variables: this.props.variables,
+        saveVariables: this.props.saveVariables,
+      },
+    });
 
   openManualEntryModal = (index) =>
     this.context.setCurrentModal({
@@ -80,6 +90,7 @@ class Flowchart extends Component {
         editStep: (process) => this.props.editProcess(process, index),
         clearConfig: this.clearConfig,
         currentProcess: this.props.process[index],
+        variables: this.props.variables,
       },
     });
 
@@ -163,6 +174,10 @@ class Flowchart extends Component {
               <i
                 className="fas fa-cog float-right mt-3 mr-3 fa-2x"
                 onClick={this.openBotConfigModal}
+              ></i>
+              <i
+                className="fas fa-file-alt float-right mt-3 mr-3 fa-2x"
+                onClick={this.openVariableModal}
               ></i>
             </span>
             {this.props.process.map((step, index) => {
@@ -388,10 +403,12 @@ const mapStateToProps = (state) => {
     selectedHeaderIndex: state.selectedHeader,
     botName: state.botName,
     botIteration: state.botIteration,
+    variables: state.variables,
   };
 };
 const mapDispathtoProps = (dispatch) => {
   return {
+    saveVariables: (variables) => dispatch(saveVariables(variables)),
     insertMenualData: (data, processIndex) => {
       dispatch(MenualEntryAction(data, processIndex));
     },
