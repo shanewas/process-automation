@@ -1,8 +1,17 @@
 import React, { useMemo, useCallback } from "react";
-import { TextField, Grid } from "@material-ui/core";
+import { TextField, Grid, Box, Typography, Button } from "@material-ui/core";
 import SelectorInput from "../../layout/input/SelectorInput";
+import EntryTypeHeader from "./EntryTypeHeader";
 
-export default ({ onChange, value, onSelectorChange, inputTypes }) => {
+export default ({
+  onChange,
+  value,
+  onSelectorChange,
+  inputTypes,
+  variables,
+  headers,
+  onClearHeaderData,
+}) => {
   console.log("%c TYPE LOAD DATA ", "background: #222; color: #bada55");
   return (
     <Grid container direction="column" spacing={3}>
@@ -54,41 +63,66 @@ export default ({ onChange, value, onSelectorChange, inputTypes }) => {
           placeholder="Input Type"
         />
       </Grid>
-      {/* { [TODO]: WHy Manual entry? Conditional view (dataheader) b/w Column and Manual entry} */}
+      {/* { TODO: set dataHeader | Conditional view (dataheader) b/w Column and Manual entry} */}
+      <Box mt={2} mx={2}>
+        <Grid container nopad="true" justify="space-between">
+          <Grid item>
+            <Typography variant="subtitle2">Data Entry</Typography>
+            {!value.dataHeader && (
+              <Box>
+                <EntryTypeHeader type={value.entryType} onChange={onChange} />
+              </Box>
+            )}
+          </Grid>
+          <Grid item>
+            <Button
+              onClick={onClearHeaderData}
+              style={{ textTransform: "capitalize" }}
+            >
+              Clear Data Entry
+            </Button>
+          </Grid>
+        </Grid>
+      </Box>
+
       {value.dataHeader ? (
-        <>
-          <Grid item>
-            <TextField
-              variant="outlined"
-              onChange={onChange}
-              value={value.dataHeader}
-              name="dataHeader"
-              label="Data Column"
-              fullWidth
-            />
-          </Grid>
-          <Grid item>
-            <TextField
-              variant="outlined"
-              onChange={onChange}
-              value={value.dataHeaderindex}
-              name="dataHeaderindex"
-              label="Data Column Number"
-              fullWidth
-            />
-          </Grid>
-        </>
-      ) : (
         <Grid item>
-          <TextField
+          <SelectorInput
             variant="outlined"
+            options={headers}
             onChange={onChange}
-            value={value.MenualData}
-            name="MenualData"
-            label="Manual Data Entry"
+            value={value.dataHeader}
+            name="dataHeader"
+            placeholder="Data Header"
             fullWidth
           />
         </Grid>
+      ) : (
+        <>
+          {value.entryType === "manual" ? (
+            <Grid item>
+              <TextField
+                variant="outlined"
+                onChange={onChange}
+                value={value.MenualData}
+                name="MenualData"
+                label="Manual Data Entry"
+                fullWidth
+              />
+            </Grid>
+          ) : (
+            <Grid item>
+              <SelectorInput
+                placeholder="Use Variable"
+                name="variableUsed"
+                value={value.variableUsed}
+                onChange={onChange}
+                options={variables}
+                optionsConfigure={{ id: "id", label: "name", value: "name" }}
+              />
+            </Grid>
+          )}
+        </>
       )}
     </Grid>
   );

@@ -93,6 +93,7 @@ class Flowchart extends Component {
         clearConfig: this.clearConfig,
         currentProcess: this.props.process[index],
         variables: this.props.variables,
+        headers: this.props.headers,
       },
     });
 

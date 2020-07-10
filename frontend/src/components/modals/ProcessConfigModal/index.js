@@ -23,8 +23,9 @@ const initFields = {
   label: "",
   link: "",
   variableField: "",
-  variableValue: "",
+  variableName: "",
   variableUsed: "",
+  entryType: "manual",
 };
 const types = ["LoadData", "link", "click", "ScreenShot", "Extract Data"];
 const inputTypes = ["null", "radio", "password", "text", "checkbox", "email"];
@@ -38,6 +39,7 @@ export default ({
   currentProcess,
   assignVariable,
   variables,
+  headers,
 }) => {
   const [process, setProcess] = useState({});
 
@@ -48,6 +50,16 @@ export default ({
     }
     setProcess(tProcess);
   }, []);
+
+  const handleClearDataHeader = () =>
+    setProcess((p) => ({
+      ...p,
+      dataHeader: "",
+      dataHeaderindex: "",
+      MenualData: "",
+      variableUsed: "",
+      entryType: "manual",
+    }));
 
   const handleSwitch = (e) => {
     e.persist();
@@ -109,6 +121,9 @@ export default ({
         )}
         {process._type === "LoadData" && (
           <TypeLoadData
+            onClearHeaderData={handleClearDataHeader}
+            headers={headers}
+            variables={variables}
             onChange={handleChange}
             value={process}
             onSelectorChange={handleTypeChange("type")}
@@ -120,7 +135,7 @@ export default ({
             extractDataFields={extractDataFields}
             variables={variables}
             extractField={process.variableField}
-            variable={process.variableValue}
+            variable={process.variableName}
             onChange={handleChange}
           />
         )}

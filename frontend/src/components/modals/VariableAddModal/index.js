@@ -45,6 +45,8 @@ export default ({
       id: shortId(),
       name: variableName,
       value: "",
+      assignees: [],
+      usedBy: [],
     };
     setVariables((v) => [...v, variable]);
     setChanged(true);
