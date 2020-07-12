@@ -436,6 +436,9 @@ ipcMain.on("need-process", async function (e) {
 						}
 						let img_filename = `${BOTS.botName}_${IDX}${PROCESSCOUNTER}.jpeg`;
 						let pathTo = path.join(element.imgpath, img_filename);
+						await page.evaluate((element) => {
+							window.scroll(0, element.param.Yaxis);
+						}, element);
 						await page
 							.screenshot({
 								path: pathTo,
@@ -452,8 +455,8 @@ ipcMain.on("need-process", async function (e) {
 									.then((screenshot) => {
 										return screenshot
 											.quality(100)
-											.brightness(.5)
-											.contrast(.5)
+											.brightness(0.5)
+											.contrast(0.5)
 											.greyscale()
 											.invert()
 											.write(pathTo);
