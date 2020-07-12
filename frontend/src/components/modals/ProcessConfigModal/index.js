@@ -19,7 +19,6 @@ import TypeExtractData from "./TypeExtractData";
 
 const initFields = {
   ocr: false,
-  MenualData: "",
   label: "",
   link: "",
   variableField: "",
@@ -55,9 +54,6 @@ export default ({
   const handleClearDataHeader = () =>
     setProcess((p) => ({
       ...p,
-      dataHeader: "",
-      dataHeaderindex: "",
-      MenualData: "",
       variableUsed: "",
       entryType: "manual",
       dataEntry: "",

@@ -40,8 +40,8 @@ export function loadBotAction(bot) {
   return { type: "LOAD_BOT", bot };
 }
 
-export function MenualEntryAction(data, processIndex) {
-  return { type: "MENUAL_ENTRY", data, processIndex };
+export function manualDataEntry(dataEntry, processIndex) {
+  return { type: "MANUAL_DATA_ENTRY", dataEntry, processIndex };
 }
 
 export function iterationChangeAction(iterationNumber) {

@@ -23,5 +23,12 @@ export default ({ type, onChange }) => (
     >
       Variable
     </span>
+    /{" "}
+    <span
+      name="dataHeader"
+      style={{ fontWeight: type === "dataHeader" ? 700 : 400 }}
+    >
+      Data Header
+    </span>
   </Box>
 );

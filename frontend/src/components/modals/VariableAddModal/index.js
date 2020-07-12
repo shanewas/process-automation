@@ -104,21 +104,15 @@ export default ({
         </Grid>
         <Box mt={2} className={classes.chipsContainer}>
           {variables.map((v) => {
-            const TChip = (
+            return (
               <Chip
-                color={v.value ? "primary" : "default"}
+                color={
+                  v.assignors.length || v.usedBy.length ? "primary" : "default"
+                }
                 key={v.id}
                 label={v.name}
                 onDelete={() => handleDeleteVariable(v)}
               />
-            );
-
-            return v.value ? (
-              <Tooltip key={v.id} title={v.value} aria-label="add">
-                {TChip}
-              </Tooltip>
-            ) : (
-              TChip
             );
           })}
         </Box>

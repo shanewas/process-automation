@@ -63,16 +63,13 @@ export default ({
           placeholder="Input Type"
         />
       </Grid>
-      {/* { TODO: set dataHeader | Conditional view (dataheader) b/w Column and Manual entry} */}
       <Box mt={2} mx={2}>
         <Grid container nopad="true" justify="space-between">
           <Grid item>
             <Typography variant="subtitle2">Data Entry</Typography>
-            {!value.dataHeader && (
-              <Box>
-                <EntryTypeHeader type={value.entryType} onChange={onChange} />
-              </Box>
-            )}
+            <Box>
+              <EntryTypeHeader type={value.entryType} onChange={onChange} />
+            </Box>
           </Grid>
           <Grid item>
             <Button
@@ -84,45 +81,42 @@ export default ({
           </Grid>
         </Grid>
       </Box>
-
-      {value.dataHeader ? (
+      {value.entryType === "dataHeader" && (
         <Grid item>
           <SelectorInput
             variant="outlined"
             options={headers}
             onChange={onChange}
-            value={value.dataHeader}
-            name="dataHeader"
+            value={value.dataEntry}
+            name="dataEntry"
             placeholder="Data Header"
             fullWidth
           />
         </Grid>
-      ) : (
-        <>
-          {value.entryType === "manual" ? (
-            <Grid item>
-              <TextField
-                variant="outlined"
-                onChange={onChange}
-                value={value.dataEntry}
-                name="dataEntry"
-                label="Manual Data Entry"
-                fullWidth
-              />
-            </Grid>
-          ) : (
-            <Grid item>
-              <SelectorInput
-                placeholder="Use Variable"
-                name="dataEntry"
-                value={value.dataEntry}
-                onChange={onChange}
-                options={variables}
-                optionsConfigure={{ id: "id", label: "name", value: "name" }}
-              />
-            </Grid>
-          )}
-        </>
+      )}
+      {value.entryType === "manual" && (
+        <Grid item>
+          <TextField
+            variant="outlined"
+            onChange={onChange}
+            value={value.dataEntry}
+            name="dataEntry"
+            label="Manual Data Entry"
+            fullWidth
+          />
+        </Grid>
+      )}
+      {value.entryType === "variable" && (
+        <Grid item>
+          <SelectorInput
+            placeholder="Use Variable"
+            name="dataEntry"
+            value={value.dataEntry}
+            onChange={onChange}
+            options={variables}
+            optionsConfigure={{ id: "id", label: "name", value: "name" }}
+          />
+        </Grid>
       )}
     </Grid>
   );

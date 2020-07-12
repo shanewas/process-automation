@@ -78,7 +78,7 @@ const areotherusing = (state, index, header) => {
   var newprocess = [...state.process];
   for (var x = 0; x < newprocess.length; x++) {
     if (x !== index) {
-      if (newprocess[x].dataHeader === header) {
+      if (newprocess[x].dataEntry === header) {
         return true;
       }
     }
@@ -90,14 +90,14 @@ const selectHeaders = (state, index) => {
   const newstatus = [...state.status];
 
   if (
-    "dataHeader" in newprocess[index] &&
-    !areotherusing(state, index, newprocess[index].dataHeader)
+    "dataEntry" in newprocess[index] &&
+    !areotherusing(state, index, newprocess[index].dataEntry)
   ) {
-    newstatus[newprocess[index].dataHeaderindex] = "notSelected";
+    newstatus[newprocess[index].dataEntryindex] = "notSelected";
   }
-  newprocess[index].dataHeader = state.headers[state.selectedHeader];
-  newprocess[index].dataHeaderindex = state.selectedHeader;
-  delete newprocess[index].MenualData;
+  newprocess[index].dataEntry = state.headers[state.selectedHeader];
+  newprocess[index].entryType = "dataHeader";
+  newprocess[index].dataEntryindex = state.selectedHeader;
   newstatus[state.selectedHeader] = "used";
 
   return {
@@ -188,16 +188,16 @@ const loadBot = (state, bot) => {
   };
 };
 
-const menualEntryData = (state, data, index) => {
+const manualDataEntry = (state, dataEntry, index) => {
   let newprocess = [...state.process];
-  newprocess[index].MenualData = data;
+  newprocess[index].dataEntry = dataEntry;
   const newstatus = [...state.status];
-  if ("dataHeader" in newprocess[index]) {
-    if (!areotherusing(state, index, newprocess[index].dataHeader)) {
-      newstatus[newprocess[index].dataHeaderindex] = "notSelected";
+  if ("dataEntry" in newprocess[index]) {
+    if (!areotherusing(state, index, newprocess[index].dataEntry)) {
+      newstatus[newprocess[index].dataEntryindex] = "notSelected";
     }
-    delete newprocess[index].dataHeader;
-    delete newprocess[index].dataHeaderindex;
+    // delete newprocess[index].dataEntry;
+    delete newprocess[index].dataEntryindex;
   }
   return {
     ...state,
@@ -251,8 +251,8 @@ const rootReducer = (state = initState, action) => {
       return removeStep(state, action.index, action.num_of_step);
     case "LOAD_BOT":
       return loadBot(state, action.bot);
-    case "MENUAL_ENTRY":
-      return menualEntryData(state, action.data, action.processIndex);
+    case "MANUAL_DATA_ENTRY":
+      return manualDataEntry(state, action.dataEntry, action.processIndex);
     case "SAVE_ITERATION":
       return changeIteration(state, action.iterationNumber);
     case "LOADED_DATASET_PROPERTIES":

@@ -10,24 +10,18 @@ import {
   editProcessAction,
   clearFlowchartAction,
   removeStepAction,
-  MenualEntryAction,
+  manualDataEntry,
   iterationChangeAction,
   saveVariables,
   assignVariable,
   consumeVariable,
 } from "../../Store/actions";
-// import MenualEntryModal from "./MenualEntryModal";
-import ProcessConfigModal from "./ProcessConfigModal";
-// import BotConfigModal from "./BotConfigModal";
 import { ModalContext } from "../../context/ModalContext";
 
 class Flowchart extends Component {
   static contextType = ModalContext;
 
   state = {
-    // BotConfigModalShow: false,
-    // menualEntryModalShow: false,
-    // menualEntryindex: null,
     ProcessConfigModalShow: false,
     ProcessConfigModalIndex: null,
   };
@@ -40,11 +34,12 @@ class Flowchart extends Component {
   //   });
   // };
 
-  insertHeader = (index) => {
+  insertHeader = (index, process) => {
     if (this.props.selectedHeaderIndex !== null) {
       this.props.useHeaders(index);
     } else {
-      this.openManualEntryModal(index);
+      if (process.entryType !== "manual") return;
+      this.openManualDataEntryModal(index, process.dataEntry);
     }
   };
 
@@ -57,11 +52,13 @@ class Flowchart extends Component {
       },
     });
 
-  openManualEntryModal = (index) =>
+  openManualDataEntryModal = (index, dataEntry) =>
     this.context.setCurrentModal({
       name: "ManualEntryModal",
       props: {
-        saveData: (data) => this.props.insertMenualData(data, index),
+        dataEntry: dataEntry,
+        saveDataEntry: (dataEntry) =>
+          this.props.insertMenualData(dataEntry, index),
       },
     });
 
@@ -145,24 +142,6 @@ class Flowchart extends Component {
     } else {
       return (
         <div>
-          {/* <MenualEntryModal
-            show={this.state.menualEntryModalShow}
-            onHide={() => this.setState({ menualEntryModalShow: false })}
-            insertMenualData={this.insertMenualData}
-          /> */}
-          {/* <BotConfigModal
-            show={this.state.BotConfigModalShow}
-            onHide={() => this.setState({ BotConfigModalShow: false })}
-            saveIteration={this.saveIteration}
-            botIteration={this.props.botIteration}
-          /> */}
-          {/* <ProcessConfigModal
-            show={this.state.ProcessConfigModalShow}
-            onHide={() => this.setState({ ProcessConfigModalShow: false })}
-            editStep={this.editStep}
-            clearConfig={this.clearConfig}
-            step={this.props.process[this.state.ProcessConfigModalIndex]}
-          /> */}
           <Card
             id="scrollstyle"
             style={{ height: "70vh", maxHeight: "70vh", overflowY: "auto" }}
@@ -275,7 +254,7 @@ class Flowchart extends Component {
                       </span>
                       <div
                         style={{ backgroundColor: "#a044b3" }}
-                        onClick={() => this.insertHeader(index)}
+                        onClick={() => this.insertHeader(index, step)}
                         className="m-b-30 text-white bg text-center mr-5 ml-5 mb-2 mt-2 p-3"
                       >
                         <span
@@ -289,29 +268,29 @@ class Flowchart extends Component {
                         </span>
                         Load Data {step.placeholder}
                         <br />
-                        {"dataHeader" in step ? (
+                        {step.entryType === "dataHeader" && (
                           <span
                             style={{ float: "right" }}
                             className="badge badge-lg badge-pill badge-success"
                           >
-                            {step.dataHeader}
+                            {step.dataEntry}
                           </span>
-                        ) : "MenualData" in step ? (
+                        )}
+                        {step.entryType === "manual" && (
                           <span
                             style={{ float: "right" }}
                             className="badge badge-lg badge-pill badge-warning"
                           >
-                            {step.MenualData}
+                            {step.dataEntry}
                           </span>
-                        ) : (
-                          <h6>
-                            <span
-                              style={{ float: "right" }}
-                              className="badge badge-pill badge-danger"
-                            >
-                              No Data Selected
-                            </span>
-                          </h6>
+                        )}
+                        {step.entryType === "variable" && (
+                          <span
+                            style={{ float: "right" }}
+                            className="badge badge-lg badge-pill badge-warning"
+                          >
+                            {step.dataEntry}
+                          </span>
                         )}
                       </div>
                     </div>
@@ -448,8 +427,8 @@ const mapDispathtoProps = (dispatch) => {
     consumeVariable: (id, processId) =>
       dispatch(consumeVariable(id, processId)),
     saveVariables: (variables) => dispatch(saveVariables(variables)),
-    insertMenualData: (data, processIndex) => {
-      dispatch(MenualEntryAction(data, processIndex));
+    insertMenualData: (dataEntry, processIndex) => {
+      dispatch(manualDataEntry(dataEntry, processIndex));
     },
     sendProcess: (process) => {
       dispatch(SendProcessAction(process));

@@ -11,11 +11,16 @@ import {
 import { Close as CloseIcon } from "@material-ui/icons";
 import Button from "react-bootstrap/Button";
 
-export default ({ open, handleClose, saveData }) => {
-  const [data, setData] = useState("");
-  const handleDataChange = (e) => setData(e.target.value);
+export default ({
+  open,
+  handleClose,
+  dataEntry: currentDataEntry = "",
+  saveDataEntry,
+}) => {
+  const [dataEntry, setDataEntry] = useState(currentDataEntry);
+  const handleDataChange = (e) => setDataEntry(e.target.value);
   const onSave = () => {
-    saveData(data);
+    saveDataEntry(dataEntry);
     handleClose();
   };
   return (
@@ -33,9 +38,9 @@ export default ({ open, handleClose, saveData }) => {
       <DialogContent>
         <TextField
           onChange={handleDataChange}
-          value={data}
+          value={dataEntry}
           variant="outlined"
-          placeholder="Data"
+          placeholder="Data Entry"
           fullWidth
         />
       </DialogContent>
