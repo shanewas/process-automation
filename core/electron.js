@@ -451,18 +451,24 @@ ipcMain.on("need-process", async function (e) {
 								},
 							})
 							.then(async () => {
-								await Jimp.read(pathTo)
-									.then((screenshot) => {
-										return screenshot
-											.quality(100)
-											.brightness(0.5)
-											.contrast(0.5)
-											.greyscale()
-											.invert()
-											.write(pathTo);
-									})
-									.then(async () => {
-										if (element.ocr) {
+								if (element.ocr) {
+									await Jimp.read(pathTo)
+										.then((screenshot) => {
+											let ocr_img_filename = `${BOTS.botName}_OCR_${IDX}${PROCESSCOUNTER}.jpeg`;
+											let ocr_pathTo = path.join(
+												element.imgpath,
+												"ocr_images/",
+												ocr_img_filename
+											);
+											return screenshot
+												.quality(100)
+												.brightness(0.5)
+												.contrast(0.5)
+												.greyscale()
+												.invert()
+												.write(ocr_pathTo);
+										})
+										.then(async () => {
 											if (!fs.existsSync(element.ocrpath)) {
 												fs.mkdirSync(element.ocrpath);
 											}
@@ -478,11 +484,11 @@ ipcMain.on("need-process", async function (e) {
 														: console.log("Saved!");
 												});
 											});
-										}
-									})
-									.catch((err) => {
-										throw err;
-									});
+										})
+										.catch((err) => {
+											throw err;
+										});
+								}
 							})
 							.finally(() => {
 								loadingWindow.webContents.send("next-process");

@@ -90,7 +90,7 @@ document.addEventListener("keypress", (e) => {
 			},
 			ocr: false,
 			ocrpath: isDev
-				? path.join("./backend/data/ocr/")
+				? path.join("./backend/data/ocrOutput/")
 				: // : path.join("./backend/data/screenshot/", fileName), //LINUX BUILD TILL SPRINT 2 TODO: Figure out how to handle this
 				  // : path.join("./backend/data/screenshot/", fileName).replace('/app.asar', ''), //LINUX BUILD TILL SPRINT 2 TODO: Figure out how to handle this
 				  path.join(app.getAppPath("userData"), "../backend/data/ocr/"), // WINDOWS BUILD
