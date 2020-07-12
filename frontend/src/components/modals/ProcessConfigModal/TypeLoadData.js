@@ -104,8 +104,8 @@ export default ({
               <TextField
                 variant="outlined"
                 onChange={onChange}
-                value={value.MenualData}
-                name="MenualData"
+                value={value.dataEntry}
+                name="dataEntry"
                 label="Manual Data Entry"
                 fullWidth
               />
@@ -114,8 +114,8 @@ export default ({
             <Grid item>
               <SelectorInput
                 placeholder="Use Variable"
-                name="variableUsed"
-                value={value.variableUsed}
+                name="dataEntry"
+                value={value.dataEntry}
                 onChange={onChange}
                 options={variables}
                 optionsConfigure={{ id: "id", label: "name", value: "name" }}

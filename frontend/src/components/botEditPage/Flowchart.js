@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import Card from "react-bootstrap/Card";
 import * as electron from "../../electronScript";
 import { connect } from "react-redux";
+import shortId from "shortid";
 import {
   UseHeaderAction,
   UnselectHeaderAction,
@@ -13,6 +14,7 @@ import {
   iterationChangeAction,
   saveVariables,
   assignVariable,
+  consumeVariable,
 } from "../../Store/actions";
 // import MenualEntryModal from "./MenualEntryModal";
 import ProcessConfigModal from "./ProcessConfigModal";
@@ -52,7 +54,6 @@ class Flowchart extends Component {
       props: {
         variables: this.props.variables,
         saveVariables: this.props.saveVariables,
-        assignVariable: this.props.assignVariable,
       },
     });
 
@@ -94,6 +95,8 @@ class Flowchart extends Component {
         currentProcess: this.props.process[index],
         variables: this.props.variables,
         headers: this.props.headers,
+        assignVariable: this.props.assignVariable,
+        consumeVariable: this.props.consumeVariable,
       },
     });
 
@@ -112,8 +115,9 @@ class Flowchart extends Component {
   };
   componentDidMount() {
     electron.ipcRenderer.on(electron.ProcessLinkChannel, (e, content) => {
-      console.log(content);
-      this.props.sendProcess(content);
+      const process = { ...content, id: shortId() };
+      console.log(process);
+      this.props.sendProcess(process);
     });
   }
 
@@ -440,7 +444,9 @@ const mapStateToProps = (state) => {
 };
 const mapDispathtoProps = (dispatch) => {
   return {
-    assignVariable: (id, value) => dispatch(assignVariable(id, value)),
+    assignVariable: (id, processId) => dispatch(assignVariable(id, processId)),
+    consumeVariable: (id, processId) =>
+      dispatch(consumeVariable(id, processId)),
     saveVariables: (variables) => dispatch(saveVariables(variables)),
     insertMenualData: (data, processIndex) => {
       dispatch(MenualEntryAction(data, processIndex));

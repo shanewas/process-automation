@@ -16,9 +16,22 @@ const saveVariables = (state, variables) => ({
   variables,
 });
 
-const assignVariable = (state, id, value) => ({
+const assignVariable = (state, id, processId) => ({
   ...state,
-  variables: state.variables.map((v) => (v.id === id ? { ...v, value } : v)),
+  variables: state.variables.map((v) =>
+    v.id === id && !v.assignors.includes(processId)
+      ? { ...v, assignors: [...v.assignors, processId] }
+      : v
+  ),
+});
+
+const consumeVariable = (state, id, processId) => ({
+  ...state,
+  variables: state.variables.map((v) =>
+    v.id === id && !v.usedBy.includes(processId)
+      ? { ...v, usedBy: [...v.usedBy, processId] }
+      : v
+  ),
 });
 
 const loadHeaders = (state, headers, path) => {
@@ -213,7 +226,9 @@ const rootReducer = (state = initState, action) => {
     case "SAVE_VARIABLES":
       return saveVariables(state, action.variables);
     case "ASSIGN_VARIABLE":
-      return assignVariable(state, action.id, action.value);
+      return assignVariable(state, action.id, action.processId);
+    case "CONSUME_VARIABLE":
+      return consumeVariable(state, action.id, action.processId);
     case "LOAD_HEADERS":
       return loadHeaders(state, action.headers, action.path);
     case "CHANGE_HEADER":

@@ -30,6 +30,7 @@ export default ({
   variables: currentVariables = [],
   saveVariables,
 }) => {
+  console.log({ currentVariables });
   const classes = useStyles();
   const [variables, setVariables] = useState(currentVariables);
   const [variableName, setVariableName] = useState("");
@@ -45,7 +46,7 @@ export default ({
       id: shortId(),
       name: variableName,
       value: "",
-      assignees: [],
+      assignors: [],
       usedBy: [],
     };
     setVariables((v) => [...v, variable]);

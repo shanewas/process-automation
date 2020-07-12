@@ -8,6 +8,7 @@ export default ({ type, onChange }) => (
       if (e.target.tagName !== "SPAN") return;
       e.target.name = "entryType";
       e.target.value = e.target.getAttribute("name");
+      e.target.typeChanged = true;
       onChange(e);
     }}
     style={{ cursor: "pointer" }}

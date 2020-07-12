@@ -26,6 +26,7 @@ const initFields = {
   variableName: "",
   variableUsed: "",
   entryType: "manual",
+  dataEntry: "",
 };
 const types = ["LoadData", "link", "click", "ScreenShot", "Extract Data"];
 const inputTypes = ["null", "radio", "password", "text", "checkbox", "email"];
@@ -38,11 +39,11 @@ export default ({
   clearConfig,
   currentProcess,
   assignVariable,
+  consumeVariable,
   variables,
   headers,
 }) => {
   const [process, setProcess] = useState({});
-
   useEffect(() => {
     const tProcess = { ...initFields, ...currentProcess };
     for (const v in tProcess) {
@@ -59,6 +60,7 @@ export default ({
       MenualData: "",
       variableUsed: "",
       entryType: "manual",
+      dataEntry: "",
     }));
 
   const handleSwitch = (e) => {
@@ -71,13 +73,26 @@ export default ({
 
   const handleChange = (e) => {
     e.persist();
-    setProcess((p) => ({ ...p, [e.target.name]: e.target.value }));
+    setProcess((p) => ({
+      ...p,
+      [e.target.name]: e.target.value,
+      ...(e.target.typeChanged ? { dataEntry: "" } : {}),
+    }));
   };
 
   const handleSubmit = () => {
-    const tProcess = { ...process };
+    const varName = process.variableName;
+    const varUsed = process.variableUsed;
+    if (varName && process._type === "Extract Data") {
+      const tVar = variables.find((v) => v.name === varName);
+      assignVariable(tVar.id, process.id);
+    }
+    if (varUsed && process.entryType === "variable") {
+      const tVar = variables.find((v) => v.name === varUsed);
+      consumeVariable(tVar.id, process.id);
+    }
 
-    editStep(tProcess);
+    editStep(process);
     handleClose();
   };
 
