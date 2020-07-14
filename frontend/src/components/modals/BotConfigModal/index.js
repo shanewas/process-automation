@@ -14,10 +14,15 @@ import Button from "react-bootstrap/Button";
 export default ({ open, handleClose, botIteration, saveIteration }) => {
   const [iteration, setIteration] = useState(botIteration);
   const handleIterationChange = (e) => setIteration(e.target.value);
+  const [errors, setErrors] = useState({});
+  console.log(errors);
   const onSave = () => {
-    saveIteration(iteration);
+    if (isNaN(iteration) || iteration <= 0)
+      return setErrors({ iteration: "Must be a number and greater than 0" });
+    saveIteration(Number(iteration));
     handleClose();
   };
+
   return (
     <Dialog open={open} fullWidth>
       <DialogTitle>
@@ -32,6 +37,8 @@ export default ({ open, handleClose, botIteration, saveIteration }) => {
       </DialogTitle>
       <DialogContent>
         <TextField
+          error={!!errors.iteration}
+          helperText={errors.iteration}
           label="Bot Iteration"
           onChange={handleIterationChange}
           value={iteration}
