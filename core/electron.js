@@ -106,19 +106,28 @@ function generateMainWindow() {
 }
 ipcMain.on("search-link", function (event, args) {
   let procSeq = {
+    ocr: false,
+    label: "",
+    link: "",
+    variableField: "",
+    variableName: "",
+    variableUsed: "",
+    entryType: "manual",
+    dataEntry: "",
+    type: "",
+    value: "",
+    xpath: "",
     tagName: `Web Link`,
-    type: undefined,
     placeholder: `Link to load "${
       args.includes("https://") || args.includes("http://")
         ? args
         : `https://${args}`
     }"`,
-    value: undefined,
     link:
       args.includes("https://") || args.includes("http://")
         ? args
         : `https://${args}`,
-    xpath: undefined,
+    // TODO: REMOVE THIS
     ext: {
       label: undefined,
     },
