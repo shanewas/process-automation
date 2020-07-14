@@ -37,8 +37,6 @@ export default ({
   editStep,
   clearConfig,
   currentProcess,
-  assignVariable,
-  consumeVariable,
   variables,
   headers,
 }) => {
@@ -77,22 +75,9 @@ export default ({
   };
 
   const handleSubmit = () => {
-    const varName = process.variableName;
-    const varUsed = process.variableUsed;
-    if (varName && process._type === "Extract Data") {
-      const tVar = variables.find((v) => v.name === varName);
-      assignVariable(tVar.id, process.id);
-    }
-    if (varUsed && process.entryType === "variable") {
-      const tVar = variables.find((v) => v.name === varUsed);
-      consumeVariable(tVar.id, process.id);
-    }
-
     editStep(process);
     handleClose();
   };
-
-  console.log(process);
 
   return (
     <Dialog open={open} fullWidth>

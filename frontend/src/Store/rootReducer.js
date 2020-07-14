@@ -16,24 +16,6 @@ const saveVariables = (state, variables) => ({
   variables,
 });
 
-const assignVariable = (state, id, processId) => ({
-  ...state,
-  variables: state.variables.map((v) =>
-    v.id === id && !v.assignors.includes(processId)
-      ? { ...v, assignors: [...v.assignors, processId] }
-      : v
-  ),
-});
-
-const consumeVariable = (state, id, processId) => ({
-  ...state,
-  variables: state.variables.map((v) =>
-    v.id === id && !v.usedBy.includes(processId)
-      ? { ...v, usedBy: [...v.usedBy, processId] }
-      : v
-  ),
-});
-
 const loadHeaders = (state, headers, path) => {
   const headerExample = headers;
   const status = new Array(headerExample.length).fill("notSelected");
@@ -124,12 +106,50 @@ const EntryProcess = (state, process) => {
   };
 };
 const editProcess = (state, process, index) => {
+  const {
+    dataEntry,
+    entryType,
+    variableField,
+    variableName,
+    variableUsed,
+    id,
+  } = process;
+  const oldProcess = state.process.find((p) => p.id === id);
+  let variables = [...state.variables];
+
+  // Assigning (Extract Data, OCR?)
+  if (oldProcess.variableName !== variableName && !oldProcess.variableName) {
+    console.log("assigning variable first time");
+    // first time assigning a variable
+    variables = variables.map((v) =>
+      v.name === variableName ? { ...v, assignors: [...v.assignors, id] } : v
+    );
+  } else if (oldProcess.variableName !== variableName) {
+    console.log("removing previous one and adding new one");
+    // changed
+    variables = variables.map((v) => {
+      // remove the process id from the previous variable assignors array
+      if (v.name === oldProcess.variableName)
+        return {
+          ...v,
+          assignors: v.assignors.filter((tv) => tv !== id),
+        };
+      // add the process id to  the new variable assignors array
+      if (v.name === variableName)
+        return { ...v, assignors: [...v.assignors, id] };
+      return v;
+    });
+  }
+
+  console.log({ variables });
+
   var newprocess = [...state.process];
 
   newprocess[index] = process;
   return {
     ...state,
     process: newprocess,
+    variables,
   };
 };
 const clearAll = (state) => {
@@ -225,10 +245,6 @@ const rootReducer = (state = initState, action) => {
   switch (action.type) {
     case "SAVE_VARIABLES":
       return saveVariables(state, action.variables);
-    case "ASSIGN_VARIABLE":
-      return assignVariable(state, action.id, action.processId);
-    case "CONSUME_VARIABLE":
-      return consumeVariable(state, action.id, action.processId);
     case "LOAD_HEADERS":
       return loadHeaders(state, action.headers, action.path);
     case "CHANGE_HEADER":

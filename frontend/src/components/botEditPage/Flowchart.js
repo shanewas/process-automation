@@ -13,8 +13,6 @@ import {
   manualDataEntry,
   iterationChangeAction,
   saveVariables,
-  assignVariable,
-  consumeVariable,
 } from "../../Store/actions";
 import { ModalContext } from "../../context/ModalContext";
 
@@ -92,8 +90,6 @@ class Flowchart extends Component {
         currentProcess: this.props.process[index],
         variables: this.props.variables,
         headers: this.props.headers,
-        assignVariable: this.props.assignVariable,
-        consumeVariable: this.props.consumeVariable,
       },
     });
 
@@ -423,9 +419,6 @@ const mapStateToProps = (state) => {
 };
 const mapDispathtoProps = (dispatch) => {
   return {
-    assignVariable: (id, processId) => dispatch(assignVariable(id, processId)),
-    consumeVariable: (id, processId) =>
-      dispatch(consumeVariable(id, processId)),
     saveVariables: (variables) => dispatch(saveVariables(variables)),
     insertMenualData: (dataEntry, processIndex) => {
       dispatch(manualDataEntry(dataEntry, processIndex));

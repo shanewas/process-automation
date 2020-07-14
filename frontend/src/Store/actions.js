@@ -56,13 +56,3 @@ export const saveVariables = (variables) => ({
   type: "SAVE_VARIABLES",
   variables,
 });
-export const assignVariable = (id, processId) => ({
-  type: "ASSIGN_VARIABLE",
-  id,
-  processId,
-});
-export const consumeVariable = (id, processId) => ({
-  type: "CONSUME_VARIABLE",
-  id,
-  processId,
-});
