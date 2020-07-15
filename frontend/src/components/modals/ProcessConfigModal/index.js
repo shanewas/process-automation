@@ -62,7 +62,13 @@ export default ({
     setProcess((p) => ({ ...p, [e.target.name]: e.target.checked }));
   };
   const handleTypeChange = (type) => (e) => {
-    setProcess((p) => ({ ...p, [type]: e.target.value }));
+    setProcess((p) => ({
+      ...p,
+      [type]: e.target.value,
+      ...(type === "_type"
+        ? { variableField: "", variableName: "", variableUsed: "" }
+        : {}),
+    }));
   };
 
   const handleChange = (e) => {
@@ -78,6 +84,8 @@ export default ({
     editStep(process);
     handleClose();
   };
+
+  console.log(process);
 
   return (
     <Dialog open={open} fullWidth>
@@ -105,7 +113,7 @@ export default ({
             onSwitch={handleSwitch}
             value={process.ocr}
             variables={variables}
-            variableUsed={process.variableUsed}
+            variableName={process.variableName}
             onChange={handleChange}
           />
         )}
