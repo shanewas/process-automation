@@ -8,7 +8,7 @@ export default class SidebarLeft extends Component {
 
   ocr = (e) => {
     e.preventDefault();
-    electron.ipcRenderer.on("ocr-engine", (ocrInBot = false) => {});
+    this.props.ocr();
   };
 
   render() {
