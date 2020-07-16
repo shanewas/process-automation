@@ -57,6 +57,7 @@ var BOTS;
 var BOTPROCESS;
 var DATA = [];
 var ITERATION = 1;
+var BOT_VARIABLES = [];
 var PROCESSLENGTH = 0;
 var PROCESSCOUNTER = 0;
 var LOCALDATA;
@@ -69,6 +70,7 @@ function reset_var() {
 	BOTPROCESS = null;
 	DATA = [];
 	ITERATION = 1;
+	BOT_VARIABLES = [];
 	PROCESSLENGTH = 0;
 	PROCESSCOUNTER = 0;
 	LOCALDATA = null;
@@ -107,19 +109,28 @@ function generateMainWindow() {
 }
 ipcMain.on("search-link", function (event, args) {
 	let procSeq = {
+		ocr: false,
+		label: "",
+		link: "",
+		variableField: "",
+		variableName: "",
+		variableUsed: "",
+		entryType: "manual",
+		dataEntry: "",
+		type: "",
+		value: "",
+		xpath: "",
 		tagName: `Web Link`,
-		type: undefined,
 		placeholder: `Link to load "${
 			args.includes("https://") || args.includes("http://")
 				? args
 				: `https://${args}`
 		}"`,
-		value: undefined,
 		link:
 			args.includes("https://") || args.includes("http://")
 				? args
 				: `https://${args}`,
-		xpath: undefined,
+		// TODO: REMOVE THIS
 		ext: {
 			label: undefined,
 		},
@@ -256,6 +267,7 @@ ipcMain.on("start-bot", async function (e, botName) {
 			win.webContents.send("notification-single", notification);
 		});
 	ITERATION = BOTS.botIteration;
+	BOT_VARIABLES = BOTS.variables;
 	console.log(`Bot is commencing ${ITERATION} iteration`);
 	IDX = 0;
 	botlist.setLastActiveTime(botName);
@@ -327,10 +339,21 @@ ipcMain.on("need-process", async function (e) {
 			try {
 				switch (element._type) {
 					case "LoadData":
-						if (element.dataHeader) {
-							dat = LOCALDATA[element.dataHeader];
-						} else {
-							dat = element.MenualData;
+						switch (element.entryType) {
+							case "manual":
+								dat = element.dataEntry;
+								break;
+							case "variable":
+								let variable_obj = BOT_VARIABLES.find(
+									(o) => o.name === element.dataEntry
+								);
+								dat = variable_obj.value;
+								break;
+							case "dataHeader":
+								dat = LOCALDATA[element.dataEntry];
+								break;
+							default:
+								break;
 						}
 						// conditions: [
 						// {
@@ -428,6 +451,15 @@ ipcMain.on("need-process", async function (e) {
 							autoLoad = true;
 						});
 						break;
+					case "Extract Data":
+						extracted_data = element[element.variableField];
+						let variable_obj = BOT_VARIABLES.find(
+							(o) => o.name === element.variableName
+						);
+						variable_obj.value = extracted_data;
+						loadingWindow.webContents.send("next-process");
+						console.log("Extracted Data " + extracted_data);
+						break;
 					case "ScreenShot":
 						console.log(`Taking screenshot ...`);
 						console.log(`will saving to ${element.imgpath}`);
@@ -472,6 +504,10 @@ ipcMain.on("need-process", async function (e) {
 												logger: (m) => console.log(m),
 											}).then(async ({ data: { text } }) => {
 												console.log(text);
+												let variable_obj = BOT_VARIABLES.find(
+													(o) => o.name === element.variableName
+												);
+												variable_obj.value = text;
 												fs.writeFile(saveTo, text, (err) => {
 													err
 														? console.log("Canceled!")
@@ -603,7 +639,8 @@ ipcMain.on("update-bot", async (event, botName, saveBotObj) => {
 		saveBotObj.filepath,
 		saveBotObj.headers,
 		saveBotObj.status,
-		saveBotObj.botIteration
+		saveBotObj.botIteration,
+		saveBotObj.variables
 	);
 });
 
@@ -613,25 +650,21 @@ ipcMain.handle("get-process", async (event, botName) => {
 });
 
 ipcMain.on("file-analytics", async (event, filepath) => {
-	if (fs.existsSync(filepath)) {
-		const { size } = fs.statSync(filepath);
-		const results = [];
-		let analytics = {};
-		fs.createReadStream(filepath, { bufferSize: 64 * 1024 })
-			.pipe(csv())
-			.on("data", (data) => results.push(data))
-			.on("end", () => {
-				analytics = {
-					path: filepath,
-					size: size,
-					rowNumber: results.length,
-					type: "text/csv",
-				};
-				event.returnValue = analytics;
-			});
-	} else {
-		event.returnValue = null;
-	}
+	const { size } = fs.statSync(filepath);
+	const results = [];
+	let analytics = {};
+	fs.createReadStream(filepath, { bufferSize: 64 * 1024 })
+		.pipe(csv())
+		.on("data", (data) => results.push(data))
+		.on("end", () => {
+			analytics = {
+				path: filepath,
+				size: size,
+				rowNumber: results.length,
+				type: "text/csv",
+			};
+			event.returnValue = analytics;
+		});
 });
 
 ipcMain.on("code-generation", async (event, file) => {

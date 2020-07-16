@@ -1,5 +1,6 @@
 const initState = {
   headers: [],
+  variables: [],
   selectedHeader: null,
   status: [],
   filepath: null,
@@ -9,6 +10,11 @@ const initState = {
   botIteration: 1,
   datasetProperties: null,
 };
+
+const saveVariables = (state, variables) => ({
+  ...state,
+  variables,
+});
 
 const loadHeaders = (state, headers, path) => {
   const headerExample = headers;
@@ -54,7 +60,7 @@ const areotherusing = (state, index, header) => {
   var newprocess = [...state.process];
   for (var x = 0; x < newprocess.length; x++) {
     if (x !== index) {
-      if (newprocess[x].dataHeader === header) {
+      if (newprocess[x].dataEntry === header) {
         return true;
       }
     }
@@ -66,14 +72,14 @@ const selectHeaders = (state, index) => {
   const newstatus = [...state.status];
 
   if (
-    "dataHeader" in newprocess[index] &&
-    !areotherusing(state, index, newprocess[index].dataHeader)
+    "dataEntry" in newprocess[index] &&
+    !areotherusing(state, index, newprocess[index].dataEntry)
   ) {
-    newstatus[newprocess[index].dataHeaderindex] = "notSelected";
+    newstatus[newprocess[index].dataEntryindex] = "notSelected";
   }
-  newprocess[index].dataHeader = state.headers[state.selectedHeader];
-  newprocess[index].dataHeaderindex = state.selectedHeader;
-  delete newprocess[index].MenualData;
+  newprocess[index].dataEntry = state.headers[state.selectedHeader];
+  newprocess[index].entryType = "dataHeader";
+  newprocess[index].dataEntryindex = state.selectedHeader;
   newstatus[state.selectedHeader] = "used";
 
   return {
@@ -100,18 +106,57 @@ const EntryProcess = (state, process) => {
   };
 };
 const editProcess = (state, process, index) => {
+  const {
+    dataEntry,
+    entryType,
+    variableField,
+    variableName,
+    variableUsed,
+    id,
+  } = process;
+  const oldProcess = state.process.find((p) => p.id === id);
+  let variables = [...state.variables];
+
+  // Assigning (Extract Data, OCR?)
+  if (oldProcess.variableName !== variableName && !oldProcess.variableName) {
+    console.log("assigning variable first time");
+    // first time assigning a variable
+    variables = variables.map((v) =>
+      v.name === variableName ? { ...v, assignors: [...v.assignors, id] } : v
+    );
+  } else if (oldProcess.variableName !== variableName) {
+    console.log("removing previous one and adding new one");
+    // changed
+    variables = variables.map((v) => {
+      // remove the process id from the previous variable assignors array
+      if (v.name === oldProcess.variableName)
+        return {
+          ...v,
+          assignors: v.assignors.filter((tv) => tv !== id),
+        };
+      // add the process id to  the new variable assignors array
+      if (v.name === variableName)
+        return { ...v, assignors: [...v.assignors, id] };
+      return v;
+    });
+  }
+
+  console.log({ variables });
+
   var newprocess = [...state.process];
 
   newprocess[index] = process;
   return {
     ...state,
     process: newprocess,
+    variables,
   };
 };
 const clearAll = (state) => {
   return {
     ...state,
     headers: [],
+    variables: [],
     selectedHeader: null,
     status: [],
     filepath: null,
@@ -148,8 +193,10 @@ const removeStep = (state, index, num_of_step) => {
 };
 
 const loadBot = (state, bot) => {
+  console.log(bot);
   return {
     ...state,
+    variables: bot.variables,
     headers: bot.header,
     status: bot.status,
     filepath: bot.filepath,
@@ -161,16 +208,16 @@ const loadBot = (state, bot) => {
   };
 };
 
-const menualEntryData = (state, data, index) => {
+const manualDataEntry = (state, dataEntry, index) => {
   let newprocess = [...state.process];
-  newprocess[index].MenualData = data;
+  newprocess[index].dataEntry = dataEntry;
   const newstatus = [...state.status];
-  if ("dataHeader" in newprocess[index]) {
-    if (!areotherusing(state, index, newprocess[index].dataHeader)) {
-      newstatus[newprocess[index].dataHeaderindex] = "notSelected";
+  if ("dataEntry" in newprocess[index]) {
+    if (!areotherusing(state, index, newprocess[index].dataEntry)) {
+      newstatus[newprocess[index].dataEntryindex] = "notSelected";
     }
-    delete newprocess[index].dataHeader;
-    delete newprocess[index].dataHeaderindex;
+    // delete newprocess[index].dataEntry;
+    delete newprocess[index].dataEntryindex;
   }
   return {
     ...state,
@@ -196,6 +243,8 @@ const rootReducer = (state = initState, action) => {
   console.log(action.type);
 
   switch (action.type) {
+    case "SAVE_VARIABLES":
+      return saveVariables(state, action.variables);
     case "LOAD_HEADERS":
       return loadHeaders(state, action.headers, action.path);
     case "CHANGE_HEADER":
@@ -218,8 +267,8 @@ const rootReducer = (state = initState, action) => {
       return removeStep(state, action.index, action.num_of_step);
     case "LOAD_BOT":
       return loadBot(state, action.bot);
-    case "MENUAL_ENTRY":
-      return menualEntryData(state, action.data, action.processIndex);
+    case "MANUAL_DATA_ENTRY":
+      return manualDataEntry(state, action.dataEntry, action.processIndex);
     case "SAVE_ITERATION":
       return changeIteration(state, action.iterationNumber);
     case "LOADED_DATASET_PROPERTIES":

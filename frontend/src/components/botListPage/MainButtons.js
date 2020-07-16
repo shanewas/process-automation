@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Card from "react-bootstrap/Card";
-import AddBotModal from "./AddBotModal";
 import { Link } from "react-router-dom";
 
 export default class MainButtons extends Component {
@@ -17,10 +16,6 @@ export default class MainButtons extends Component {
   render() {
     return (
       <div>
-        <AddBotModal
-          show={this.state.addmodalShow}
-          onHide={() => this.setState({ addmodalShow: false })}
-        />
         <Row>
           <Col xs={12} md={6} lg={3} xl={3}>
             <Card className="p-3">

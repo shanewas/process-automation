@@ -13,6 +13,7 @@ export const SingleNotificationChannel = "notification-single";
 export const ocrEngineChannel = "ocr-engine";
 export const exportBot = "export-bot";
 export const importBot = "import-bot";
+export const ocrEngine = "ocr-engine";
 
 export function send(teleport, content) {
   ipcRenderer.send(teleport, content);

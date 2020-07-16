@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import Card from "react-bootstrap/Card";
 import * as electron from "../../electronScript";
 import { connect } from "react-redux";
+import shortId from "shortid";
 import {
   UseHeaderAction,
   UnselectHeaderAction,
@@ -9,43 +10,64 @@ import {
   editProcessAction,
   clearFlowchartAction,
   removeStepAction,
-  MenualEntryAction,
+  manualDataEntry,
   iterationChangeAction,
+  saveVariables,
 } from "../../Store/actions";
-import MenualEntryModal from "./MenualEntryModal";
-import ProcessConfigModal from "./ProcessConfigModal";
-import BotConfigModal from "./BotConfigModal";
 import { ModalContext } from "../../context/ModalContext";
 
 class Flowchart extends Component {
   static contextType = ModalContext;
 
   state = {
-    BotConfigModalShow: false,
-    menualEntryModalShow: false,
-    menualEntryindex: null,
     ProcessConfigModalShow: false,
     ProcessConfigModalIndex: null,
   };
 
-  menaulEntry = (index) => {
-    this.setState({
-      ...this.state,
-      menualEntryModalShow: true,
-      menualEntryindex: index,
-    });
-  };
+  // menaulEntry = (index) => {
+  //   this.setState({
+  //     ...this.state,
+  //     menualEntryModalShow: true,
+  //     menualEntryindex: index,
+  //   });
+  // };
 
-  insertHeader = (index) => {
+  insertHeader = (index, process) => {
     if (this.props.selectedHeaderIndex !== null) {
       this.props.useHeaders(index);
     } else {
-      this.menaulEntry(index);
+      if (process.entryType !== "manual") return;
+      this.openManualDataEntryModal(index, process.dataEntry);
     }
   };
-  insertMenualEntry = (data) => {
-    this.props.insertMenualData(data, this.state.menualEntryindex);
-  };
+
+  openVariableModal = () =>
+    this.context.setCurrentModal({
+      name: "VariableAddModal",
+      props: {
+        variables: this.props.variables,
+        saveVariables: this.props.saveVariables,
+      },
+    });
+
+  openManualDataEntryModal = (index, dataEntry) =>
+    this.context.setCurrentModal({
+      name: "ManualEntryModal",
+      props: {
+        dataEntry: dataEntry,
+        saveDataEntry: (dataEntry) =>
+          this.props.insertMenualData(dataEntry, index),
+      },
+    });
+
+  openBotConfigModal = () =>
+    this.context.setCurrentModal({
+      name: "BotConfigModal",
+      props: {
+        saveIteration: this.saveIteration,
+        botIteration: this.props.botIteration,
+      },
+    });
 
   removeStep = (index) => {
     this.props.removeStep(index, 1);
@@ -59,9 +81,21 @@ class Flowchart extends Component {
     });
   };
 
-  editStep = (process) => {
-    this.props.editProcess(process, this.state.ProcessConfigModalIndex);
-  };
+  openProcessConfigModal = (index) =>
+    this.context.setCurrentModal({
+      name: "ProcessConfigModal",
+      props: {
+        editStep: (process) => this.props.editProcess(process, index),
+        clearConfig: this.clearConfig,
+        currentProcess: this.props.process[index],
+        variables: this.props.variables,
+        headers: this.props.headers,
+      },
+    });
+
+  // editStep = (process) => {
+
+  // };
 
   clearConfig = () => {
     this.setState({
@@ -74,7 +108,9 @@ class Flowchart extends Component {
   };
   componentDidMount() {
     electron.ipcRenderer.on(electron.ProcessLinkChannel, (e, content) => {
-      this.props.sendProcess(content);
+      const process = { ...content, id: shortId() };
+      console.log(process);
+      this.props.sendProcess(process);
     });
   }
 
@@ -83,7 +119,6 @@ class Flowchart extends Component {
   }
 
   render() {
-    console.log(this.props.process);
     const { setCurrentModal } = this.context;
     if (this.props.process.length === 0) {
       return (
@@ -103,24 +138,6 @@ class Flowchart extends Component {
     } else {
       return (
         <div>
-          <MenualEntryModal
-            show={this.state.menualEntryModalShow}
-            onHide={() => this.setState({ menualEntryModalShow: false })}
-            insertMenualData={this.insertMenualEntry}
-          />
-          <BotConfigModal
-            show={this.state.BotConfigModalShow}
-            onHide={() => this.setState({ BotConfigModalShow: false })}
-            saveIteration={this.saveIteration}
-            botIteration={this.props.botIteration}
-          />
-          <ProcessConfigModal
-            show={this.state.ProcessConfigModalShow}
-            onHide={() => this.setState({ ProcessConfigModalShow: false })}
-            editStep={this.editStep}
-            clearConfig={this.clearConfig}
-            step={this.props.process[this.state.ProcessConfigModalIndex]}
-          />
           <Card
             id="scrollstyle"
             style={{ height: "70vh", maxHeight: "70vh", overflowY: "auto" }}
@@ -138,7 +155,11 @@ class Flowchart extends Component {
               ></i>
               <i
                 className="fas fa-cog float-right mt-3 mr-3 fa-2x"
-                onClick={() => this.setState({ BotConfigModalShow: true })}
+                onClick={this.openBotConfigModal}
+              ></i>
+              <i
+                className="fas fa-file-alt float-right mt-3 mr-3 fa-2x"
+                onClick={this.openVariableModal}
               ></i>
             </span>
             {this.props.process.map((step, index) => {
@@ -154,9 +175,7 @@ class Flowchart extends Component {
                       ></i>
                       <i
                         className="fas fa-cog float-right mt-5 mr-2"
-                        onClick={() => {
-                          this.openconfigtab(index);
-                        }}
+                        onClick={() => this.openProcessConfigModal(index)}
                       ></i>
                     </span>
                     <div className=" text-white bg-primary text-center mr-5 ml-5 mb-2 mt-5 p-3">
@@ -181,7 +200,8 @@ class Flowchart extends Component {
                         <i
                           className="fas fa-cog float-right mt-2 mr-2"
                           onClick={() => {
-                            this.openconfigtab(index);
+                            this.openProcessConfigModal(index);
+                            // this.openconfigtab(index);
                           }}
                         ></i>
                       </span>
@@ -209,12 +229,13 @@ class Flowchart extends Component {
                         <i
                           className="fas fa-cog float-right mt-2 mr-2"
                           onClick={() => {
-                            this.openconfigtab(index);
+                            this.openProcessConfigModal(index);
+                            // this.openconfigtab(index);
                           }}
                         ></i>
                         <i
                           className="fas fa-edit float-right mt-2 mr-2"
-                          onClick={() => {
+                          onClick={() =>
                             setCurrentModal({
                               name: "DataConditionsModal",
                               props: {
@@ -223,13 +244,13 @@ class Flowchart extends Component {
                                 editProcess: (process) =>
                                   this.props.editProcess(process, index),
                               },
-                            });
-                          }}
+                            })
+                          }
                         ></i>
                       </span>
                       <div
                         style={{ backgroundColor: "#a044b3" }}
-                        onClick={() => this.insertHeader(index)}
+                        onClick={() => this.insertHeader(index, step)}
                         className="m-b-30 text-white bg text-center mr-5 ml-5 mb-2 mt-2 p-3"
                       >
                         <span
@@ -243,29 +264,29 @@ class Flowchart extends Component {
                         </span>
                         Load Data {step.placeholder}
                         <br />
-                        {"dataHeader" in step ? (
+                        {step.entryType === "dataHeader" && (
                           <span
                             style={{ float: "right" }}
                             className="badge badge-lg badge-pill badge-success"
                           >
-                            {step.dataHeader}
+                            {step.dataEntry}
                           </span>
-                        ) : "MenualData" in step ? (
+                        )}
+                        {step.entryType === "manual" && (
                           <span
                             style={{ float: "right" }}
                             className="badge badge-lg badge-pill badge-warning"
                           >
-                            {step.MenualData}
+                            {step.dataEntry}
                           </span>
-                        ) : (
-                          <h6>
-                            <span
-                              style={{ float: "right" }}
-                              className="badge badge-pill badge-danger"
-                            >
-                              No Data Selected
-                            </span>
-                          </h6>
+                        )}
+                        {step.entryType === "variable" && (
+                          <span
+                            style={{ float: "right" }}
+                            className="badge badge-lg badge-pill badge-warning"
+                          >
+                            {step.dataEntry}
+                          </span>
                         )}
                       </div>
                     </div>
@@ -286,7 +307,8 @@ class Flowchart extends Component {
                         <i
                           className="fas fa-cog float-right mt-2 mr-2"
                           onClick={() => {
-                            this.openconfigtab(index);
+                            this.openProcessConfigModal(index);
+                            // this.openconfigtab(index);
                           }}
                         ></i>
                       </span>
@@ -329,9 +351,10 @@ class Flowchart extends Component {
                           }}
                         ></i>
                         <i
-                          className="fas fa-eye float-right mt-2 mr-2"
+                          className="fas fa-cog float-right mt-2 mr-2"
                           onClick={() => {
-                            this.openconfigtab(index);
+                            this.openProcessConfigModal(index);
+                            // this.openconfigtab(index);
                           }}
                         ></i>
                       </span>
@@ -340,6 +363,35 @@ class Flowchart extends Component {
                         className="m-b-30 text-white text-center mr-5 ml-5 mb-2 mt-2 p-3"
                       >
                         {step.placeholder}
+                      </div>
+                    </div>
+                  );
+                } else if (step._type === "Extract Data") {
+                  return (
+                    <div key={index}>
+                      <div style={{ textAlign: "center" }}>
+                        <i className="fas fa-arrow-down fa-2x"></i>
+                      </div>
+                      <span>
+                        <i
+                          className="fas fa-window-close float-right mt-2 mr-5"
+                          onClick={() => {
+                            this.removeStep(index);
+                          }}
+                        ></i>
+                        <i
+                          className="fas fa-cog float-right mt-2 mr-2"
+                          onClick={() => {
+                            this.openProcessConfigModal(index);
+                            // this.openconfigtab(index);
+                          }}
+                        ></i>
+                      </span>
+                      <div
+                        style={{ backgroundColor: "#70cee4" }}
+                        className="m-b-30 text-white text-center mr-5 ml-5 mb-2 mt-2 p-3"
+                      >
+                        Extracting Data - {step.placeholder}
                       </div>
                     </div>
                   );
@@ -362,12 +414,14 @@ const mapStateToProps = (state) => {
     selectedHeaderIndex: state.selectedHeader,
     botName: state.botName,
     botIteration: state.botIteration,
+    variables: state.variables,
   };
 };
 const mapDispathtoProps = (dispatch) => {
   return {
-    insertMenualData: (data, processIndex) => {
-      dispatch(MenualEntryAction(data, processIndex));
+    saveVariables: (variables) => dispatch(saveVariables(variables)),
+    insertMenualData: (dataEntry, processIndex) => {
+      dispatch(manualDataEntry(dataEntry, processIndex));
     },
     sendProcess: (process) => {
       dispatch(SendProcessAction(process));
