@@ -1,3 +1,11 @@
+const crypto = require("crypto");
+const algorithm = "aes-256-ctr";
+let key = process.env.KEY;
+key = crypto
+	.createHash("sha256")
+	.update(String(key))
+	.digest("base64")
+	.substr(0, 32);
 const path = require("path");
 const electron = require("electron");
 const Tesseract = require("tesseract.js");
@@ -728,8 +736,9 @@ ipcMain.on("export-bot", async (event, botName) => {
 		process: process,
 	};
 	project = JSON.stringify(project);
+	const encrypted = encrypt(project);
 	const save = dialog.showSaveDialog(win, options);
-	fs.writeFile((await save).filePath, project, function (err) {
+	fs.writeFile((await save).filePath, encrypted, function (err) {
 		if (err) console.log("Canceled!");
 		else console.log("Exported!");
 	});
@@ -740,17 +749,18 @@ ipcMain.on("export-bot", async (event, botName) => {
 ipcMain.on("import-bot", async (event) => {
 	let options = {
 		title: "Export AIW Project",
-		buttonLabel: "Export",
+		buttonLabel: "Import",
 		filters: [{ name: "AIW Project", extensions: ["aiw"] }],
 		// properties: ['openFile', 'multiSelections']
 	};
 	const save = dialog.showOpenDialog(win, options);
 	let paths = (await save).filePaths;
 	for (const file of paths) {
-		const contents = await fs.readFile(file, async (err, data) => {
+		await fs.readFile(file, async (err, data) => {
 			if (err) console.log("Canceled!");
 			else {
-				obj = JSON.parse(data);
+				const decrypted = decrypt(data);
+				obj = JSON.parse(decrypted);
 				await botlist.addBot(obj.bot.botName, obj.bot.botType);
 				await botlist.editBot(
 					obj.bot.botName,
@@ -765,3 +775,25 @@ ipcMain.on("import-bot", async (event) => {
 		});
 	}
 });
+
+const encrypt = (buffer) => {
+	// Create an initialization vector
+	const iv = crypto.randomBytes(16);
+	// Create a new cipher using the algorithm, key, and iv
+	const cipher = crypto.createCipheriv(algorithm, key, iv);
+	// Create the new (encrypted) buffer
+	const result = Buffer.concat([iv, cipher.update(buffer), cipher.final()]);
+	return result;
+};
+
+const decrypt = (encrypted) => {
+	// Get the iv: the first 16 bytes
+	const iv = encrypted.slice(0, 16);
+	// Get the rest
+	encrypted = encrypted.slice(16);
+	// Create a decipher
+	const decipher = crypto.createDecipheriv(algorithm, key, iv);
+	// Actually decrypt it
+	const result = Buffer.concat([decipher.update(encrypted), decipher.final()]);
+	return result;
+};
