@@ -2,19 +2,13 @@ import React, { Component } from "react";
 import * as electron from "../../electronScript";
 
 export default class SidebarLeft extends Component {
-  save = () => {
-    this.props.savebot();
-  };
-  generateCode = () => {
-    this.props.generateCode();
-  };
   itarationchange = (e) => {
     this.props.saveIteration(e.target.value);
   };
 
   ocr = (e) => {
     e.preventDefault();
-    electron.ipcRenderer.on("ocr-engine", (ocrInBot = false) => {});
+    this.props.ocr();
   };
 
   render() {
@@ -81,13 +75,19 @@ export default class SidebarLeft extends Component {
               <li className="menu-title">Actions</li>
 
               <li>
-                <div onClick={this.save} className="waves-effect p-3">
+                <div
+                  onClick={this.props.openBotSaveModal}
+                  className="waves-effect p-3"
+                >
                   <i className="fas fa-save mr-1 fa-2x" />
                   <span> Save Bot </span>
                 </div>
               </li>
               <li>
-                <div onClick={this.generateCode} className="waves-effect p-3">
+                <div
+                  onClick={this.props.openGenerateCodeModal}
+                  className="waves-effect p-3"
+                >
                   <i className="fas fa-code mr-1 fa-2x" />
                   <span> Generate Code </span>
                 </div>

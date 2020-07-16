@@ -7,15 +7,17 @@ import Col from "react-bootstrap/Col";
 import Flowchart from "./Flowchart";
 import DatasetLoader from "./DatasetLoader";
 import { connect } from "react-redux";
-import SelectBotModal from "./SelectBotModal";
-import GenerateCodeModal from "./GenerateCodeModal";
+// import SelectBotModal from "./SelectBotModal";
+// import GenerateCodeModal from "./GenerateCodeModal";
 import { selectBotAction, clearAllAction } from "../../Store/actions";
 import { SeleniumCode } from "../../CodeGeneration";
 import * as electron from "../../electronScript";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { ModalContext } from "../../context/ModalContext";
 
 class BotBuildPage extends Component {
+  static contextType = ModalContext;
   state = {
     selectmodalShow: false,
     codeGenerationModal: false,
@@ -27,33 +29,43 @@ class BotBuildPage extends Component {
     this.setState({ selectmodalShow: true });
   };
 
-  generateCode = () => {
+  openGenerateCodeModal = () => {
     var code = SeleniumCode(
       this.props.process,
       this.props.botIteration,
       this.props.filepath
     );
-
-    this.setState(
-      {
-        ...this.state,
-        code: code,
+    this.context.setCurrentModal({
+      name: "GenerateCodeModal",
+      props: {
+        code,
+        saveCode: () => electron.ipcRenderer.send("code-generation", code),
       },
-      () => {
-        this.showCodeModal();
-      }
-    );
-  };
-  showCodeModal = () => {
-    this.setState({
-      ...this.state,
-      codeGenerationModal: true,
     });
   };
+
+  openBotSaveModal = async () => {
+    // currently we're saving bots with name attr, [FUTURE] need to change it to Id
+    const tBots = await electron.ipcRenderer.invoke("bots");
+    const bots = tBots.map((b) => b.botName);
+    this.context.setCurrentModal({
+      name: "BotSaveModal",
+      props: {
+        bots,
+        addBot: async ({ name, category }) => {
+          await electron.ipcRenderer.invoke("add-bot", name, category);
+          await this.selectBot(name);
+        },
+        saveExisting: this.selectBot,
+      },
+    });
+  };
+
   selectBot = (botName) => {
     let saveBotObject = {};
     saveBotObject.botName = botName;
     saveBotObject.filepath = this.props.filepath;
+    saveBotObject.variables = this.props.variables;
     saveBotObject.headers = this.props.headers;
     saveBotObject.status = this.props.status;
     saveBotObject.botIteration = this.props.botIteration;
@@ -62,6 +74,7 @@ class BotBuildPage extends Component {
     electron.ipcRenderer.send("update-bot", botName, saveBotObject);
     this.botChanged(false);
   };
+
   botChanged = (change) => {
     this.setState({
       saved: change,
@@ -82,6 +95,9 @@ class BotBuildPage extends Component {
       });
     }
   };
+  ocr = () => {
+    electron.ipcRenderer.send(electron.ocrEngine);
+  };
   componentWillUnmount() {
     this.props.clearProcess();
   }
@@ -90,22 +106,23 @@ class BotBuildPage extends Component {
     return (
       <div>
         <ToastContainer />
-        <SelectBotModal
+        {/* <SelectBotModal
           show={this.state.selectmodalShow}
           onHide={() => this.setState({ selectmodalShow: false })}
           selectbot={this.selectBot}
-        />
-        <GenerateCodeModal
+        /> */}
+        {/* <GenerateCodeModal
           show={this.state.codeGenerationModal}
           onHide={() => this.setState({ codeGenerationModal: false })}
           code={this.state.code}
-        />
+        /> */}
         <Navbarup />
         <SidebarLeft
           runBot={this.runBot}
-          savebot={this.savebot}
+          openBotSaveModal={this.openBotSaveModal}
           saveIteration={this.saveIteration}
-          generateCode={this.generateCode}
+          openGenerateCodeModal={this.openGenerateCodeModal}
+          ocr={this.ocr}
         ></SidebarLeft>
 
         <div>
@@ -139,6 +156,7 @@ const mapStateToProps = (state) => {
     headers: state.headers,
     status: state.status,
     filepath: state.filepath,
+    variables: state.variables,
     botIteration: state.botIteration,
   };
 };

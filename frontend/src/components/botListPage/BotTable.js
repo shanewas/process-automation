@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import DeleteBotModal from "./DeleteBotModal";
 import moment from "moment";
 import * as electron from "../../electronScript";
 import { connect } from "react-redux";
@@ -7,13 +6,13 @@ import { loadBotAction, loadDatasetProperties } from "../../Store/actions";
 import { Redirect } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { ModalContext } from "../../context/ModalContext";
 
 class BotTable extends Component {
+  static contextType = ModalContext;
   state = {
     botList: [],
     build: false,
-    deletemodalShow: false,
-    deletebotselect: null,
     botSearch: "",
     sortDesc: false,
   };
@@ -22,6 +21,7 @@ class BotTable extends Component {
     let filepath;
     let status;
     let header;
+    let variables;
     let process;
     let iteration;
     let datasetProperties;
@@ -32,6 +32,7 @@ class BotTable extends Component {
       }),
       electron.ipcRenderer.invoke("bot-name", botName).then((data) => {
         iteration = data.botIteration;
+        variables = data.variables;
         // if there is dataset
         let properties = electron.ipcRenderer.sendSync("file-analytics", data.filepath);
         console.log(properties);
@@ -54,6 +55,7 @@ class BotTable extends Component {
       bot["botName"] = botName;
       bot["status"] = status;
       bot["header"] = header;
+      bot["variables"] = variables;
       bot["process"] = process;
       bot["iteration"] = iteration;
       this.props.loadBot(bot);
@@ -119,19 +121,19 @@ class BotTable extends Component {
   handleSearchSort = (_) =>
     this.setState((prev) => ({ sortDesc: !prev.sortDesc }));
 
+  handleBotDelete = (botName) => {
+    electron.ipcRenderer.send(electron.deleteBotChannel, botName);
+    this.updatetable();
+  };
+
   render() {
     if (this.state.build) {
       return <Redirect to="/build"></Redirect>;
     }
+    const { setCurrentModal } = this.context;
     return (
       <div className="row">
         <ToastContainer style={{ fontWeight: "bolder" }} />
-        <DeleteBotModal
-          bot={this.state.deletebotselect}
-          show={this.state.deletemodalShow}
-          onHide={() => this.setState({ deletemodalShow: false })}
-          updatetable={this.updatetable}
-        />
         <div className="col-xl-12">
           <div className="card">
             <div className="card-body">
@@ -196,61 +198,61 @@ class BotTable extends Component {
                           ? 1
                           : -1;
                       })
-                      .map((bot, i) => {
-                        return (
-                          <tr key={i}>
-                            <td>{bot.botName}</td>
-                            {/* <td>
+                      .map((bot, i) => (
+                        <tr key={i}>
+                          <td>{bot.botName}</td>
+                          {/* <td>
                   <span className={this.badgemaker(bot.status)}>{bot.status}</span>
                 </td>
                 <td>{bot.category}</td>
                 <td>{bot.runTime}</td> */}
-                            {/* MMMM Do YYYY at H:mm:ss a */}
-                            <td>{moment(bot.lastActive).fromNow()}</td>
-                            <td>
-                              <div>
-                                <div className="btn btn-primary mr-2 btn-sm">
-                                  <div
-                                    onClick={() => {
-                                      this.buildbot(bot.botName);
-                                    }}
-                                  >
-                                    <i className="fas fa-hammer"></i> Edit
-                                  </div>
-                                </div>
-                                <div className="btn btn-success mr-2 btn-sm">
-                                  <div
-                                    onClick={() => this.startbot(bot.botName)}
-                                  >
-                                    <i className="fas fa-running"></i> Start
-                                  </div>
-                                </div>
-                                <div className="btn btn-danger mr-2 btn-sm">
-                                  <div
-                                    onClick={() => {
-                                      this.setState({
-                                        deletemodalShow: true,
-                                        deletebotselect: bot,
-                                      });
-                                    }}
-                                  >
-                                    <i className="far fa-trash-alt"></i> Delete
-                                  </div>
-                                </div>
-                                <div className="btn btn-warning mr-2 btn-sm">
-                                  <div
-                                    onClick={() => {
-                                      this.exportBot(bot.botName);
-                                    }}
-                                  >
-                                    <i className="fa fa-download"></i> Export
-                                  </div>
+                          {/* MMMM Do YYYY at H:mm:ss a */}
+                          <td>{moment(bot.lastActive).fromNow()}</td>
+                          <td>
+                            <div>
+                              <div className="btn btn-primary mr-2 btn-sm">
+                                <div
+                                  onClick={() => {
+                                    this.buildbot(bot.botName);
+                                  }}
+                                >
+                                  <i className="fas fa-hammer"></i> Edit
                                 </div>
                               </div>
-                            </td>
-                          </tr>
-                        );
-                      })}
+                              <div className="btn btn-success mr-2 btn-sm">
+                                <div onClick={() => this.startbot(bot.botName)}>
+                                  <i className="fas fa-running"></i> Start
+                                </div>
+                              </div>
+                              <div className="btn btn-danger mr-2 btn-sm">
+                                <div
+                                  onClick={() =>
+                                    setCurrentModal({
+                                      name: "BotDeleteModal",
+                                      props: {
+                                        onBotDelete: () =>
+                                          this.handleBotDelete(bot.botName),
+                                        bot,
+                                      },
+                                    })
+                                  }
+                                >
+                                  <i className="far fa-trash-alt"></i> Delete
+                                </div>
+                              </div>
+                              <div className="btn btn-warning mr-2 btn-sm">
+                                <div
+                                  onClick={() => {
+                                    this.exportBot(bot.botName);
+                                  }}
+                                >
+                                  <i className="fa fa-download"></i> Export
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
                   </tbody>
                 </table>
               </div>
