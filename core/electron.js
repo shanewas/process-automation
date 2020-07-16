@@ -1,6 +1,7 @@
 const path = require("path");
 const electron = require("electron");
 const Tesseract = require("tesseract.js");
+const Jimp = require("jimp");
 
 const { app, Menu, ipcMain, dialog, Notification, BrowserWindow } = electron;
 
@@ -142,6 +143,7 @@ ipcMain.on("search-link", function (event, args) {
 		contectWindow.destroy();
 		contectWindow = window.createWindow(procSeq.link, win, false, true, true);
 	}
+	contectWindow.setResizable(false);
 	contectWindow.on("close", (e) => {
 		LINKALREADYOPENED = false;
 		e.preventDefault();
@@ -200,6 +202,7 @@ ipcMain.on("start-bot", async function (e, botName) {
 			true
 		);
 	}
+	loadingWindow.setResizable(false);
 	loadingWindow.on("close", (e) => {
 		BOTALREADYOPENED = false;
 		e.preventDefault();
@@ -465,37 +468,57 @@ ipcMain.on("need-process", async function (e) {
 						}
 						let img_filename = `${BOTS.botName}_${IDX}${PROCESSCOUNTER}.jpeg`;
 						let pathTo = path.join(element.imgpath, img_filename);
-						await page.setViewport({
-							width: 1920,
-							height: 1080,
-							deviceScaleFactor: 1,
-						});
+						await page.evaluate((element) => {
+							window.scroll(0, element.param.Yaxis);
+						}, element);
 						await page
 							.screenshot({
 								path: pathTo,
 								type: "jpeg",
-								fullPage: true,
+								clip: {
+									x: element.param.Xaxis,
+									y: element.param.Yaxis,
+									width: element.param.width,
+									height: element.param.height,
+								},
 							})
 							.then(async () => {
-								if (element.ocr) {
-									if (!fs.existsSync(element.ocrpath)) {
-										fs.mkdirSync(element.ocrpath);
-									}
-									let ocr_filename = `${BOTS.botName}_${IDX}${PROCESSCOUNTER}.txt`;
-									let saveTo = path.join(element.ocrpath, ocr_filename);
-									await Tesseract.recognize(pathTo, "eng", {
-										logger: (m) => console.log(m),
-									}).then(async ({ data: { text } }) => {
-										console.log(text);
-										let variable_obj = BOT_VARIABLES.find(
-											(o) => o.name === element.variableName
-										);
-										variable_obj.value = text;
-										fs.writeFile(saveTo, text, (err) => {
-											err ? console.log("Canceled!") : console.log("Saved!");
-										});
+								await Jimp.read(pathTo)
+									.then((screenshot) => {
+										return screenshot
+											.quality(100)
+											.brightness(0.5)
+											.contrast(0.5)
+											.greyscale()
+											.invert()
+											.write(pathTo);
+									})
+									.then(async () => {
+										if (element.ocr) {
+											if (!fs.existsSync(element.ocrpath)) {
+												fs.mkdirSync(element.ocrpath);
+											}
+											let ocr_filename = `${BOTS.botName}_${IDX}${PROCESSCOUNTER}.txt`;
+											let saveTo = path.join(element.ocrpath, ocr_filename);
+											await Tesseract.recognize(pathTo, "eng", {
+												logger: (m) => console.log(m),
+											}).then(async ({ data: { text } }) => {
+												console.log(text);
+												let variable_obj = BOT_VARIABLES.find(
+													(o) => o.name === element.variableName
+												);
+												variable_obj.value = text;
+												fs.writeFile(saveTo, text, (err) => {
+													err
+														? console.log("Canceled!")
+														: console.log("Saved!");
+												});
+											});
+										}
+									})
+									.catch((err) => {
+										throw err;
 									});
-								}
 							})
 							.finally(() => {
 								loadingWindow.webContents.send("next-process");
