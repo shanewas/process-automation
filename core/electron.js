@@ -1,3 +1,11 @@
+const crypto = require("crypto");
+const algorithm = "aes-256-ctr";
+let key = process.env.KEY;
+key = crypto
+	.createHash("sha256")
+	.update(String(key))
+	.digest("base64")
+	.substr(0, 32);
 const path = require("path");
 const electron = require("electron");
 const Tesseract = require("tesseract.js");
@@ -483,18 +491,24 @@ ipcMain.on("need-process", async function (e) {
 								},
 							})
 							.then(async () => {
-								await Jimp.read(pathTo)
-									.then((screenshot) => {
-										return screenshot
-											.quality(100)
-											.brightness(0.5)
-											.contrast(0.5)
-											.greyscale()
-											.invert()
-											.write(pathTo);
-									})
-									.then(async () => {
-										if (element.ocr) {
+								if (element.ocr) {
+									await Jimp.read(pathTo)
+										.then((screenshot) => {
+											let ocr_img_filename = `${BOTS.botName}_OCR_${IDX}${PROCESSCOUNTER}.jpeg`;
+											let ocr_pathTo = path.join(
+												element.imgpath,
+												"ocr_images/",
+												ocr_img_filename
+											);
+											return screenshot
+												.quality(100)
+												.brightness(0.5)
+												.contrast(0.5)
+												.greyscale()
+												.invert()
+												.write(ocr_pathTo);
+										})
+										.then(async () => {
 											if (!fs.existsSync(element.ocrpath)) {
 												fs.mkdirSync(element.ocrpath);
 											}
@@ -514,11 +528,11 @@ ipcMain.on("need-process", async function (e) {
 														: console.log("Saved!");
 												});
 											});
-										}
-									})
-									.catch((err) => {
-										throw err;
-									});
+										})
+										.catch((err) => {
+											throw err;
+										});
+								}
 							})
 							.finally(() => {
 								loadingWindow.webContents.send("next-process");
@@ -700,19 +714,36 @@ ipcMain.on("ocr-engine", async (event) => {
 		],
 	};
 	(await dialog.showOpenDialog(win, upload_options)).filePaths.forEach(
-		async (path) => {
-			Tesseract.recognize(path, "eng", {
-				logger: (m) => console.log(m),
-			}).then(async ({ data: { text } }) => {
-				console.log(text);
-				fs.writeFile(
-					(await dialog.showSaveDialog(win, save_options)).filePath,
-					text,
-					(err) => {
-						err ? console.log("Canceled!") : console.log("Saved!");
-					}
-				);
-			});
+		(path) => {
+			Jimp.read(path)
+				.then((image) => {
+					return (
+						image
+							.quality(60)
+							.brightness(0.1)
+							.contrast(0.1)
+							.greyscale()
+							// .invert()
+							.write(path)
+					); // save
+				})
+				.then(async () => {
+					Tesseract.recognize(path, "eng", {
+						logger: (m) => console.log(m),
+					}).then(async ({ data: { text } }) => {
+						console.log(text);
+						fs.writeFile(
+							(await dialog.showSaveDialog(win, save_options)).filePath,
+							text,
+							(err) => {
+								err ? console.log("Canceled!") : console.log("Saved!");
+							}
+						);
+					});
+				})
+				.catch((err) => {
+					console.error(err);
+				});
 		}
 	);
 });
@@ -738,8 +769,9 @@ ipcMain.on("export-bot", async (event, botName) => {
 		process: process,
 	};
 	project = JSON.stringify(project);
+	const encrypted = encrypt(project);
 	const save = dialog.showSaveDialog(win, options);
-	fs.writeFile((await save).filePath, project, function (err) {
+	fs.writeFile((await save).filePath, encrypted, function (err) {
 		if (err) console.log("Canceled!");
 		else console.log("Exported!");
 	});
@@ -750,17 +782,18 @@ ipcMain.on("export-bot", async (event, botName) => {
 ipcMain.on("import-bot", async (event) => {
 	let options = {
 		title: "Export AIW Project",
-		buttonLabel: "Export",
+		buttonLabel: "Import",
 		filters: [{ name: "AIW Project", extensions: ["aiw"] }],
 		// properties: ['openFile', 'multiSelections']
 	};
 	const save = dialog.showOpenDialog(win, options);
 	let paths = (await save).filePaths;
 	for (const file of paths) {
-		const contents = await fs.readFile(file, async (err, data) => {
+		await fs.readFile(file, async (err, data) => {
 			if (err) console.log("Canceled!");
 			else {
-				obj = JSON.parse(data);
+				const decrypted = decrypt(data);
+				obj = JSON.parse(decrypted);
 				await botlist.addBot(obj.bot.botName, obj.bot.botType);
 				await botlist.editBot(
 					obj.bot.botName,
@@ -775,3 +808,25 @@ ipcMain.on("import-bot", async (event) => {
 		});
 	}
 });
+
+const encrypt = (buffer) => {
+	// Create an initialization vector
+	const iv = crypto.randomBytes(16);
+	// Create a new cipher using the algorithm, key, and iv
+	const cipher = crypto.createCipheriv(algorithm, key, iv);
+	// Create the new (encrypted) buffer
+	const result = Buffer.concat([iv, cipher.update(buffer), cipher.final()]);
+	return result;
+};
+
+const decrypt = (encrypted) => {
+	// Get the iv: the first 16 bytes
+	const iv = encrypted.slice(0, 16);
+	// Get the rest
+	encrypted = encrypted.slice(16);
+	// Create a decipher
+	const decipher = crypto.createDecipheriv(algorithm, key, iv);
+	// Actually decrypt it
+	const result = Buffer.concat([decipher.update(encrypted), decipher.final()]);
+	return result;
+};
