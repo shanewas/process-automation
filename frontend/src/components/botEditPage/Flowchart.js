@@ -107,6 +107,7 @@ class Flowchart extends Component {
     this.props.iterationChange(iterationNumber);
   };
   componentDidMount() {
+    // TODO different factory funcs
     electron.ipcRenderer.on(electron.ProcessLinkChannel, (e, content) => {
       const process = { ...content, id: shortId() };
       console.log(process);

@@ -115,7 +115,38 @@ const editProcess = (state, process, index) => {
     id,
   } = process;
   const oldProcess = state.process.find((p) => p.id === id);
+  console.log({ oldProcess });
   let variables = [...state.variables];
+
+  // Using (Load Data - DATA ENTRY)
+  if (entryType === "variable") {
+    if (oldProcess.entryType !== "variable") {
+      console.log("using variable first time [DE]");
+      // ADD - first time using
+      variables = variables.map((v) =>
+        v.name === dataEntry ? { ...v, usedBy: [...v.usedBy, id] } : v
+      );
+    } else if (
+      oldProcess.entryType === "variable" &&
+      dataEntry !== oldProcess.dataEntry
+    ) {
+      // REMOVE AND ADD (Variable changed)
+      variables = variables.map((v) => {
+        if (v.name === oldProcess.dataEntry)
+          return { ...v, usedBy: v.usedBy.filter((tv) => tv !== id) };
+        else if (v.name === dataEntry)
+          return { ...v, usedBy: [...v.usedBy, id] };
+        else return v;
+      });
+    }
+  } else if (oldProcess.entryType === "variable" && entryType !== "variable") {
+    // remove entryType changed from variable
+    variables = variables.map((v) =>
+      v.name === oldProcess.dataEntry
+        ? { ...v, usedBy: v.usedBy.filter((tv) => tv !== id) }
+        : v
+    );
+  }
 
   // Assigning (Extract Data, OCR?)
   if (oldProcess.variableName !== variableName && !oldProcess.variableName) {
@@ -135,9 +166,9 @@ const editProcess = (state, process, index) => {
           assignors: v.assignors.filter((tv) => tv !== id),
         };
       // add the process id to  the new variable assignors array
-      if (v.name === variableName)
+      else if (v.name === variableName)
         return { ...v, assignors: [...v.assignors, id] };
-      return v;
+      else return v;
     });
   }
 
