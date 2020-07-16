@@ -673,19 +673,36 @@ ipcMain.on("ocr-engine", async (event) => {
 		],
 	};
 	(await dialog.showOpenDialog(win, upload_options)).filePaths.forEach(
-		async (path) => {
-			Tesseract.recognize(path, "eng", {
-				logger: (m) => console.log(m),
-			}).then(async ({ data: { text } }) => {
-				console.log(text);
-				fs.writeFile(
-					(await dialog.showSaveDialog(win, save_options)).filePath,
-					text,
-					(err) => {
-						err ? console.log("Canceled!") : console.log("Saved!");
-					}
-				);
-			});
+		(path) => {
+			Jimp.read(path)
+				.then((image) => {
+					return (
+						image
+							.quality(60)
+							.brightness(0.1)
+							.contrast(0.1)
+							.greyscale()
+							// .invert()
+							.write(path)
+					); // save
+				})
+				.then(async () => {
+					Tesseract.recognize(path, "eng", {
+						logger: (m) => console.log(m),
+					}).then(async ({ data: { text } }) => {
+						console.log(text);
+						fs.writeFile(
+							(await dialog.showSaveDialog(win, save_options)).filePath,
+							text,
+							(err) => {
+								err ? console.log("Canceled!") : console.log("Saved!");
+							}
+						);
+					});
+				})
+				.catch((err) => {
+					console.error(err);
+				});
 		}
 	);
 });
