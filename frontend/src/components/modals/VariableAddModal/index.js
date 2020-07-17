@@ -55,13 +55,6 @@ export default ({
   };
 
   const handleDeleteVariable = (tVar) => {
-    if (
-      tVar.value &&
-      !window.confirm(
-        "This variable got a value attached, are you sure you want to delete it?"
-      )
-    )
-      return;
     setVariables((v) => v.filter((tv) => tv.id !== tVar.id));
     setChanged(true);
   };
@@ -110,7 +103,11 @@ export default ({
                 }
                 key={v.id}
                 label={v.name}
-                onDelete={() => handleDeleteVariable(v)}
+                onDelete={
+                  v.assignors.length || v.usedBy.length
+                    ? null
+                    : () => handleDeleteVariable(v)
+                }
               />
             );
           })}
