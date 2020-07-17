@@ -95,6 +95,9 @@ class BotBuildPage extends Component {
       });
     }
   };
+  ocr = () => {
+    electron.ipcRenderer.send(electron.ocrEngine);
+  };
   componentWillUnmount() {
     this.props.clearProcess();
   }
@@ -119,6 +122,7 @@ class BotBuildPage extends Component {
           openBotSaveModal={this.openBotSaveModal}
           saveIteration={this.saveIteration}
           openGenerateCodeModal={this.openGenerateCodeModal}
+          ocr={this.ocr}
         ></SidebarLeft>
 
         <div>
