@@ -56,7 +56,7 @@ export default ({
       if (typeof tProcess[v] === "undefined") tProcess[v] = "";
     }
     setProcess(tProcess);
-  }, []);
+  }, [currentProcess]);
 
   const handleClearDataHeader = () =>
     setProcess((p) => ({

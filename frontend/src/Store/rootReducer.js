@@ -109,9 +109,9 @@ const editProcess = (state, process, index) => {
   const {
     dataEntry,
     entryType,
-    variableField,
+    // variableField,
     variableName,
-    variableUsed,
+    // variableUsed,
     id,
   } = process;
   const oldProcess = state.process.find((p) => p.id === id);

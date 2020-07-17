@@ -12,7 +12,6 @@ import {
   Button,
   Chip,
   makeStyles,
-  Tooltip,
 } from "@material-ui/core";
 import { Close as CloseIcon } from "@material-ui/icons";
 

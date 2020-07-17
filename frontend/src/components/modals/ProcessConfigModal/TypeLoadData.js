@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from "react";
+import React, { useMemo } from "react";
 import { TextField, Grid, Box, Typography, Button } from "@material-ui/core";
 import SelectorInput from "../../layout/input/SelectorInput";
 import EntryTypeHeader from "./EntryTypeHeader";
@@ -58,7 +58,7 @@ export default ({
       <Grid item>
         <SelectorInput
           value={useMemo(() => value.type, [value.type])}
-          onChange={useCallback((e) => onSelectorChange(e), [])}
+          onChange={(e) => onSelectorChange(e)}
           options={inputTypes}
           placeholder="Input Type"
         />
