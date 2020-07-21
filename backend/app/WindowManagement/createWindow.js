@@ -21,7 +21,7 @@ function createWindow(
     frame: frame,
     show: false,
     title: "AIW Core",
-    icon: path.join(__dirname, "../../logo.png"),
+    icon: path.join(__dirname, "../../../logo.png"),
     webPreferences: {
       webSecurity: true,
       nodeIntegration: true,

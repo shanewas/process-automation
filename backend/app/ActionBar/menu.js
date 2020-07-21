@@ -1,5 +1,4 @@
 const electron = require("electron");
-// const windowCollection = require('./window_collection')
 
 const { app } = electron;
 

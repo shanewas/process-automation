@@ -93,7 +93,7 @@
     "type": "git",
     "url": "git+https://github.com/ferntechsolutions/aiwcore.git"
   },
-  "main": "core/electron.js",
+  "main": "backend/app/main.js",
   "homepage": "./",
   "keywords": [
     "RPA",
