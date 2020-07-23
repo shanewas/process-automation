@@ -4,12 +4,20 @@ const window = require("./createWindow");
 
 let mainWindow = window.createWindow(
 	isDev
-		? "http://localhost:4000"
-		: `file://${path.join(__dirname, "../../../frontend/build/index.html")}`,
+		? `http://localhost:7521`
+		: `file://${path.join(
+				__dirname,
+				"..",
+				"..",
+				"..",
+				"frontend",
+				"build",
+				"index.html"
+		  )}`,
 	null,
 	false,
 	true,
-	false
+	true,
 );
 
 mainWindow.once("ready-to-show", function () {
