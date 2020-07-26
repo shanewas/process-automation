@@ -1,39 +1,40 @@
 const { ipcMain } = require("electron");
-const botlist = require("../../controller/local/local");
-function botHandler() {
-  ipcMain.handle("bot-name", async (event, botName) => {
-    const result = await botlist.fetchBot(botName);
-    return result;
-  });
+const {
+	fetchBot,
+	addBot,
+	removeBot,
+	updateBotProcess,
+	editBot,
+	listAllBots,
+} = require("../../controller/local/local");
 
-  ipcMain.handle("add-bot", async (event, botName, botType) => {
-    const result = await botlist.addBot(botName, botType);
-    return result;
-  });
+ipcMain.handle("add-bot", async (event, botName, botType) => {
+	return await addBot(botName, botType);
+});
 
-  ipcMain.on("remove-bot", async (event, botName) => {
-    await botlist.removeBot(botName);
-  });
+ipcMain.handle("bots", async (event) => {
+	return await listAllBots();
+});
 
-  ipcMain.on("update-bot-process", async (event, botName, BOTPROCESS) => {
-    await botlist.updateBotProcess(botName, BOTPROCESS);
-  });
+ipcMain.handle("bot-name", async (event, botName) => {
+	return await fetchBot(botName);
+});
 
-  ipcMain.on("update-bot", async (event, botName, saveBotObj) => {
-    await botlist.editBot(
-      botName,
-      saveBotObj.filepath,
-      saveBotObj.headers,
-      saveBotObj.status,
-      saveBotObj.botIteration,
-      saveBotObj.variables
-    );
-  });
+ipcMain.on("update-bot-process", async (event, botName, BOTPROCESS) => {
+	await updateBotProcess(botName, BOTPROCESS);
+});
 
-  ipcMain.handle("bots", async (event) => {
-    const result = await botlist.listAllBots();
-    return result;
-  });
-}
+ipcMain.on("update-bot", async (event, botName, saveBotObj) => {
+	await editBot(
+		botName,
+		saveBotObj.filepath,
+		saveBotObj.headers,
+		saveBotObj.status,
+		saveBotObj.botIteration,
+		saveBotObj.variables
+	);
+});
 
-module.exports = { botHandler };
+ipcMain.on("remove-bot", async (event, botName) => {
+	await removeBot(botName);
+});
