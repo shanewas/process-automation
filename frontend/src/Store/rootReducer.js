@@ -115,7 +115,6 @@ const editProcess = (state, process, index) => {
     id,
   } = process;
   const oldProcess = state.process.find((p) => p.id === id);
-  console.log({ oldProcess });
   let variables = [...state.variables];
 
   // Using (Load Data - DATA ENTRY)

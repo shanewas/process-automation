@@ -4,8 +4,12 @@ export const ModalContext = createContext();
 
 export const ModalContextProvider = (props) => {
   const [currentModal, setCurrentModal] = useState();
+  const [currentToastr, setCurrentToastr] = useState({});
+
   return (
-    <ModalContext.Provider value={{ currentModal, setCurrentModal }}>
+    <ModalContext.Provider
+      value={{ currentModal, setCurrentModal, currentToastr, setCurrentToastr }}
+    >
       {props.children}
     </ModalContext.Provider>
   );

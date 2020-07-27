@@ -8,26 +8,65 @@ import Flowchart from "./Flowchart";
 import DatasetLoader from "./DatasetLoader";
 import { connect } from "react-redux";
 // import SelectBotModal from "./SelectBotModal";
-// import GenerateCodeModal from "./GenerateCodeModal";
-import { selectBotAction, clearAllAction } from "../../Store/actions";
+import {
+  selectBotAction,
+  clearAllAction,
+  editProcessAction,
+} from "../../Store/actions";
 import { SeleniumCode } from "../../CodeGeneration";
 import * as electron from "../../electronScript";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ModalContext } from "../../context/ModalContext";
+import WarningsDrawer from "./WarningsDrawer";
+import checkBot from "./checkBot";
+import { Snackbar } from "@material-ui/core";
 
 class BotBuildPage extends Component {
   static contextType = ModalContext;
   state = {
-    selectmodalShow: false,
-    codeGenerationModal: false,
-    code: "",
+    // selectmodalShow: false,
+    // codeGenerationModal: false,
+    // code: "",
     changed: false,
+    warningsDrawer: false,
+    warnings: {},
+    activeWarning: "",
   };
 
-  savebot = () => {
-    this.setState({ selectmodalShow: true });
+  showWarnings = () => this.setState({ warningsDrawer: true });
+  hideWarnings = () => this.setState({ warningsDrawer: false });
+  onWarningHover = (id) => this.setState({ activeWarning: id });
+  onWarningHoverOut = () => this.setState({ activeWarning: "" });
+  removeWarningOnProcessUpdate = (id) => {
+    const warnings = { ...this.state.warnings };
+    delete warnings[id];
+    const isLast = !Object.keys(warnings).length;
+    this.setState({
+      warnings,
+      ...(isLast && { warningsDrawer: false }),
+    });
   };
+  openProcessConfigModal = (processId) =>
+    this.context.setCurrentModal({
+      name: "ProcessConfigModal",
+      props: {
+        editStep: (process) => {
+          this.removeWarningOnProcessUpdate(processId);
+          this.props.editProcess(
+            process,
+            this.props.process.findIndex((p) => p.id === processId)
+          );
+        },
+        currentProcess: this.props.process.find((p) => p.id === processId),
+        variables: this.props.variables,
+        headers: this.props.headers,
+      },
+    });
+
+  // savebot = () => {
+  //   this.setState({ selectmodalShow: true });
+  // };
 
   openGenerateCodeModal = () => {
     var code = SeleniumCode(
@@ -45,6 +84,13 @@ class BotBuildPage extends Component {
   };
 
   openBotSaveModal = async () => {
+    const warnings = checkBot(this.props.process);
+    if (Object.keys(warnings).length) {
+      this.context.setCurrentToastr({
+        msg: "Could not save, please fix the warnings",
+      });
+      return this.setState({ warnings });
+    }
     // currently we're saving bots with name attr, [FUTURE] need to change it to Id
     const tBots = await electron.ipcRenderer.invoke("bots");
     const bots = tBots.map((b) => b.botName);
@@ -103,21 +149,29 @@ class BotBuildPage extends Component {
   }
 
   render() {
+    {
+      console.log(this.context);
+    }
     return (
       <div>
+        <WarningsDrawer
+          open={this.state.warningsDrawer}
+          warnings={this.state.warnings}
+          hideWarnings={this.hideWarnings}
+          onWarningHover={this.onWarningHover}
+          onWarningHoverOut={this.onWarningHoverOut}
+          openProcessConfigModal={this.openProcessConfigModal}
+        />
         <ToastContainer />
         {/* <SelectBotModal
           show={this.state.selectmodalShow}
           onHide={() => this.setState({ selectmodalShow: false })}
           selectbot={this.selectBot}
         /> */}
-        {/* <GenerateCodeModal
-          show={this.state.codeGenerationModal}
-          onHide={() => this.setState({ codeGenerationModal: false })}
-          code={this.state.code}
-        /> */}
         <Navbarup />
         <SidebarLeft
+          showWarnings={this.showWarnings}
+          showBtn={!!Object.keys(this.state.warnings).length}
           runBot={this.runBot}
           openBotSaveModal={this.openBotSaveModal}
           saveIteration={this.saveIteration}
@@ -137,7 +191,10 @@ class BotBuildPage extends Component {
             }}
           >
             <Col xs={12} md={12} lg={6} xl={6}>
-              <Flowchart />
+              <Flowchart
+                removeWarningOnProcessUpdate={this.removeWarningOnProcessUpdate}
+                activeWarning={this.state.activeWarning}
+              />
             </Col>
             <Col xs={12} md={12} lg={6} xl={6}>
               <DatasetLoader />
@@ -149,7 +206,7 @@ class BotBuildPage extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
+const mapState = (state) => {
   return {
     process: state.process,
     botName: state.botName,
@@ -160,7 +217,7 @@ const mapStateToProps = (state) => {
     botIteration: state.botIteration,
   };
 };
-const mapDispathtoProps = (dispatch) => {
+const mapDispatch = (dispatch) => {
   return {
     selectBot: (bot) => {
       dispatch(selectBotAction(bot));
@@ -168,6 +225,9 @@ const mapDispathtoProps = (dispatch) => {
     clearProcess: () => {
       dispatch(clearAllAction());
     },
+    editProcess: (process, index) => {
+      dispatch(editProcessAction(process, index));
+    },
   };
 };
-export default connect(mapStateToProps, mapDispathtoProps)(BotBuildPage);
+export default connect(mapState, mapDispatch)(BotBuildPage);

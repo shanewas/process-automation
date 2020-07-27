@@ -44,7 +44,6 @@ export default ({
   open,
   handleClose,
   editStep,
-  clearConfig,
   currentProcess,
   variables,
   headers,
