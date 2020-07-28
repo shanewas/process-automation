@@ -115,35 +115,6 @@ class DatasetLoader extends Component {
               })}
             </div>
           </Card>
-          <Card>
-            {this.props.datasetProperties ? (
-              <div className="card-body">
-                <h4 className="mt-0 header-title">Dataset Properties</h4>
-                <div className="table-responsive">
-                  <table className="table mb-0">
-                    <thead>
-                      <tr>
-                        <th>File Type</th>
-                        <th>File Size</th>
-                        <th>Number of Rows</th>
-                        <th>Path</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>{this.props.datasetProperties.type}</td>
-                        <td>{this.props.datasetProperties.size / 1000} MB</td>
-                        <td>{this.props.datasetProperties.rowNumber}</td>
-                        <td>{this.props.datasetProperties.path}</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            ) : (
-              <div></div>
-            )}
-          </Card>
         </div>
       );
     }
