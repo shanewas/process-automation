@@ -20,7 +20,6 @@ import "react-toastify/dist/ReactToastify.css";
 import { ModalContext } from "../../context/ModalContext";
 import WarningsDrawer from "./WarningsDrawer";
 import checkBot from "./checkBot";
-import { Snackbar } from "@material-ui/core";
 
 class BotBuildPage extends Component {
   static contextType = ModalContext;
