@@ -32,18 +32,21 @@ require("./Bots/crud");
 //Import-Export section
 require("./ExternalConnectivity/ImportExport");
 
-//** Menu building section START */
-//require Templete
+/** Menu building section START
+ *  Require Templete
+ */
 const { mainMenuTempate } = require("./ActionBar/menu");
-// Build menu
+/** Build menu */
 const mainMenu = Menu.buildFromTemplate(mainMenuTempate);
-// Inset menu
+/** Inset menu */
 Menu.setApplicationMenu(mainMenu);
-//menu dev/prod configuration
+/** menu dev/prod configuration */
 require("./ActionBar/config");
-//** Menu building section END */
+/** Menu building section END */
 
-//importing fancy error module
+/**
+ * importing fancy error module
+ */
 const { FancyError } = require("../Error/errorHandler");
 //error example
 console.log(new FancyError("An augmented error"));
