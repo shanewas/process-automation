@@ -4,7 +4,7 @@ const window = require("./createWindow");
 
 let mainWindow = window.createWindow(
 	isDev
-		? `http://localhost:7521`
+		? `http://localhost:${process.env.PORT}`
 		: `file://${path.join(
 				__dirname,
 				"..",
@@ -17,7 +17,7 @@ let mainWindow = window.createWindow(
 	null,
 	false,
 	true,
-	true,
+	true
 );
 
 mainWindow.once("ready-to-show", function () {
