@@ -1,7 +1,9 @@
 const isDev = require("electron-is-dev");
 const path = require("path");
 const window = require("./createWindow");
+require("dotenv").config();
 
+console.log(process.env.PORT);
 let mainWindow = window.createWindow(
 	isDev
 		? `http://localhost:${process.env.PORT}`
