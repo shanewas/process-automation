@@ -85,8 +85,11 @@ class Flowchart extends Component {
     this.context.setCurrentModal({
       name: "ProcessConfigModal",
       props: {
-        editStep: (process) => this.props.editProcess(process, index),
-        clearConfig: this.clearConfig,
+        editStep: (process) => {
+          const id = this.props.process[index].id;
+          this.props.removeWarningOnProcessUpdate(id);
+          this.props.editProcess(process, index);
+        },
         currentProcess: this.props.process[index],
         variables: this.props.variables,
         headers: this.props.headers,
@@ -107,6 +110,7 @@ class Flowchart extends Component {
     this.props.iterationChange(iterationNumber);
   };
   componentDidMount() {
+    // TODO different factory funcs
     electron.ipcRenderer.on(electron.ProcessLinkChannel, (e, content) => {
       const process = { ...content, id: shortId() };
       console.log(process);
@@ -140,7 +144,12 @@ class Flowchart extends Component {
         <div>
           <Card
             id="scrollstyle"
-            style={{ height: "70vh", maxHeight: "70vh", overflowY: "auto" }}
+            style={{
+              height: "70vh",
+              maxHeight: "70vh",
+              overflowY: "auto",
+              overflowX: "hidden",
+            }}
           >
             <span className="float-left">
               Bot Name :
@@ -165,7 +174,12 @@ class Flowchart extends Component {
             {this.props.process.map((step, index) => {
               if (index === 0) {
                 return (
-                  <div key={index}>
+                  <div
+                    key={index}
+                    className={
+                      this.props.activeWarning === step.id ? "warninghover" : ""
+                    }
+                  >
                     <span>
                       <i
                         className="fas fa-window-close float-right mt-5 mr-5"
@@ -215,7 +229,14 @@ class Flowchart extends Component {
                   );
                 } else if (step._type === "LoadData") {
                   return (
-                    <div key={index}>
+                    <div
+                      key={index}
+                      className={
+                        this.props.activeWarning === step.id
+                          ? "warninghover"
+                          : ""
+                      }
+                    >
                       <div style={{ textAlign: "center" }}>
                         <i className="fas fa-arrow-down fa-2x"></i>
                       </div>
@@ -293,7 +314,14 @@ class Flowchart extends Component {
                   );
                 } else if (step._type === "link") {
                   return (
-                    <div key={index}>
+                    <div
+                      key={index}
+                      className={
+                        this.props.activeWarning === step.id
+                          ? "warninghover"
+                          : ""
+                      }
+                    >
                       <div style={{ textAlign: "center" }}>
                         <i className="fas fa-arrow-down fa-2x"></i>
                       </div>
@@ -339,7 +367,14 @@ class Flowchart extends Component {
                   );
                 } else if (step._type === "ScreenShot") {
                   return (
-                    <div key={index}>
+                    <div
+                      key={index}
+                      className={
+                        this.props.activeWarning === step.id
+                          ? "warninghover"
+                          : ""
+                      }
+                    >
                       <div style={{ textAlign: "center" }}>
                         <i className="fas fa-arrow-down fa-2x"></i>
                       </div>
@@ -368,7 +403,14 @@ class Flowchart extends Component {
                   );
                 } else if (step._type === "Extract Data") {
                   return (
-                    <div key={index}>
+                    <div
+                      key={index}
+                      className={
+                        this.props.activeWarning === step.id
+                          ? "warninghover"
+                          : ""
+                      }
+                    >
                       <div style={{ textAlign: "center" }}>
                         <i className="fas fa-arrow-down fa-2x"></i>
                       </div>

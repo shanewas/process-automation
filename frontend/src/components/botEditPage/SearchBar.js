@@ -23,23 +23,26 @@ export default (props) => {
   };
 
   const openLink = (e) => {
+    e.preventDefault();
     if (!url) return;
     electron.send(electron.SearchLinkChannel, url);
   };
 
   return (
     <Box className={classes.root}>
-      <RoundedTF
-        endAdornment={
-          <IconButton onClick={openLink} color="primary">
-            <WebIcon />
-          </IconButton>
-        }
-        disableUnderline
-        value={url}
-        onChange={handleUrlChange}
-        placeholder="Enter URL"
-      />
+      <form onSubmit={openLink}>
+        <RoundedTF
+          endAdornment={
+            <IconButton onClick={openLink} color="primary">
+              <WebIcon />
+            </IconButton>
+          }
+          disableUnderline
+          value={url}
+          onChange={handleUrlChange}
+          placeholder="Enter URL"
+        />
+      </form>
     </Box>
   );
 };
