@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-import * as electron from "../../electronScript";
+import { Button, Box } from "@material-ui/core";
+import { Warning } from "@material-ui/icons";
 
 export default class SidebarLeft extends Component {
   itarationchange = (e) => {
@@ -17,7 +18,22 @@ export default class SidebarLeft extends Component {
         <div className="slimscroll-menu" id="remove-scroll">
           <div id="sidebar-menu">
             <ul className="metismenu" id="side-menu">
-              <li className="menu-title">Functions</li>
+              <Box display="flex" justifyContent="space-between" pr={1}>
+                <li className="menu-title">Functions</li>
+                {this.props.showBtn && (
+                  <Button
+                    onClick={this.props.showWarnings}
+                    size="small"
+                    variant="contained"
+                    elevation={0}
+                    color="secondary"
+                    style={{ fontSize: "14px", textTransform: "capitalize" }}
+                  >
+                    <Warning style={{ fontSize: "16px", marginRight: "5px" }} />
+                    Warning
+                  </Button>
+                )}
+              </Box>
               <li>
                 <a href="index.html" className="waves-effect">
                   <i className="fas fa-mouse-pointer fa-2x" />

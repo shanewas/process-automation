@@ -31,11 +31,19 @@ const types = ["LoadData", "link", "click", "ScreenShot", "Extract Data"];
 const inputTypes = ["null", "radio", "password", "text", "checkbox", "email"];
 const extractDataFields = ["xpath", "label", "placeholder", "value"];
 
+const resetFields = {
+  variableField: "",
+  variableName: "",
+  variableUsed: "",
+  entryType: "manual",
+  dataEntry: "",
+  ocr: false,
+};
+
 export default ({
   open,
   handleClose,
   editStep,
-  clearConfig,
   currentProcess,
   variables,
   headers,
@@ -47,27 +55,28 @@ export default ({
       if (typeof tProcess[v] === "undefined") tProcess[v] = "";
     }
     setProcess(tProcess);
-  }, []);
+  }, [currentProcess]);
 
   const handleClearDataHeader = () =>
     setProcess((p) => ({
       ...p,
-      variableUsed: "",
-      entryType: "manual",
-      dataEntry: "",
+      ...resetFields,
     }));
 
   const handleSwitch = (e) => {
     e.persist();
-    setProcess((p) => ({ ...p, [e.target.name]: e.target.checked }));
+    const { ocr, ...rf } = resetFields;
+    setProcess((p) => ({
+      ...p,
+      [e.target.name]: e.target.checked,
+      ...rf,
+    }));
   };
   const handleTypeChange = (type) => (e) => {
     setProcess((p) => ({
       ...p,
       [type]: e.target.value,
-      ...(type === "_type"
-        ? { variableField: "", variableName: "", variableUsed: "" }
-        : {}),
+      ...(type === "_type" ? resetFields : {}),
     }));
   };
 
@@ -76,7 +85,11 @@ export default ({
     setProcess((p) => ({
       ...p,
       [e.target.name]: e.target.value,
-      ...(e.target.typeChanged ? { dataEntry: "" } : {}),
+      ...(e.target.typeChanged
+        ? {
+            dataEntry: "",
+          }
+        : {}),
     }));
   };
 

@@ -4165,6 +4165,10 @@ table.focus-on tbody tr.focused td {
 
 /*omar115 sytle for searchbar*/
 
+.warninghover {
+  transform: scale(1.1);
+}
+
 .searchBox {
   position: absolute;
   top: 10%;

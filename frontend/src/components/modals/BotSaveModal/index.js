@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -48,7 +48,7 @@ export default ({ open, handleClose, bots, addBot, saveExisting }) => {
                 <KeyboardArrowLeft size={15} />
               </IconButton>
             )}
-            Process Configuration
+            Save Bot
           </Grid>
           <Grid item>
             <IconButton onClick={handleClose}>
