@@ -1,9 +1,10 @@
 const isDev = require("electron-is-dev");
 const path = require("path");
-const window = require("./createWindow");
+const { createWindow } = require("./window");
+
 require("dotenv").config();
 
-let mainWindow = window.createWindow(
+let mainWindow = createWindow(
 	isDev
 		? `http://localhost:${process.env.PORT}`
 		: `file://${path.join(
@@ -18,7 +19,7 @@ let mainWindow = window.createWindow(
 	null,
 	false,
 	true,
-	true
+	false
 );
 
 mainWindow.once("ready-to-show", function () {
@@ -28,12 +29,4 @@ mainWindow.once("ready-to-show", function () {
 
 mainWindow.on("closed", () => (mainWindow = null));
 
-function createContectWindow() {
-	// contectWindow;
-}
-
-function createLoadingWindow() {
-	// contectWindow;
-}
-
-module.exports = { mainWindow, createContectWindow, createLoadingWindow };
+module.exports = { mainWindow };

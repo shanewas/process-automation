@@ -7,12 +7,18 @@ const {
 	BrowserWindow,
 } = require("electron");
 
-let mainWindow = null;
-
-app.on("ready", () => {
-	mainWindow = require("./WindowManagement/windowConfig").mainWindow;
-	mainWindow.webContents.openDevTools();
-});
+app
+	.on("ready", () => {
+		const { mainWindow } = require("./WindowManagement/mainWindow");
+		mainWindow.webContents.openDevTools();
+	})
+	.on("activate", (mainWindow) => {
+		//macos
+		console.log(mainWindow);
+		if (mainWindow === null) {
+			require("./WindowManagement/mainWindow").mainWindow();
+		}
+	});
 
 app.on("window-all-closed", () => {
 	if (process.platform !== "darwin") {
@@ -20,15 +26,8 @@ app.on("window-all-closed", () => {
 	}
 });
 
-app.on("activate", () => {
-	//macos
-	if (mainWindow === null) {
-		mainWindow = require("./WindowManagement/windowConfig").mainWindow;
-	}
-});
-
 //BOT IPC CRUD
-require("./Bots/bots");
+require("./Bots/crud");
 
 //Import-Export section
 require("./ExternalConnectivity/ImportExport");

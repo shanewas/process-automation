@@ -1,4 +1,4 @@
-const xpath = require("../modules/xpath");
+const xpath = require("../../modules/xpath");
 const { ipcRenderer, remote } = require("electron");
 const isDev = require("electron-is-dev");
 const path = require("path");

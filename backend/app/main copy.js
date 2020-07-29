@@ -47,7 +47,7 @@ const isDev = require("electron-is-dev");
 const pie = require("puppeteer-in-electron");
 const puppeteer = require("puppeteer-core");
 const fs = require("fs");
-const botlist = require("../controller/local/local");
+const botlist = require("../controller/local/dbScript");
 const conf = require("./ActionBar/config");
 const menu = require("./ActionBar/menu");
 

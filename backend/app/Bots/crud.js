@@ -6,7 +6,7 @@ const {
 	updateBotProcess,
 	editBot,
 	listAllBots,
-} = require("../../controller/local/local");
+} = require("../../controller/local/dbScript");
 
 ipcMain.handle("add-bot", async (event, botName, botType) => {
 	return await addBot(botName, botType);
