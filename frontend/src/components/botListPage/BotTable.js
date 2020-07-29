@@ -24,7 +24,6 @@ class BotTable extends Component {
     let variables;
     let process;
     let iteration;
-    let datasetProperties;
     Promise.all([
       electron.ipcRenderer.invoke("get-process", botName).then((data) => {
         if (data) process = data;
@@ -33,21 +32,9 @@ class BotTable extends Component {
       electron.ipcRenderer.invoke("bot-name", botName).then((data) => {
         iteration = data.botIteration;
         variables = data.variables;
-        // if there is dataset
-        let properties = electron.ipcRenderer.sendSync("file-analytics", data.filepath);
-        console.log(properties);
-        if(properties)
-          {
-            filepath = data.filepath;
-            status = data.status;
-            header = data.header;
-            this.props.loadDatasetProperties(datasetProperties);
-          }
-          else{
-            filepath = null;
-            status = [];
-            header = [];
-          }
+        filepath = data.filepath;
+        status = data.status;
+        header = data.header;
       }),
     ]).then(() => {
       let bot = {};
