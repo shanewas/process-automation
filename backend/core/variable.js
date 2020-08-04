@@ -1,19 +1,20 @@
-let browser;
 let LINKALREADYOPENED = false;
 let BOTALREADYOPENED = false;
-var BOTS;
-var BOTPROCESS;
-var DATA = [];
-var ITERATION = 1;
-var BOT_VARIABLES = [];
-var PROCESSLENGTH = 0;
-var PROCESSCOUNTER = 0;
-var LOCALDATA;
-var IDX;
-var ERRSTATUS = [];
-var RUNINGSTATUS = false;
+let BOTS;
+let BOTPROCESS;
+let DATA = [];
+let ITERATION = 1;
+let BOT_VARIABLES = [];
+let PROCESSLENGTH = 0;
+let PROCESSCOUNTER = 0;
+let LOCALDATA;
+let IDX;
+let ERRSTATUS = [];
+let RUNINGSTATUS = false;
 
 function reset_var() {
+	// LINKALREADYOPENED = false;
+	// BOTALREADYOPENED = false;
 	BOTS = null;
 	BOTPROCESS = null;
 	DATA = [];
@@ -27,4 +28,4 @@ function reset_var() {
 	RUNINGSTATUS = false;
 }
 
-module.exports = { reset_var };
+module.exports = { LINKALREADYOPENED, reset_var };

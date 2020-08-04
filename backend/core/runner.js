@@ -1,3 +1,4 @@
+let browser;
 async () => {
 	await pie.initialize(app);
 	browser = await pie.connect(app, puppeteer);
