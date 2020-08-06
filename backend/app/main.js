@@ -1,16 +1,18 @@
-const {
-	app,
-	Menu,
-	ipcMain,
-	dialog,
-	Notification,
-	BrowserWindow,
-} = require("electron");
+const { app, Menu } = require("electron");
 
 app
 	.on("ready", () => {
-		const { mainWindow } = require("./WindowManagement/mainWindow");
-		mainWindow.webContents.openDevTools();
+		/**
+		 * splash screen
+		 */
+		const { splashWindow } = require("./WindowManagement/splashScreen");
+		splashWindow.show();
+		/**
+		 * main window import
+		 * destrying splash on main window load
+		 */
+		const { mainWindow, splash } = require("./WindowManagement/mainWindow");
+		splash(splashWindow);
 		/**
 		 * BOT CREATING MODULE
 		 */

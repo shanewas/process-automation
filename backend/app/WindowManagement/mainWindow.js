@@ -22,11 +22,15 @@ let mainWindow = createWindow(
 	false
 );
 
-mainWindow.once("ready-to-show", function () {
-	mainWindow.maximize();
-	mainWindow.show();
-});
+function splash(splashScreen) {
+	mainWindow.once("ready-to-show", function () {
+		mainWindow.maximize();
+		mainWindow.show();
+		splashScreen.hide();
+		splashScreen.destroy();
+	});
 
-mainWindow.on("closed", () => (mainWindow = null));
+	mainWindow.on("closed", () => (mainWindow = null));
+}
 
-module.exports = { mainWindow };
+module.exports = { mainWindow, splash };

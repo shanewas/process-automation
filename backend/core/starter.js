@@ -1,5 +1,3 @@
-
-
 ipcMain.on("start-bot", async function (e, botName) {
 	let botsReady = false;
 	let procSeqReady = false;
