@@ -1,10 +1,9 @@
 const { ipcMain } = require("electron");
 const { createWindow } = require("../WindowManagement/window");
 
-let { LINKALREADYOPENED } = require("../../core/variable");
 let contectWindow = null;
 
-function bot_create(mainWindow) {
+function bot_create(mainWindow, LINKALREADYOPENED) {
 	ipcMain.on("search-link", function (event, args) {
 		let procSeq = {
 			ocr: false,

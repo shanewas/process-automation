@@ -6,6 +6,7 @@ const {
 	updateBotProcess,
 	editBot,
 	listAllBots,
+	getProcessSequence,
 } = require("../../controller/local/dbScript");
 
 ipcMain.handle("add-bot", async (event, botName, botType) => {
@@ -37,4 +38,9 @@ ipcMain.on("update-bot", async (event, botName, saveBotObj) => {
 
 ipcMain.on("remove-bot", async (event, botName) => {
 	await removeBot(botName);
+});
+
+ipcMain.handle("get-process", async (event, botName) => {
+	const result = await getProcessSequence(botName);
+	return result;
 });

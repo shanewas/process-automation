@@ -1,4 +1,5 @@
-const { ipcMain } = require("electron");
+const { ipcMain, dialog } = require("electron");
+const fs = require("fs");
 const { encrypt, decrypt } = require("./encryption");
 const {
 	addBot,
@@ -7,7 +8,10 @@ const {
 	getProcessSequence,
 	updateBotProcess,
 } = require("../../controller/local/dbScript");
-
+let win;
+function getWindow(window) {
+	this.win = window;
+}
 //EXPORT bot process
 ipcMain.on("export-bot", async (event, botName) => {
 	let options = {
@@ -60,3 +64,5 @@ ipcMain.on("import-bot", async (event) => {
 		});
 	}
 });
+
+module.exports = { getWindow };
