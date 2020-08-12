@@ -26,47 +26,29 @@
     }
   ],
   "license": "MIT",
-  "version": "0.1.0",
+  "version": "0.4.1",
   "private": true,
-  "config": {
-    "forge": {
-      "packagerConfig": {},
-      "makers": [
-        {
-          "name": "@electron-forge/maker-squirrel",
-          "config": {
-            "name": "aiw-core"
-          }
-        },
-        {
-          "name": "@electron-forge/maker-zip",
-          "platforms": [
-            "darwin"
-          ]
-        },
-        {
-          "name": "@electron-forge/maker-deb",
-          "config": {}
-        },
-        {
-          "name": "@electron-forge/maker-rpm",
-          "config": {}
-        }
-      ]
-    }
-  },
   "build": {
     "productName": "AIW Core",
     "appId": "com.ferntechsolutions.aiw_core",
     "files": [
-      "node_modules/",
-      "frontend/build",
-      "frontend/node_modules/",
-      "frontend/public/",
+      "node_modules/**/*",
+      "backend/**/*",
+      "core/**/*",
+      "frontend/build/**/*",
+      "frontend/node_modules/**/*",
       "frontend/package.json",
-      "backend/",
-      "core/",
-      "package.json"
+      "package.json",
+      "logo.png",
+      "icon.png"
+    ],
+    "extraResources": [
+      "bots.db",
+      "process.db"
+    ],
+    "extraFiles": [
+      "backend/data/bots.db",
+      "backend/data/process.db"
     ],
     "dmg": {
       "contents": [
@@ -97,7 +79,7 @@
       "category": "Development"
     },
     "directories": {
-      "buildResources": "resources",
+      "buildResources": ".",
       "output": "release"
     },
     "publish": {
@@ -113,27 +95,6 @@
   },
   "main": "core/electron.js",
   "homepage": "./",
-  "jest": {
-    "API_URL": "http://localhost:9000",
-    "moduleNameMapper": {
-      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/internals/mocks/fileMock.js",
-      "\\.(css|less|sass|scss)$": "identity-obj-proxy"
-    },
-    "moduleFileExtensions": [
-      "js",
-      "jsx",
-      "ts",
-      "tsx",
-      "json"
-    ],
-    "moduleDirectories": [
-      "node_modules",
-      "frontend/node_modules"
-    ],
-    "setupFiles": [
-      "./internals/scripts/CheckBuildsExist.js"
-    ]
-  },
   "keywords": [
     "RPA",
     "Automation",
@@ -141,46 +102,43 @@
   ],
   "peerDependencies": {},
   "dependencies": {
-    "async": "^3.2.0",
-    "body-parser": "^1.19.0",
-    "cors": "^2.8.5",
-    "csv-parser": "^2.3.2",
+    "csv-parser": "^2.3.3",
     "electron-is-dev": "^1.2.0",
     "electron-reload": "^1.5.0",
-    "electron-squirrel-startup": "^1.0.0",
-    "express": "^4.17.1",
-    "jquery": "^3.5.0",
-    "moment": "^2.24.0",
-    "nedb": "^1.8.0"
+    "jimp": "^0.14.0",
+    "jquery": "^3.5.1",
+    "moment": "^2.27.0",
+    "nedb-promises": "^4.0.3",
+    "puppeteer-core": "^4.0.1",
+    "puppeteer-in-electron": "^3.0.3",
+    "react-syntax-highlighter": "^12.2.1",
+    "show-toast": "^1.1.4",
+    "tesseract.js": "^2.1.1"
   },
   "devDependencies": {
-    "@electron-forge/cli": "6.0.0-beta.50",
-    "@electron-forge/maker-deb": "6.0.0-beta.50",
-    "@electron-forge/maker-rpm": "6.0.0-beta.50",
-    "@electron-forge/maker-squirrel": "6.0.0-beta.50",
-    "@electron-forge/maker-zip": "6.0.0-beta.50",
-    "concurrently": "^5.1.0",
+    "concurrently": "^5.2.0",
     "cross-env": "^7.0.2",
-    "electron": "^8.2.2",
-    "electron-builder": "^22.5.1",
-    "electron-rebuild": "^1.10.1",
-    "wait-on": "^4.0.2"
+    "electron": "^9.0.5",
+    "electron-builder": "^22.7.0",
+    "electron-devtools-installer": "^3.1.0",
+    "wait-on": "^5.0.1"
   },
   "scripts": {
     "install-all": "npm install && cd frontend && npm install",
     "react-start": "npm start --prefix frontend",
-    "react-build": "npm build --prefix frontend",
+    "react-build": "cd frontend && npm run build",
     "react-test": "react-scripts test --env=jsdom",
     "react-eject": "react-scripts eject",
     "backend-start": "cd backend && node server.js",
-    "electron-build": "electron-builder",
+    "electron-build": "cross-env NODE_ENV=prod electron-builder",
     "release": "yarn react-build && electron-builder --publish=always",
     "build": "yarn react-build && yarn electron-build",
-    "start": "concurrently \"cross-env BROWSER=none yarn backend-start\" \"cross-env BROWSER=none yarn react-start\" \"wait-on http://localhost:4000 && electron .\"",
+    "start": "concurrently \"cross-env NODE_ENV=dev BROWSER=none yarn react-start\" \"cross-env NODE_ENV=dev wait-on http://localhost:4000 && electron .\"",
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
-    "lint": "echo \"No linting configured\""
+    "lint": "echo \"No linting configured\"",
+    "postinstall": "electron-builder install-app-deps"
   },
   "eslintConfig": {
     "extends": "react-app"

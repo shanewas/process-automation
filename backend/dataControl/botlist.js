@@ -1,232 +1,247 @@
+const { app } = require("electron");
+const isDev = require("electron-is-dev");
 const fs = require("fs");
 const path = require("path");
 const moment = require("moment");
-const DataStore = require("nedb");
-const csv = require("csv-parser");
+const DataStore = require("nedb-promises");
 
-let botsList = new DataStore({
-	filename: `${path.join(__dirname, "../data/bots.db")}`,
-	autoload: true,
-});
-let processList = new DataStore({
-	filename: `${path.join(__dirname, "../data/process.db")}`,
-	autoload: true,
-});
+const dbFactory = (fileName) =>
+  DataStore.create({
+    filename: isDev
+      ? path.join("./backend/data/", fileName)
+      : // : path.join("./backend/data/", fileName), //LINUX BUILD TILL SPRINT 2 TODO: Figure out how to handle this
+        // : path.join("./backend/data/", fileName).replace('/app.asar', ''), //LINUX BUILD TILL SPRINT 2 TODO: Figure out how to handle this
+        path.join(app.getAppPath("userData"), "../backend/data/", fileName), // WINDOWS BUILD
+    // : path.join(__dirname, "../data/", fileName).replace('/app.asar', ''),
+    timestampData: true,
+    autoload: true,
+  });
+
+const db = {
+  botsList: dbFactory("bots.db"),
+  processList: dbFactory("process.db"),
+  notificationList: dbFactory("notification.db"),
+};
 
 // GET BOTS LIST
-const listAllBots = function (res) {
-	let bots = null;
-	botsList.find({}, function (err, docs) {
-		res.send(docs);
-	});
+const listAllBots = async () => {
+  const docs = await db.botsList.find({}).exec();
+  return docs;
 };
 
 // GET SINGLE BOT
-const fetchBot = (botName, res) => {
-	botsList.findOne({ botName: botName }, (err, docs) => {
-		if (docs === null) {
-			res.send(
-				"The bot you are looking for does not exist, provide a valid bot name and try again!"
-			);
-			return false;
-		} else {
-			res.send(docs);
-			return true;
-		}
-	});
-};
-const MainFetchBot = (botName) => {
-	botsList.findOne({ botName: botName }, (err, docs) => {
-		if (docs === null) {
-			// res.send('The bot you are looking for does not exist, provide a valid bot name and try again!');
-			return false;
-		} else {
-			// res.send(docs);
-			return docs;
-		}
-	});
+const fetchBot = async (botName) => {
+  const docs = await db.botsList.findOne({ botName: botName }).exec();
+  return docs;
 };
 
-// Nabil
 // ADD BOT
-const addBot = function (botName, botType, res) {
-	botsList.findOne({ botName: botName }, (err, docs) => {
-		if (docs === null) {
-			const currentDateTime = getCurrentTime();
-			// inserting new bot in db
-			let bot = {
-				// id: id,
-				botName: botName,
-				botType: botType,
-				botStatus: "disabled",
-				lastActive: getCurrentTime(),
-			};
-			botsList.insert(bot, (err, doc) => {
-				res.send(doc);
-			});
-			console.log(botName + "has been Added");
-		} else
-			res.send(
-				"a bot with this bot name already exists, change the bot name and try again!"
-			);
-		console.log(
-			"a bot with this bot name already exists, change the bot name and try again!"
-		);
-	});
+const addBot = async (botName, botType) => {
+  const docs = await db.botsList.findOne({ botName: botName }).exec();
+  if (docs === null) {
+    const currentDateTime = getCurrentTime();
+    // inserting new bot in db
+    let bot = {
+      // id: id,
+      botName: botName,
+      botType: botType,
+      botStatus: "disabled",
+      lastActive: getCurrentTime(),
+    };
+    await db.botsList.insert(bot).then((err, doc) => {
+      console.log(`${botName} has been Added`);
+      return;
+    });
+  } else {
+    console.log(
+      `${botName} already exists, change the bot name and try again!`
+    );
+    return;
+  }
 };
 
 // REMOVE BOT
-const removeBot = function (botName, res) {
-	botsList.remove({ botName: botName }, (err, doc) => {
-		if (err) res.send("Unable to remove bot, please try again!");
-		else {
-			if (doc > 0) {
-				let resMsg = `Bot: '${botName}' has been removed successfully!`;
-				res.send(resMsg);
-			} else res.send("Unable to remove bot, please pass a valid bot name!");
-		}
-	});
-
-	// saveBots(botsToKeep);
+const removeBot = async function (botName) {
+  await db.botsList.remove({ botName: botName }, {}).then((err, numRemoved) => {
+    if (err) console.log(`Unable to remove ${botName}, please try again!`);
+    else {
+      if (numRemoved > 0) {
+        console.log(`Bot: '${botName}' has been removed successfully!`);
+      } else console.log("Unable to remove bot, please pass a valid bot name!");
+    }
+  });
+  await db.processList
+    .remove({ botName: botName }, {})
+    .then((err, numRemoved) => {
+      if (err) console.log(`Unable to remove ${botName}, please try again!`);
+      else {
+        if (numRemoved > 0) {
+          console.log(
+            `Process List for : '${botName}' has been removed successfully!`
+          );
+        } else
+          console.log("Unable to remove bot, please pass a valid bot name!");
+      }
+    });
+  await db.notificationList
+    .remove({ botName: botName }, { multi: true })
+    .then((err, numRemoved) => {
+      if (err) console.log(`Unable to remove ${botName}, please try again!`);
+      else {
+        if (numRemoved > 0) {
+          console.log(
+            `Notification set for: '${botName}' has been removed successfully!`
+          );
+        } else
+          console.log("Unable to remove bot, please pass a valid bot name!");
+      }
+    });
 };
 
-// Nabil
 // ADD/EDIT PROCESS
-const editBotProcess = function (botName, process, res) {
-	bot = botsList.findOne({ botName: botName }, (err, docs) => {
-		if (docs === null) res.send("No such bot exists!");
-		else {
-			processList.find({ botName: botName }, (err, docs) => {
-				if (docs.length === 0) {
-					bot = {
-						botName: botName,
-						processSequence: process,
-					};
-					processList.insert(bot, (err, docs) => {
-						res.send(docs.processSequence);
-					});
-				} else {
-					processList.findOne({ botName: botName }, (err, docs) => {
-						prevProcessList = docs.processSequence;
-						for (let i = 0; i < process.length; i++)
-							prevProcessList.push(process[i]);
-						processList.update(
-							{ botName: botName },
-							{ $set: { processSequence: prevProcessList } },
-							(err, numReplaced) => {
-								res.send(prevProcessList);
-							}
-						);
-					});
-				}
-			});
-		}
-	});
+const updateBotProcess = async function (botName, process) {
+  const docs = await db.botsList.findOne({ botName: botName }, {}).exec();
+  if (docs === null) console.log(`${botName} bot does not exist`);
+  else {
+    bot = {
+      botName: botName,
+      processSequence: process,
+    };
+    const docs = await db.processList.findOne({ botName: botName }, {}).exec();
+    if (docs === null) {
+      await db.processList.insert(bot).then((err, doc) => {
+        console.log(`process sequence added to ${bot.botName} bot`);
+      });
+    } else {
+      await db.processList
+        .update(
+          { botName: botName },
+          { $set: { processSequence: bot.processSequence } },
+          {}
+        )
+        .then((err, doc) => {
+          console.log(
+            `process: ${bot.processSequence} added to ${bot.botName} bot`
+          );
+        });
+    }
+  }
 };
+
+//update-bot
+const editBot = async function (
+  botName,
+  filepath,
+  header,
+  status,
+  botIteration,
+  variables
+) {
+  const docs = await db.botsList.findOne({ botName: botName }).exec();
+  if (docs === null) {
+    console.log(`${botName} not found in DB!`);
+  } else {
+    await db.botsList
+      .update(
+        { botName: botName },
+        {
+          $set: {
+            filepath: filepath,
+            status: status,
+            header: header,
+            botIteration: botIteration,
+            variables: variables,
+          },
+        },
+        {}
+      )
+      .then((err, numReplaced) => {
+        console.log("Bot updated successfully!!");
+      });
+  }
+};
+
 // GET PROCESS SEQUENCE FOR SINGLE BOT
-const getProcessSequence = (botName, res) => {
-	processList.findOne({ botName: botName }, (err, docs) => {
-		if (docs !== null) {
-			console.log(docs);
-			res.send(docs.processSequence);
-		} else
-			res.send(
-				"Unable to get the process sequence, give valid bot name and try again!"
-			);
-	});
+const getProcessSequence = async (botName, res) => {
+  const docs = await db.processList.findOne({ botName: botName }).exec();
+  if (docs !== null) {
+    return docs.processSequence;
+  } else return [];
 };
 // ****************************************NO CHANGE MAIN RUN BOT PROCESS*********************************************************************//
-const RunP1 = (botName, window) => {
-	processList.findOne({ botName: botName }, async (err, docs) => {
-		if (docs !== null) {
-			console.log(
-				`Loading: ${botName} of link ${docs.processSequence[0].link}`
-			);
-			await window.loadURL(docs.processSequence[0].link);
-			window.show();
-		} else
-			console.log(
-				"Unable to get the process sequence, give valid bot name and try again!"
-			);
-	});
-};
 
-function GetProcess(botName) {
-	return new Promise((resolve, reject) => {
-		processList.findOne({ botName: botName }, function (err, docs) {
-			docs !== null ? resolve(docs) : `No process found under ${botName} bot`;
-		});
-	});
+async function GetProcess(botName) {
+  const docs = await db.processList.findOne({ botName: botName }).exec();
+  if (docs !== null) return docs;
+  else return [];
 }
-function GetBot(botName) {
-	return new Promise((resolve, reject) => {
-		botsList.findOne({ botName: botName }, function (err, docs) {
-			docs !== null ? resolve(docs) : `No bot found named ${botName}`;
-		});
-	});
+async function GetBot(botName) {
+  const docs = await db.botsList.findOne({ botName: botName }).exec();
+  if (docs !== null) return docs;
+  else return [];
 }
-
-function GetCsv(filepath) {
-	return new Promise((resolve, reject) => {
-		var x = [];
-		fs.createReadStream(filepath, { bufferSize: 64 * 1024 })
-			.pipe(csv())
-			.on("data", (row) => {
-				x.push(row);
-			})
-			.on("end", () => {
-				console.log("CSV file successfully processed");
-				resolve(x);
-			});
-	});
-}
-// ****************************************NO CHANGE MAIN RUN BOT PROCESS*********************************************************************//
-
-const editBot = function (botName, filepath, header, status,botIteration, res) {
-	console.log("edit bot: " + botName);
-	botsList.findOne({ botName: botName }, (err, docs) => {
-		if (docs === null) {
-			console.log("Not found");
-			res.send("Unable to edit bot, no such bot exists!");
-		} else {
-			botsList.update(
-				{ botName: botName },
-				{ $set: { filepath: filepath, status: status, header: header ,botIteration:botIteration} },
-				(err, numReplaced) => {
-					res.send("Bot updated successfully!");
-				}
-			);
-		}
-	});
-};
-
-// Store BotList Function
-const saveBots = function (bots) {
-	const dataJSON = JSON.stringify(bots);
-	fs.writeFileSync(`${path.join(__dirname, "botlist.json")}`, dataJSON);
-};
 
 // getting current time and date in local format
 const getCurrentTime = () => {
-	let date = moment().format("MMMM Do YYYY");
-	let time = moment().format("h:mm:ss a");
-	let currentDateTime = date + " at " + time;
-	return currentDateTime;
+  // let date = moment().format("MMMM Do YYYY");
+  let time = moment().valueOf();
+  // let currentDateTime = date + " at " + time;
+  return time;
+};
+
+const getNotification = async function (notiNumber) {
+  const notificationDocs = await db.notificationList
+    .find({})
+    .sort({ time: -1 })
+    .limit(notiNumber)
+    .exec();
+  return notificationDocs;
+};
+
+const setNotification = async function (botName, type, message, action) {
+  const docs = await db.botsList.findOne({ botName: botName }, {}).exec();
+  if (docs === null) console.log(`No such bot named ${botName} found!!`);
+  else {
+    let currentDateTime = Date.now();
+    let notification = {
+      botName: botName,
+      type: type,
+      message: message,
+      action: action,
+      time: currentDateTime,
+    };
+    await db.notificationList.insert(notification).then((err) => {
+      console.log(`Notification successfully added ${botName}`);
+    });
+    return notification;
+  }
+};
+
+const setLastActiveTime = async function (botName) {
+  const docs = await db.botsList.findOne({ botName: botName }, {}).exec();
+  if (docs === null) console.log(`No such bot named ${botName} found!`);
+  else {
+    let time = getCurrentTime();
+    await db.botsList
+      .update({ botName: botName }, { $set: { lastActive: time } }, {})
+      .then((err, numReplaced) => {
+        console.log(`Bot ${botName} was last active at: ${time}`);
+      });
+  }
 };
 
 module.exports = {
-	GetProcess: GetProcess,
-	GetBot: GetBot,
-	GetCsv: GetCsv,
-	RunP1: RunP1,
-	addBot: addBot,
-	removeBot: removeBot,
-	editBot: editBot,
-	listAllBots: listAllBots,
-	fetchBot: fetchBot,
-	MainFetchBot: MainFetchBot,
-	getCurrentTime: getCurrentTime,
-	editBotProcess: editBotProcess,
-	getProcessSequence: getProcessSequence,
-	processList: processList,
+  addBot,
+  editBot,
+  fetchBot,
+  GetBot,
+  getCurrentTime,
+  getNotification,
+  GetProcess,
+  getProcessSequence,
+  listAllBots,
+  removeBot,
+  setNotification,
+  updateBotProcess,
+  setLastActiveTime,
 };
