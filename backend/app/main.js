@@ -87,6 +87,11 @@ app
 		 * Import-Export section
 		 */
 		require("./ExternalConnectivity/ImportExport").getWindow(mainWindow);
+
+		/**
+		 * ocr engine
+		 */
+		require("./ExternalConnectivity/ocrEngine").ocrEngine(mainWindow);
 	})
 	.on("activate", (mainWindow) => {
 		//macos
@@ -116,9 +121,14 @@ app.on("window-all-closed", () => {
 require("./Bots/crud");
 
 /**
- * ocr engine
+ * code generation
  */
-require("./ExternalConnectivity/ocrEngine");
+// require("../../frontend/src/CodeGeneration");
+
+/**
+ * notification handling
+ */
+require("./Notification/notification");
 
 /**
  * Menu building section START

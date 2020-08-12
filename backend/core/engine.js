@@ -4,6 +4,7 @@ const fs = require("fs");
 const PIE = require("puppeteer-in-electron");
 const Tesseract = require("tesseract.js");
 const Jimp = require("jimp");
+const csv = require("csv-parser");
 
 const { createWindow } = require("../app/WindowManagement/window");
 const {
@@ -307,7 +308,7 @@ async function run_bot(BROWSER, mainWindow, PARAMS) {
 						if (!fs.existsSync(element.imgpath)) {
 							fs.mkdirSync(element.imgpath);
 						}
-						let img_filename = `${PARAMS.BOTS.botName}_${IDX}${PROCESSCOUNTER}.jpeg`;
+						let img_filename = `${PARAMS.BOTS.botName}_${PARAMS.IDX}${PARAMS.PROCESSCOUNTER}.jpeg`;
 						let pathTo = path.join(element.imgpath, img_filename);
 						await page.evaluate((element) => {
 							window.scroll(0, element.param.Yaxis);
