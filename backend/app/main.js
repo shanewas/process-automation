@@ -116,6 +116,11 @@ app.on("window-all-closed", () => {
 require("./Bots/crud");
 
 /**
+ * ocr engine
+ */
+require("./ExternalConnectivity/ocrEngine");
+
+/**
  * Menu building section START
  * Required Templete
  * MENU DEV/PRODUCTION CONFIG
