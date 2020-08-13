@@ -42,6 +42,7 @@ document.addEventListener("click", (e) => {
 			ext: {
 				label: label,
 			},
+			clearField:false
 			// parent: e.path,
 			// parentLength: e.path.length,
 		};

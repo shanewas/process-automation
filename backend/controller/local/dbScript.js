@@ -8,7 +8,7 @@ const DataStore = require("nedb-promises");
 const dbFactory = (fileName) =>
 	DataStore.create({
 		filename: isDev
-			? path.join("..", "controller", "database", fileName)
+			? path.join(".","backend","controller", "database", fileName)
 			: // : path.join("./backend/data/", fileName), //LINUX BUILD TILL SPRINT 2 TODO: Figure out how to handle this
 			  // : path.join("./backend/data/", fileName).replace('/app.asar', ''), //LINUX BUILD TILL SPRINT 2 TODO: Figure out how to handle this
 			  path.join(

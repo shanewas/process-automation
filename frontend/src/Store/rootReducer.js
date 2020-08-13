@@ -99,6 +99,7 @@ const UnselectHeader = (state, index) => {
   };
 };
 const EntryProcess = (state, process) => {
+  console.log(process)
   const newprocess = [...state.process, process];
   return {
     ...state,
