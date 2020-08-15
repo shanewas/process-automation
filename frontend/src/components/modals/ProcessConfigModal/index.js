@@ -138,6 +138,7 @@ export default ({
         )}
         {process._type === "LoadData" && (
           <TypeLoadData
+            onSwitch={handleSwitch}
             onClearHeaderData={handleClearDataHeader}
             headers={headers}
             variables={variables}

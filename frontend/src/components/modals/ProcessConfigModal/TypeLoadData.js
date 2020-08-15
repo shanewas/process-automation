@@ -1,10 +1,18 @@
 import React, { useMemo } from "react";
-import { TextField, Grid, Box, Typography, Button } from "@material-ui/core";
+import {
+  TextField,
+  Grid,
+  Box,
+  Typography,
+  Button,
+  Switch,
+} from "@material-ui/core";
 import SelectorInput from "../../layout/input/SelectorInput";
 import EntryTypeHeader from "./EntryTypeHeader";
 
 export default ({
   onChange,
+  onSwitch,
   value,
   onSelectorChange,
   inputTypes,
@@ -15,6 +23,18 @@ export default ({
   console.log("%c TYPE LOAD DATA ", "background: #222; color: #bada55");
   return (
     <Grid container direction="column" spacing={3}>
+      <Grid item container spacing={2} alignItems="center">
+        <Grid item>
+          <Typography>Clear fields:</Typography>
+        </Grid>
+        <Grid item>
+          <Switch
+            name="clearField"
+            onChange={onSwitch}
+            checked={value.clearField}
+          />
+        </Grid>
+      </Grid>
       <Grid item>
         <TextField
           variant="outlined"
