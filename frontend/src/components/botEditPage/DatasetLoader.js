@@ -9,8 +9,10 @@ import {
   clearDatasetAction,
   loadDatasetProperties,
 } from "../../Store/actions";
+import { ModalContext } from "../../context/ModalContext";
 
 class DatasetLoader extends Component {
+  static contextType = ModalContext;
   changestatus = (index) => {
     this.props.changeHeader(index);
   };
@@ -28,6 +30,14 @@ class DatasetLoader extends Component {
       },
     });
   };
+
+  openDatasetPropertiesModal = (processId) =>
+    this.context.setCurrentModal({
+      name: "DatasetPropModal",
+      props: {
+        datasetProperties: this.props.datasetProperties,
+      },
+    });
 
   render() {
     if (this.props.headers.length === 0) {
@@ -62,6 +72,12 @@ class DatasetLoader extends Component {
         <div>
           <Card>
             <div style={{ margin: "3vh", textAlign: "center" }}>
+              <span>
+                <i
+                  className="ml-4 fas fa-info-circle float-right fa-2x"
+                  onClick={this.openDatasetPropertiesModal}
+                ></i>
+              </span>
               <span>
                 <i
                   className="fas fa-undo-alt float-right fa-2x"
@@ -115,6 +131,35 @@ class DatasetLoader extends Component {
               })}
             </div>
           </Card>
+          {/* <Card>
+            {this.props.datasetProperties ? (
+              <div className="card-body">
+                <h4 className="mt-0 header-title">Dataset Properties</h4>
+                <div className="table-responsive">
+                  <table className="table mb-0">
+                    <thead>
+                      <tr>
+                        <th>File Type</th>
+                        <th>File Size</th>
+                        <th>Number of Rows</th>
+                        <th>Path</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>{this.props.datasetProperties.type}</td>
+                        <td>{this.props.datasetProperties.size / 1000} MB</td>
+                        <td>{this.props.datasetProperties.rowNumber}</td>
+                        <td>{this.props.datasetProperties.path}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            ) : (
+              <div></div>
+            )}
+          </Card> */}
         </div>
       );
     }

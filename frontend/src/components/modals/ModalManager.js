@@ -8,6 +8,7 @@ import ManualEntryModal from "./ManualEntryModal";
 import BotConfigModal from "./BotConfigModal";
 import ProcessConfigModal from "./ProcessConfigModal";
 import VariableAddModal from "./VariableAddModal";
+import DatasetPropModal from "./DatasetPropModal";
 
 const Modals = {
   DataConditionsModal,
@@ -18,6 +19,7 @@ const Modals = {
   BotConfigModal,
   ProcessConfigModal,
   VariableAddModal,
+  DatasetPropModal,
 };
 
 const ModalManager = (props) => {
