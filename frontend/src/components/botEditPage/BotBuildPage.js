@@ -148,9 +148,7 @@ class BotBuildPage extends Component {
   }
 
   render() {
-    {
-      console.log(this.context);
-    }
+    console.log(this.context);
     return (
       <div>
         <WarningsDrawer

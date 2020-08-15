@@ -12,7 +12,7 @@ import BotBuildPage from "./components/botEditPage/BotBuildPage";
 import DataSetPage from "./components/DataSetPage/DatasetPage";
 import { ModalContextProvider } from "./context/ModalContext";
 import ModalManager from "./components/modals/ModalManager";
-import { ThemeProvider, Snackbar } from "@material-ui/core";
+import { ThemeProvider } from "@material-ui/core";
 import theme from "./theme";
 import ToastrManager from "./components/toastrs/ToastrManager";
 
