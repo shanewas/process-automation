@@ -3,6 +3,7 @@ import Card from "react-bootstrap/Card";
 import Dropzone from "react-dropzone";
 import { connect } from "react-redux";
 import * as Papa from "papaparse";
+import * as electron from "../../electronScript";
 import {
   loadHeaderAction,
   ChangeHeaderAction,
@@ -38,6 +39,16 @@ class DatasetLoader extends Component {
         datasetProperties: this.props.datasetProperties,
       },
     });
+  
+  componentDidMount(){
+    electron.ipcRenderer.send("get-dataset", this.props.filepath);
+    electron.ipcRenderer.on('dataset-result', (event, result) => {
+      console.log(result) // prints "pong"
+    })
+  }
+  componentWillUnmount() {
+    electron.ipcRenderer.removeAllListeners("get-dataset");
+  }
 
   render() {
     if (this.props.headers.length === 0) {

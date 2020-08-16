@@ -149,3 +149,15 @@ Menu.setApplicationMenu(mainMenu);
 //error example
 // console.log(new FancyError("An augmented error"));
 // { [Your fancy error: An augmented error] name: 'FancyError' }
+
+
+
+/*
+Handleing dataset
+*/
+
+require("./Dataset/dataset");
+
+/*
+end Handleing dataset
+*/

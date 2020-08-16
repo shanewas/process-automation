@@ -224,7 +224,6 @@ const removeStep = (state, index, num_of_step) => {
 };
 
 const loadBot = (state, bot) => {
-  console.log(bot);
   return {
     ...state,
     variables: bot.variables,
