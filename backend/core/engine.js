@@ -272,6 +272,12 @@ async function run_bot(BROWSER, mainWindow, PARAMS) {
 								}
 							} else {
 								elements = await page.$x(element.xpath);
+								if(element.clearField)
+								{
+									await elements[0].click({clickCount: 3});
+									await elements[0].press('Backspace'); 
+
+								}
 								await elements[0].type(dat);
 							}
 						}
