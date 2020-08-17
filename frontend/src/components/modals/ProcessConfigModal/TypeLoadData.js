@@ -25,7 +25,7 @@ export default ({
     <Grid container direction="column" spacing={3}>
       <Grid item container spacing={2} alignItems="center">
         <Grid item>
-          <Typography>Clear fields:</Typography>
+          <Typography>Clear field:</Typography>
         </Grid>
         <Grid item>
           <Switch

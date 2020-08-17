@@ -39,12 +39,12 @@ class DatasetLoader extends Component {
         datasetProperties: this.props.datasetProperties,
       },
     });
-  
-  componentDidMount(){
+
+  componentDidMount() {
     electron.ipcRenderer.send("get-dataset", this.props.filepath);
-    electron.ipcRenderer.on('dataset-result', (event, result) => {
-      console.log(result) // prints "pong"
-    })
+    electron.ipcRenderer.on("dataset-result", (event, result) => {
+      console.log(result); // prints "pong"
+    });
   }
   componentWillUnmount() {
     electron.ipcRenderer.removeAllListeners("get-dataset");
@@ -62,7 +62,12 @@ class DatasetLoader extends Component {
               <section>
                 <div {...getRootProps()}>
                   <input {...getInputProps()} />
-                  <Card style={{ height: "70vh", paddingTop: "22vh" }}>
+                  <Card
+                    style={{
+                      height: "70vh",
+                      paddingTop: "22vh",
+                    }}
+                  >
                     <div className="text-center">
                       <label className="h2 text-center mb-4">
                         No Dataset Selected
@@ -81,7 +86,12 @@ class DatasetLoader extends Component {
     } else {
       return (
         <div>
-          <Card>
+          <Card
+            style={{
+              height: "70vh",
+              overflowY: "scroll",
+            }}
+          >
             <div style={{ margin: "3vh", textAlign: "center" }}>
               <span>
                 <i
