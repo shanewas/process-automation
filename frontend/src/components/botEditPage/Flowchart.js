@@ -15,6 +15,7 @@ import {
   saveVariables,
 } from "../../Store/actions";
 import { ModalContext } from "../../context/ModalContext";
+import { OpenInNew as OpenIcon } from "@material-ui/icons";
 
 class Flowchart extends Component {
   static contextType = ModalContext;
@@ -118,6 +119,10 @@ class Flowchart extends Component {
     });
   }
 
+  openLink = (url) => {
+    electron.send(electron.SearchLinkChannel, url);
+  };
+
   componentWillUnmount() {
     electron.ipcRenderer.removeAllListeners(electron.ProcessLinkChannel);
   }
@@ -191,6 +196,11 @@ class Flowchart extends Component {
                         className="fas fa-cog float-right mt-5 mr-2"
                         onClick={() => this.openProcessConfigModal(index)}
                       ></i>
+                      <OpenIcon
+                        className="float-right mt-5 mr-2"
+                        style={{ color: "#A5A6AD", fontSize: "15px" }}
+                        onClick={() => this.openLink(step.link)}
+                      />
                     </span>
                     <div className=" text-white bg-primary text-center mr-5 ml-5 mb-2 mt-5 p-3">
                       Opened Webpage {step.link ? step.link : "Not selected"}
