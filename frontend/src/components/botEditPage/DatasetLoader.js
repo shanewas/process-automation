@@ -43,7 +43,12 @@ class DatasetLoader extends Component {
   componentDidMount() {
     electron.ipcRenderer.send("get-dataset", this.props.filepath);
     electron.ipcRenderer.on("dataset-result", (event, result) => {
-      console.log(result); // prints "pong"
+      if (!result.exists && this.props.headers.length !== 0) {
+        this.props.clearDataset();
+        this.context.setCurrentToastr({
+          msg: "Could not find the respective .CSV file",
+        });
+      }
     });
   }
   componentWillUnmount() {

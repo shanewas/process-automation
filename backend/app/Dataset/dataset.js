@@ -2,7 +2,6 @@ const fs = require("fs");
 const { ipcMain } = require("electron");
 const csv = require("csv-parser");
 
-
 ipcMain.on("get-dataset", async (event, filepath) => {
   if (fs.existsSync(filepath)) {
     const { size } = fs.statSync(filepath);
@@ -23,7 +22,7 @@ ipcMain.on("get-dataset", async (event, filepath) => {
       });
   } else {
     analytics = {
-        exists: false,
+      exists: false,
     };
     event.reply("dataset-result", analytics);
   }

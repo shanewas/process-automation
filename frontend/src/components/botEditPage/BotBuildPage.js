@@ -83,7 +83,7 @@ class BotBuildPage extends Component {
   };
 
   openBotSaveModal = async () => {
-    const warnings = checkBot(this.props.process);
+    const warnings = checkBot(this.props.process, this.props.headers);
     if (Object.keys(warnings).length) {
       this.context.setCurrentToastr({
         msg: "Could not save, please fix the warnings",
@@ -148,7 +148,6 @@ class BotBuildPage extends Component {
   }
 
   render() {
-    console.log(this.context);
     return (
       <div>
         <WarningsDrawer
