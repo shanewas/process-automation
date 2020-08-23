@@ -9,6 +9,7 @@ import BotConfigModal from "./BotConfigModal";
 import ProcessConfigModal from "./ProcessConfigModal";
 import VariableAddModal from "./VariableAddModal";
 import DatasetPropModal from "./DatasetPropModal";
+import ProcessGroupModal from "./ProcessGroupModal";
 
 const Modals = {
   DataConditionsModal,
@@ -20,6 +21,7 @@ const Modals = {
   ProcessConfigModal,
   VariableAddModal,
   DatasetPropModal,
+  ProcessGroupModal,
 };
 
 const ModalManager = (props) => {

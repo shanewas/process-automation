@@ -4,7 +4,39 @@ const initState = {
   selectedHeader: null,
   status: [],
   filepath: null,
-  process: [],
+  process: [
+    {
+      clearField: false,
+      ext: { label: undefined },
+      id: "z46qywLrF",
+      placeholder: undefined,
+      tagName: "INPUT",
+      type: "text",
+      value: "",
+      xpath: '//*[@id="tsf"]/DIV[2]/DIV[1]/DIV[1]/DIV[1]/DIV[2]/INPUT[1]',
+      _type: "LoadData",
+    },
+    {
+      clearField: false,
+      ext: { label: undefined },
+      id: "z46qywLrF",
+      placeholder: undefined,
+      tagName: "INPUT",
+      type: "text",
+      value: "",
+      xpath: '//*[@id="tsf"]/DIV[2]/DIV[1]/DIV[1]/DIV[1]/DIV[2]/INPUT[1]',
+      _type: "LoadData",
+    },
+  ],
+  processGroups: [
+    {
+      id: "123",
+      name: "Testin",
+      color: 1,
+      iteration: 2,
+      processes: [1, 2, 3, 4],
+    },
+  ],
   botName: null,
   prevStatus: null,
   botIteration: 1,
@@ -99,7 +131,7 @@ const UnselectHeader = (state, index) => {
   };
 };
 const EntryProcess = (state, process) => {
-  console.log(process)
+  console.log(process);
   const newprocess = [...state.process, process];
   return {
     ...state,

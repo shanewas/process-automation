@@ -10,6 +10,11 @@ export default createMuiTheme({
     //     },
     //   },
     // },
+    MuiButton: {
+      root: {
+        textTransform: "none",
+      },
+    },
     MuiDialogActions: {
       root: {
         padding: "16px 24px",

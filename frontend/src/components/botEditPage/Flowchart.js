@@ -16,6 +16,9 @@ import {
 } from "../../Store/actions";
 import { ModalContext } from "../../context/ModalContext";
 import { OpenInNew as OpenIcon } from "@material-ui/icons";
+import { GroupWork as GroupWorkIcon } from "@material-ui/icons";
+import { Popper } from "@material-ui/core";
+import ProcessGroupPopper from "./process/ProcessGroupPopper";
 
 class Flowchart extends Component {
   static contextType = ModalContext;
@@ -23,7 +26,57 @@ class Flowchart extends Component {
   state = {
     ProcessConfigModalShow: false,
     ProcessConfigModalIndex: null,
+    processEl: null,
+    openPg: false,
   };
+
+  processGroups = [
+    {
+      id: 1,
+      name: "Using Screenshot",
+      processes: [1, 2, 3, 4],
+      iteration: 2,
+      color: 1,
+    },
+    {
+      id: 2,
+      name: "Logging in",
+      processes: [1],
+      iteration: 3,
+      color: 2,
+    },
+    {
+      id: 3,
+      name: "Saving Doc",
+      processes: [1, 2, 3],
+      iteration: 2,
+      color: 3,
+    },
+    {
+      id: 4,
+      name: "Saving Files",
+      processes: [1, 2, 3, 4],
+      iteration: 2,
+      color: 4,
+    },
+  ];
+
+  // How to display? naming?
+  // multiple groups
+
+  closePopper = () => {
+    console.log("close popper");
+    this.setState({
+      processEl: null,
+      openPg: false,
+    });
+  };
+
+  openProcessGroup = (e) =>
+    this.setState({
+      processEl: e.currentTarget,
+      openPg: true,
+    });
 
   // menaulEntry = (index) => {
   //   this.setState({
@@ -176,6 +229,18 @@ class Flowchart extends Component {
                 onClick={this.openVariableModal}
               ></i>
             </span>
+
+            <Popper
+              open={this.state.openPg}
+              anchorEl={this.state.processEl}
+              placement="right"
+            >
+              <ProcessGroupPopper
+                processGroups={this.processGroups}
+                closePopper={this.closePopper}
+              />
+            </Popper>
+
             {this.props.process.map((step, index) => {
               if (index === 0) {
                 return (
@@ -278,6 +343,11 @@ class Flowchart extends Component {
                             })
                           }
                         ></i>
+                        <GroupWorkIcon
+                          className="float-right mt-2 mr-2"
+                          style={{ color: "#A5A6AD", fontSize: "15px" }}
+                          onClick={(e) => this.openProcessGroup(e)}
+                        />
                       </span>
                       <div
                         style={{ backgroundColor: "#a044b3" }}
