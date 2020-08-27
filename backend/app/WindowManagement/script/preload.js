@@ -1,4 +1,4 @@
-const xpath = require("../modules/xpath");
+const xpath = require("../../modules/xpath");
 const { ipcRenderer, remote } = require("electron");
 const isDev = require("electron-is-dev");
 const path = require("path");
@@ -90,18 +90,21 @@ document.addEventListener("keypress", (e) => {
 			},
 			ocr: false,
 			ocrpath: isDev
-				? path.join("./backend/data/ocrOutput/")
-				: // : path.join("./backend/data/screenshot/", fileName), //LINUX BUILD TILL SPRINT 2 TODO: Figure out how to handle this
-				  // : path.join("./backend/data/screenshot/", fileName).replace('/app.asar', ''), //LINUX BUILD TILL SPRINT 2 TODO: Figure out how to handle this
-				  path.join(remote.app.getAppPath("userData"), "../backend/data/ocr/"), // WINDOWS BUILD
-			// : path.join(__dirname, "../data/screenshot", fileName).replace('/app.asar', ''),
-			imgpath: isDev
-				? path.join("./backend/data/screenshot/")
+				? path.join("../../../../controller/database/ocrOutput/")
 				: // : path.join("./backend/data/screenshot/", fileName), //LINUX BUILD TILL SPRINT 2 TODO: Figure out how to handle this
 				  // : path.join("./backend/data/screenshot/", fileName).replace('/app.asar', ''), //LINUX BUILD TILL SPRINT 2 TODO: Figure out how to handle this
 				  path.join(
 						remote.app.getAppPath("userData"),
-						"../backend/data/screenshot/"
+						"./backend/controller/database/ocrOutput/"
+				  ), // WINDOWS BUILD
+			// : path.join(__dirname, "../data/screenshot", fileName).replace('/app.asar', ''),
+			imgpath: isDev
+				? path.join("../../../../controller/database/screenshot/")
+				: // : path.join("./backend/data/screenshot/", fileName), //LINUX BUILD TILL SPRINT 2 TODO: Figure out how to handle this
+				  // : path.join("./backend/data/screenshot/", fileName).replace('/app.asar', ''), //LINUX BUILD TILL SPRINT 2 TODO: Figure out how to handle this
+				  path.join(
+						remote.app.getAppPath("userData"),
+						"./backend/controller/database/screenshot/"
 				  ), // WINDOWS BUILD
 			// : path.join(__dirname, "../data/screenshot", fileName).replace('/app.asar', ''),
 		};

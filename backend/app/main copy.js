@@ -22,7 +22,7 @@ function splashScreen() {
 		frame: false,
 		show: false,
 		title: "AIW Core",
-		icon: path.join(__dirname, "../logo.png"),
+		icon: path.join(__dirname, "../../logo.png"),
 		alwaysOnTop: true,
 		fullscreen: false,
 		fullscreenable: false,
@@ -36,7 +36,7 @@ function splashScreen() {
 	splashWindow.loadURL(
 		isDev
 			? "http://localhost:4000/splash.html"
-			: `file://${path.join(__dirname, "../frontend/build/splash.html")}`
+			: `file://${path.join(__dirname, "../../frontend/build/splash.html")}`
 	);
 	splashWindow.setIgnoreMouseEvents(true);
 	splashWindow.setFocusable(false);
@@ -47,16 +47,16 @@ const isDev = require("electron-is-dev");
 const pie = require("puppeteer-in-electron");
 const puppeteer = require("puppeteer-core");
 const fs = require("fs");
-const botlist = require("../backend/dataControl/botlist");
-const conf = require("./electron/config");
-const menu = require("./electron/menu");
+const botlist = require("../controller/local/dbScript");
+const conf = require("./ActionBar/config");
+const menu = require("./ActionBar/menu");
 
 require("electron-reload")(__dirname, {
 	electron: path.join(__dirname, "node_modules", ".bin", "electron"),
 });
 
-let { win, contectWindow, loadingWindow } = require("./electron/windowList");
-let window = require("./electron/createWindow");
+let { win, contectWindow, loadingWindow } = require("./WindowManagement/windowList");
+let window = require("./WindowManagement/createWindows");
 
 let browser;
 let LINKALREADYOPENED = false;
@@ -91,7 +91,7 @@ function generateMainWindow() {
 	win = window.createWindow(
 		isDev
 			? "http://localhost:4000"
-			: `file://${path.join(__dirname, "../frontend/build/index.html")}`,
+			: `file://${path.join(__dirname, "../../frontend/build/index.html")}`,
 		null,
 		false,
 		true,
@@ -191,7 +191,7 @@ ipcMain.on("start-bot", async function (e, botName) {
 		loadingWindow = window.createWindow(
 			isDev
 				? "http://localhost:4000/loading.html"
-				: `file://${path.join(__dirname, "../frontend/build/loading.html")}`,
+				: `file://${path.join(__dirname, "../../frontend/build/loading.html")}`,
 			win,
 			false,
 			true,
@@ -203,7 +203,7 @@ ipcMain.on("start-bot", async function (e, botName) {
 		loadingWindow = window.createWindow(
 			isDev
 				? "http://localhost:4000/loading.html"
-				: `file://${path.join(__dirname, "../frontend/build/loading.html")}`,
+				: `file://${path.join(__dirname, "../../frontend/build/loading.html")}`,
 			win,
 			false,
 			true,
