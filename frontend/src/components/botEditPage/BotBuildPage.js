@@ -83,7 +83,11 @@ class BotBuildPage extends Component {
   };
 
   openBotSaveModal = async () => {
-    const warnings = checkBot(this.props.process, this.props.headers);
+    const warnings = checkBot({
+      processes: this.props.process,
+      headers: this.props.headers,
+      fpg: this.props.fpg,
+    });
     if (Object.keys(warnings).length) {
       this.context.setCurrentToastr({
         msg: "Could not save, please fix the warnings",
@@ -190,6 +194,7 @@ class BotBuildPage extends Component {
               <Flowchart
                 removeWarningOnProcessUpdate={this.removeWarningOnProcessUpdate}
                 activeWarning={this.state.activeWarning}
+                fpg={this.props.fpg}
               />
             </Col>
             <Col xs={12} md={12} lg={6} xl={6}>
@@ -203,7 +208,16 @@ class BotBuildPage extends Component {
 }
 
 const mapState = (state) => {
+  const fpg = {};
+  for (const id in state.processGroups) {
+    state.processGroups[id].processes.forEach((pid, index) => {
+      const { processes, ...group } = state.processGroups[id];
+      const pg = { ...group, index, id };
+      fpg[pid] = fpg[pid] ? [...fpg[pid], pg] : [pg];
+    });
+  }
   return {
+    fpg,
     process: state.process,
     botName: state.botName,
     headers: state.headers,

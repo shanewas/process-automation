@@ -255,7 +255,14 @@ class Flowchart extends Component {
               } else {
                 if (step._type === "click") {
                   return (
-                    <div key={index}>
+                    <div
+                      key={index}
+                      className={
+                        this.props.activeWarning === step.id
+                          ? "warninghover"
+                          : ""
+                      }
+                    >
                       <div style={{ textAlign: "center" }}>
                         <i className="fas fa-arrow-down fa-2x"></i>
                       </div>
@@ -597,21 +604,9 @@ class Flowchart extends Component {
 }
 
 const mapStateToProps = (state) => {
-  const fpg = {};
-  for (const id in state.processGroups) {
-    state.processGroups[id].processes.forEach((pid, index) => {
-      const { processes, ...group } = state.processGroups[id];
-      const pg = { ...group, index, id };
-      fpg[pid] = fpg[pid] ? [...fpg[pid], pg] : [pg];
-    });
-  }
-
-  console.log({ processGroups: state.processGroups, fpg });
-
   return {
     process: state.process,
     processGroups: state.processGroups,
-    fpg,
     headers: state.headers,
     selectedHeaderIndex: state.selectedHeader,
     botName: state.botName,

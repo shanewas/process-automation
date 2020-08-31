@@ -122,34 +122,40 @@ export default React.forwardRef((props, ref) => {
           </Box>
           {!isNew ? (
             <>
-              {Object.entries(props.processGroups).map((pg) => (
-                <Box
-                  key={pg[0]}
-                  className={`${classes.processGroup} ${
-                    pg[1].processes.includes(props.pid) && classes.included
-                  }`}
-                  onClick={() => handlePgClick(pg[0], pg[1].processes)}
-                >
+              {!!Object.keys(props.processGroups).length ? (
+                Object.entries(props.processGroups).map((pg) => (
                   <Box
-                    mr={2}
-                    className={classes.color}
-                    style={{ backgroundColor: colors[pg[1].color] }}
-                  ></Box>
-                  <Box
-                    mr={2}
-                    width="120px"
-                    overflow="hidden"
-                    textOverflow="ellipsis"
-                    whiteSpace="nowrap"
-                    textAlign="left"
+                    key={pg[0]}
+                    className={`${classes.processGroup} ${
+                      pg[1].processes.includes(props.pid) && classes.included
+                    }`}
+                    onClick={() => handlePgClick(pg[0], pg[1].processes)}
                   >
-                    {pg[1].name}
+                    <Box
+                      mr={2}
+                      className={classes.color}
+                      style={{ backgroundColor: colors[pg[1].color] }}
+                    ></Box>
+                    <Box
+                      mr={2}
+                      width="120px"
+                      overflow="hidden"
+                      textOverflow="ellipsis"
+                      whiteSpace="nowrap"
+                      textAlign="left"
+                    >
+                      {pg[1].name}
+                    </Box>
+                    <Box ml={2}>
+                      <TimerIcon size={20} /> {pg[1].iteration}
+                    </Box>
                   </Box>
-                  <Box ml={2}>
-                    <TimerIcon size={20} /> {pg[1].iteration}
-                  </Box>
+                ))
+              ) : (
+                <Box mt={2} textAlign="center">
+                  No process groups available
                 </Box>
-              ))}
+              )}
             </>
           ) : (
             <>
