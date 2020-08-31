@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
+import * as electron from "../../../electronScript";
 import {
   Dialog,
   DialogTitle,
@@ -16,6 +17,8 @@ import TypeClick from "./TypeClick";
 import TypeLoadData from "./TypeLoadData";
 import SelectorInput from "../../layout/input/SelectorInput";
 import TypeExtractData from "./TypeExtractData";
+import TypeUpload from "./TypeUpload";
+import TypeDownload from "./TypeDownload";
 
 const initFields = {
   ocr: false,
@@ -27,11 +30,20 @@ const initFields = {
   entryType: "manual",
   dataEntry: "",
 };
-const types = ["LoadData", "link", "click", "ScreenShot", "Extract Data"];
+const types = [
+  "LoadData",
+  "link",
+  "click",
+  "ScreenShot",
+  "Extract Data",
+  "upload",
+  "download",
+];
 const inputTypes = ["null", "radio", "password", "text", "checkbox", "email"];
 const extractDataFields = ["xpath", "label", "placeholder", "value"];
 
 const resetFields = {
+  folderPath: "",
   variableField: "",
   variableName: "",
   variableUsed: "",
@@ -98,6 +110,20 @@ export default ({
     handleClose();
   };
 
+  const getUploadFolderPath = async () => {
+    const folderPath = await electron.ipcRenderer.sendSync(
+      electron.getUploadFolderPath
+    );
+    folderPath && setProcess((o) => ({ ...o, folderPath }));
+  };
+
+  const getDownloadFolderPath = async () => {
+    const folderPath = await electron.ipcRenderer.sendSync(
+      electron.getDownloadFolderPath
+    );
+    folderPath && setProcess((o) => ({ ...o, folderPath }));
+  };
+
   console.log(process);
 
   return (
@@ -155,6 +181,22 @@ export default ({
             extractField={process.variableField}
             variable={process.variableName}
             onChange={handleChange}
+          />
+        )}
+        {process._type === "upload" && (
+          <TypeUpload
+            getUploadFolderPath={getUploadFolderPath}
+            onChange={handleChange}
+            xpath={process.xpath}
+            folderPath={process.folderPath}
+          />
+        )}
+        {process._type === "download" && (
+          <TypeDownload
+            getDownloadFolderPath={getDownloadFolderPath}
+            onChange={handleChange}
+            xpath={process.xpath}
+            folderPath={process.folderPath}
           />
         )}
       </DialogContent>

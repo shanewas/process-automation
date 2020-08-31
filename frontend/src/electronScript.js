@@ -14,6 +14,8 @@ export const ocrEngineChannel = "ocr-engine";
 export const exportBot = "export-bot";
 export const importBot = "import-bot";
 export const ocrEngine = "ocr-engine";
+export const getUploadFolderPath = "get-synchronous-upload-folder-path";
+export const getDownloadFolderPath = "get-synchronous-download-folder-path";
 
 export function send(teleport, content) {
   ipcRenderer.send(teleport, content);

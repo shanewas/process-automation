@@ -52,6 +52,16 @@ export function loadDatasetProperties(properties) {
   return { type: "LOADED_DATASET_PROPERTIES", properties };
 }
 
+export function editProcessGroup(group) {
+  return { type: "EDIT_PROCESS_GROUPS", group };
+}
+export function addToProcessGroup(ids) {
+  return { type: "ADD_TO_PROCESS_GROUP", ids };
+}
+export function removeFromProcessGroup(ids) {
+  return { type: "REMOVE_FROM_PROCESS_GROUP", ids };
+}
+
 export const saveVariables = (variables) => ({
   type: "SAVE_VARIABLES",
   variables,

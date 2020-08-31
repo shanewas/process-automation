@@ -13,6 +13,9 @@ import {
   manualDataEntry,
   iterationChangeAction,
   saveVariables,
+  editProcessGroup,
+  removeFromProcessGroup,
+  addToProcessGroup,
 } from "../../Store/actions";
 import { ModalContext } from "../../context/ModalContext";
 import { OpenInNew as OpenIcon } from "@material-ui/icons";
@@ -27,39 +30,9 @@ class Flowchart extends Component {
     ProcessConfigModalShow: false,
     ProcessConfigModalIndex: null,
     processEl: null,
+    pid: null,
     openPg: false,
   };
-
-  processGroups = [
-    {
-      id: 1,
-      name: "Using Screenshot",
-      processes: [1, 2, 3, 4],
-      iteration: 2,
-      color: 1,
-    },
-    {
-      id: 2,
-      name: "Logging in",
-      processes: [1],
-      iteration: 3,
-      color: 2,
-    },
-    {
-      id: 3,
-      name: "Saving Doc",
-      processes: [1, 2, 3],
-      iteration: 2,
-      color: 3,
-    },
-    {
-      id: 4,
-      name: "Saving Files",
-      processes: [1, 2, 3, 4],
-      iteration: 2,
-      color: 4,
-    },
-  ];
 
   // How to display? naming?
   // multiple groups
@@ -72,11 +45,13 @@ class Flowchart extends Component {
     });
   };
 
-  openProcessGroup = (e) =>
+  openProcessGroup = (e, pid) => {
     this.setState({
       processEl: e.currentTarget,
+      pid,
       openPg: true,
     });
+  };
 
   // menaulEntry = (index) => {
   //   this.setState({
@@ -236,7 +211,12 @@ class Flowchart extends Component {
               placement="right"
             >
               <ProcessGroupPopper
-                processGroups={this.processGroups}
+                addToProcessGroup={this.props.addToProcessGroup}
+                removeFromProcessGroup={this.props.removeFromProcessGroup}
+                editProcessGroup={this.props.editProcessGroup}
+                processGroups={this.props.processGroups}
+                fpg={this.props.fpg}
+                pid={this.state.pid}
                 closePopper={this.closePopper}
               />
             </Popper>
@@ -346,7 +326,7 @@ class Flowchart extends Component {
                         <GroupWorkIcon
                           className="float-right mt-2 mr-2"
                           style={{ color: "#A5A6AD", fontSize: "15px" }}
-                          onClick={(e) => this.openProcessGroup(e)}
+                          onClick={(e) => this.openProcessGroup(e, step.id)}
                         />
                       </span>
                       <div
@@ -365,6 +345,15 @@ class Flowchart extends Component {
                         </span>
                         Load Data {step.placeholder}
                         <br />
+                        {this.props.fpg[step.id]?.map((group) => (
+                          <span
+                            style={{ float: "left" }}
+                            key={group.id}
+                            className={`badge badge-lg badge-pill badge-group badge-${group.color}`}
+                          >
+                            {group.name}
+                          </span>
+                        ))}
                         {step.entryType === "dataHeader" && (
                           <span
                             style={{ float: "right" }}
@@ -517,6 +506,84 @@ class Flowchart extends Component {
                       </div>
                     </div>
                   );
+                } else if (step._type === "upload") {
+                  return (
+                    <div
+                      key={index}
+                      className={
+                        this.props.activeWarning === step.id
+                          ? "warninghover"
+                          : ""
+                      }
+                    >
+                      <div style={{ textAlign: "center" }}>
+                        <i className="fas fa-arrow-down fa-2x"></i>
+                      </div>
+                      <span>
+                        <i
+                          className="fas fa-window-close float-right mt-2 mr-5"
+                          onClick={() => {
+                            this.removeStep(index);
+                          }}
+                        ></i>
+                        <i
+                          className="fas fa-cog float-right mt-2 mr-2"
+                          onClick={() => {
+                            this.openProcessConfigModal(index);
+                            // this.openconfigtab(index);
+                          }}
+                        ></i>
+                      </span>
+                      <div
+                        style={{
+                          backgroundColor: "#363636",
+                          border: "1px solid #fff",
+                        }}
+                        className="m-b-30 text-white text-center mr-5 ml-5 mb-2 mt-2 p-3"
+                      >
+                        Upload Data
+                      </div>
+                    </div>
+                  );
+                } else if (step._type === "download") {
+                  return (
+                    <div
+                      key={index}
+                      className={
+                        this.props.activeWarning === step.id
+                          ? "warninghover"
+                          : ""
+                      }
+                    >
+                      <div style={{ textAlign: "center" }}>
+                        <i className="fas fa-arrow-down fa-2x"></i>
+                      </div>
+                      <span>
+                        <i
+                          className="fas fa-window-close float-right mt-2 mr-5"
+                          onClick={() => {
+                            this.removeStep(index);
+                          }}
+                        ></i>
+                        <i
+                          className="fas fa-cog float-right mt-2 mr-2"
+                          onClick={() => {
+                            this.openProcessConfigModal(index);
+                            // this.openconfigtab(index);
+                          }}
+                        ></i>
+                      </span>
+                      <div
+                        style={{
+                          backgroundColor: "#363636",
+                          border: "1px solid #fff",
+                        }}
+                        className="m-b-30 text-white text-center mr-5 ml-5 mb-2 mt-2 p-3"
+                      >
+                        Download Data
+                      </div>
+                    </div>
+                  );
                 } else {
                   return <div key={index}></div>;
                 }
@@ -530,8 +597,21 @@ class Flowchart extends Component {
 }
 
 const mapStateToProps = (state) => {
+  const fpg = {};
+  for (const id in state.processGroups) {
+    state.processGroups[id].processes.forEach((pid, index) => {
+      const { processes, ...group } = state.processGroups[id];
+      const pg = { ...group, index, id };
+      fpg[pid] = fpg[pid] ? [...fpg[pid], pg] : [pg];
+    });
+  }
+
+  console.log({ processGroups: state.processGroups, fpg });
+
   return {
     process: state.process,
+    processGroups: state.processGroups,
+    fpg,
     headers: state.headers,
     selectedHeaderIndex: state.selectedHeader,
     botName: state.botName,
@@ -541,6 +621,9 @@ const mapStateToProps = (state) => {
 };
 const mapDispathtoProps = (dispatch) => {
   return {
+    addToProcessGroup: (ids) => dispatch(addToProcessGroup(ids)),
+    removeFromProcessGroup: (ids) => dispatch(removeFromProcessGroup(ids)),
+    editProcessGroup: (group) => dispatch(editProcessGroup(group)),
     saveVariables: (variables) => dispatch(saveVariables(variables)),
     insertMenualData: (dataEntry, processIndex) => {
       dispatch(manualDataEntry(dataEntry, processIndex));

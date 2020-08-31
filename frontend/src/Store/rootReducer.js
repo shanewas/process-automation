@@ -1,3 +1,5 @@
+import shortId from "shortid";
+
 const initState = {
   headers: [],
   variables: [],
@@ -5,38 +7,54 @@ const initState = {
   status: [],
   filepath: null,
   process: [
-    {
-      clearField: false,
-      ext: { label: undefined },
-      id: "z46qywLrF",
-      placeholder: undefined,
-      tagName: "INPUT",
-      type: "text",
-      value: "",
-      xpath: '//*[@id="tsf"]/DIV[2]/DIV[1]/DIV[1]/DIV[1]/DIV[2]/INPUT[1]',
-      _type: "LoadData",
-    },
-    {
-      clearField: false,
-      ext: { label: undefined },
-      id: "z46qywLrF",
-      placeholder: undefined,
-      tagName: "INPUT",
-      type: "text",
-      value: "",
-      xpath: '//*[@id="tsf"]/DIV[2]/DIV[1]/DIV[1]/DIV[1]/DIV[2]/INPUT[1]',
-      _type: "LoadData",
-    },
+    // {
+    //   clearField: false,
+    //   ext: { label: undefined },
+    //   id: "z46qywLrF",
+    //   placeholder: undefined,
+    //   tagName: "INPUT",
+    //   type: "text",
+    //   value: "",
+    //   xpath: '//*[@id="tsf"]/DIV[2]/DIV[1]/DIV[1]/DIV[1]/DIV[2]/INPUT[1]',
+    //   _type: "LoadData",
+    // },
+    // {
+    //   clearField: false,
+    //   ext: { label: undefined },
+    //   id: "z46qysrF",
+    //   placeholder: undefined,
+    //   tagName: "INPUT",
+    //   type: "text",
+    //   value: "",
+    //   xpath: '//*[@id="tsf"]/DIV[2]/DIV[1]/DIV[1]/DIV[1]/DIV[2]/INPUT[1]',
+    //   _type: "LoadData",
+    // },
+    // {
+    //   clearField: false,
+    //   ext: { label: undefined },
+    //   id: "z46asdrF",
+    //   placeholder: undefined,
+    //   tagName: "INPUT",
+    //   type: "text",
+    //   value: "",
+    //   xpath: '//*[@id="tsf"]/DIV[2]/DIV[1]/DIV[1]/DIV[1]/DIV[2]/INPUT[1]',
+    //   _type: "LoadData",
+    // },
   ],
-  processGroups: [
-    {
-      id: "123",
-      name: "Testin",
-      color: 1,
-      iteration: 2,
-      processes: [1, 2, 3, 4],
-    },
-  ],
+  processGroups: {
+    // 123: {
+    //   name: "Testin",
+    //   iteration: 2,
+    //   color: 1,
+    //   processes: ["z46qysrF"],
+    // },
+    // 1141: {
+    //   name: "new test",
+    //   iteration: 3,
+    //   color: 2,
+    //   processes: ["z46asdrF"],
+    // },
+  },
   botName: null,
   prevStatus: null,
   botIteration: 1,
@@ -228,6 +246,7 @@ const clearAll = (state) => {
     prevStatus: null,
   };
 };
+
 const clearFlowchart = (state) => {
   const status = new Array(state.headers.length).fill("notSelected");
   return {
@@ -236,6 +255,50 @@ const clearFlowchart = (state) => {
     status: status,
   };
 };
+
+const editProcessGroup = (state, group) => {
+  if (group.id)
+    return {
+      ...state,
+      processGroups: {
+        ...state.processGroups,
+        [group.id]: group,
+      },
+    };
+  else
+    return {
+      ...state,
+      processGroups: {
+        ...state.processGroups,
+        [shortId()]: group,
+      },
+    };
+};
+
+const removeFromProcessGroup = (state, ids) => ({
+  ...state,
+  processGroups: {
+    ...state.processGroups,
+    [ids.gid]: {
+      ...state.processGroups[ids.gid],
+      processes: state.processGroups[ids.gid].processes.filter(
+        (p) => p !== ids.pid
+      ),
+    },
+  },
+});
+
+const addToProcessGroup = (state, ids) => ({
+  ...state,
+  processGroups: {
+    ...state.processGroups,
+    [ids.gid]: {
+      ...state.processGroups[ids.gid],
+      processes: [...state.processGroups[ids.gid].processes, ids.pid],
+    },
+  },
+});
+
 const clearDataset = (state) => {
   return {
     ...state,
@@ -305,6 +368,12 @@ const rootReducer = (state = initState, action) => {
   console.log(action.type);
 
   switch (action.type) {
+    case "EDIT_PROCESS_GROUPS":
+      return editProcessGroup(state, action.group);
+    case "ADD_TO_PROCESS_GROUP":
+      return addToProcessGroup(state, action.ids);
+    case "REMOVE_FROM_PROCESS_GROUP":
+      return removeFromProcessGroup(state, action.ids);
     case "SAVE_VARIABLES":
       return saveVariables(state, action.variables);
     case "LOAD_HEADERS":

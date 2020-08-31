@@ -43,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
     color: "#c4c6c8",
     textAlign: "center",
     padding: "6px",
-    marginBottom: theme.spacing(0.5),
+    marginBottom: theme.spacing(1),
     fontSize: "14.5px",
     display: "flex",
     alignItems: "center",
@@ -56,6 +56,10 @@ const useStyles = makeStyles((theme) => ({
       cursor: "pointer",
     },
   },
+  included: {
+    color: "#363636",
+    borderColor: "#363636",
+  },
   color: {
     height: "20px",
     width: "20px",
@@ -67,11 +71,37 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const initInfo = { name: "", iteration: 0, color: "", processes: [] };
+
 export default React.forwardRef((props, ref) => {
-  const [isNew, setIsNew] = useState(false);
-  const [newGrpClr, setNewGrpClr] = useState("");
-  const colors = ["#61BD4F", "#F2D600", "#FF9F1A", "#F56E5A", "#E195FE"];
   const classes = useStyles();
+  const [isNew, setIsNew] = useState(false);
+  const [grpInfo, setGrpInfo] = useState(initInfo);
+  const colors = ["#61BD4F", "#F2D600", "#FF9F1A", "#F56E5A", "#E195FE"];
+
+  const handleChange = (e) => {
+    e.persist();
+    setGrpInfo((o) => ({ ...o, [e.target.name]: e.target.value }));
+  };
+
+  const createGroup = () => {
+    props.editProcessGroup(grpInfo);
+    setIsNew(false);
+    setGrpInfo(initInfo);
+  };
+
+  const handlePgClick = (gid, processes) => {
+    if (processes.includes(props.pid)) {
+      if (window.confirm("Do you want to remove it from the Group?")) {
+        props.removeFromProcessGroup({ gid, pid: props.pid });
+      }
+    } else {
+      if (window.confirm("Do you want to add it to the group?")) {
+        props.addToProcessGroup({ gid, pid: props.pid });
+      }
+    }
+  };
+
   return (
     <ClickAwayListener onClickAway={props.closePopper}>
       <Paper className={classes.wrapper}>
@@ -92,12 +122,18 @@ export default React.forwardRef((props, ref) => {
           </Box>
           {!isNew ? (
             <>
-              {props.processGroups.map((pg) => (
-                <Box key={pg.id} className={classes.processGroup}>
+              {Object.entries(props.processGroups).map((pg) => (
+                <Box
+                  key={pg[0]}
+                  className={`${classes.processGroup} ${
+                    pg[1].processes.includes(props.pid) && classes.included
+                  }`}
+                  onClick={() => handlePgClick(pg[0], pg[1].processes)}
+                >
                   <Box
                     mr={2}
                     className={classes.color}
-                    style={{ backgroundColor: colors[pg.color] }}
+                    style={{ backgroundColor: colors[pg[1].color] }}
                   ></Box>
                   <Box
                     mr={2}
@@ -107,10 +143,10 @@ export default React.forwardRef((props, ref) => {
                     whiteSpace="nowrap"
                     textAlign="left"
                   >
-                    {pg.name}
+                    {pg[1].name}
                   </Box>
                   <Box ml={2}>
-                    <TimerIcon size={20} /> {pg.iteration}
+                    <TimerIcon size={20} /> {pg[1].iteration}
                   </Box>
                 </Box>
               ))}
@@ -118,12 +154,18 @@ export default React.forwardRef((props, ref) => {
           ) : (
             <>
               <FilledInput
+                onChange={handleChange}
+                value={grpInfo.name}
+                name="name"
                 disableUnderline
                 placeholder="Group name"
                 fullWidth
               />
               <Box mt={1}>
                 <FilledInput
+                  value={grpInfo.iteration}
+                  onChange={handleChange}
+                  name="iteration"
                   disableUnderline
                   placeholder="Number of Iteration"
                   fullWidth
@@ -133,15 +175,15 @@ export default React.forwardRef((props, ref) => {
                 <Typography variant="caption">Group Color</Typography>
               </Box>
               <Box display="flex">
-                {colors.map((clr) => (
+                {colors.map((color, idx) => (
                   <Box
-                    onClick={() => setNewGrpClr(clr)}
+                    onClick={() => setGrpInfo((o) => ({ ...o, color: idx }))}
                     m={0.5}
-                    key={clr}
+                    key={color}
                     className={classes.color}
-                    style={{ backgroundColor: clr }}
+                    style={{ backgroundColor: color }}
                   >
-                    {newGrpClr === clr ? <CheckIcon size={18} /> : null}
+                    {grpInfo.color === idx ? <CheckIcon size={18} /> : null}
                   </Box>
                 ))}
               </Box>
@@ -150,12 +192,41 @@ export default React.forwardRef((props, ref) => {
         </Box>
 
         <Box mt={2}>
+          {!isNew ? (
+            <Button
+              fullWidth
+              variant="outlined"
+              disableElevation
+              color="primary"
+              onClick={() => setIsNew(true)}
+            >
+              <>
+                <Box mr={1}>
+                  <AddIcon color="primary" />
+                </Box>
+                Create new
+              </>
+            </Button>
+          ) : (
+            <Button
+              fullWidth
+              variant="contained"
+              disableElevation
+              color="primary"
+              onClick={createGroup}
+            >
+              New Group
+            </Button>
+          )}
+        </Box>
+
+        {/* <Box mt={2}>
           <Button
             fullWidth
             variant={isNew ? "contained" : "outlined"}
             disableElevation
             color="primary"
-            onClick={() => setIsNew(true)}
+            onClick={handleClick}
           >
             {isNew ? (
               "Create"
@@ -168,7 +239,7 @@ export default React.forwardRef((props, ref) => {
               </>
             )}
           </Button>
-        </Box>
+        </Box> */}
       </Paper>
     </ClickAwayListener>
   );

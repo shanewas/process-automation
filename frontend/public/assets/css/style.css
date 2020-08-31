@@ -373,6 +373,29 @@ dt {
   color: #30419b;
 }
 
+.badge-group {
+  font-weight: bold;
+  background-color: white;
+  color: #363636;
+}
+
+
+.badge-0 {
+  background-color: #61BD4F;
+}
+.badge-1 {
+  background-color: #F2D600;
+}
+.badge-2 {
+  background-color: #FF9F1A;
+}
+.badge-3{
+  background-color: #F56E5A;
+}
+.badge-4 {
+  background-color: #E195FE;
+}
+
 /*  Accordion  */
 #accordion a {
   color: #a5a6ad !important;
