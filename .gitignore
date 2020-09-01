@@ -1,6 +1,8 @@
 /backend/dataControl/botlist.json
 /backend/controller/database/
 *.db
+*.jpeg
+*.jpg
 .DS_Store
 .env
 .gclient_done

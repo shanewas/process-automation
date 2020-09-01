@@ -287,32 +287,28 @@ async function run_bot(BROWSER, mainWindow, PARAMS) {
             break;
           case "upload":
             console.log("uploading element ...");
-            // let fileUpload = path.join(
-            //   __dirname,
-            //   "../controller/database/screenshot/github.com_01.jpeg"
-            // );
-            // elements = await page.$x(element.xpath);
-            // //file upload
-            // const [fileChooser] = await Promise.all([
-            //   page.waitForFileChooser(),
-            //   await elements[0].click(),
-            // ]);
-            // await fileChooser.accept([fileUpload]);
-
-            // loadingWindow.webContents.on("will-navigate", (event, url) => {
-            //   autoLoad = true;
-            // });
-            fs.readDir(__dirname, function (err, files) {
+            console.log("done -1");
+            fs.readdir(element.folderPath, async function (err, files) {
               if (err) console.log(err);
               else {
-                files.forEach((file) => {
-                  console.log(file);
+                console.log("done 0");
+
+                elements = await page.$x(element.xpath);
+                const [fileChooser] = await Promise.all([
+                  page.waitForFileChooser(),
+                  await elements[0].click(),
+                ]).finally(() => {
+                  console.log("done 1");
                 });
+                await fileChooser
+                  .accept([path.join(element.folderPath, files[1])])
+                  .then(() => {
+                    console.log("done 2");
+                    loadingWindow.webContents.send("next-process");
+                  });
               }
             });
-            loadingWindow.webContents.on("will-navigate", (event, url) => {
-              autoLoad = true;
-            });
+            console.log("done 3");
             break;
           case "download":
             console.log("downloading element ...");
