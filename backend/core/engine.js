@@ -279,8 +279,32 @@ async function run_bot(BROWSER, mainWindow, PARAMS) {
             break;
           case "click":
             console.log("clicking element ...");
-            elements = await page.$x(element.xpath);
-            await elements[0].click();
+            // elements = await page.$x(element.xpath);
+            // await elements[0].click();
+            // loadingWindow.webContents.on(
+            //   "did-frame-finish-load",
+            //   (event, isMainFrame, frameProcessId, frameRoutingId) => {}
+            // );
+            // await Promise.all([
+            //   // page.click("button[type=submit]"),
+            //   elements[0].waitForSelector(),
+            //   elements[0].click(),
+            //   page.waitForNavigation({ timeout: 500 }),
+            // ]);
+            await page
+              .waitForXPath(element.xpath, { visible: true })
+              .then(async () => {
+                elements = await page.$x(element.xpath);
+                await elements[0].click();
+              });
+            // const [response] = await Promise.all([
+            //   page.waitForNavigation(), // The promise resolves after navigation has finished
+            //   // page.click("a.my-link"), // Clicking the link will indirectly cause a navigation
+            //   await elements[0].click(),
+            // ]);
+            // await elements[0].click().then(async () => {
+            //   await page.waitForNavigation({ timeout: 1000 });
+            // });
             loadingWindow.webContents.on("will-navigate", (event, url) => {
               autoLoad = true;
             });
@@ -455,6 +479,7 @@ async function run_bot(BROWSER, mainWindow, PARAMS) {
       PARAMS.BOTALREADYOPENED = false;
       loadingWindow.hide();
       loadingWindow.destroy();
+      loadingWindow = null;
     }
     mainWindow.setProgressBar(PARAMS.IDX / PARAMS.ITERATION);
   }

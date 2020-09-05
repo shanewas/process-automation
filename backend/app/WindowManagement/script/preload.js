@@ -92,7 +92,7 @@ document.addEventListener("keypress", (e) => {
       },
       ocr: false,
       ocrpath: isDev
-        ? path.join("../controller/database/ocrOutput/")
+        ? path.join(__dirname, "../../../controller/database/ocrOutput/")
         : // : path.join("./backend/data/screenshot/", fileName), //LINUX BUILD TILL SPRINT 2 TODO: [AB-162] Figure out how to handle this
           // : path.join("./backend/data/screenshot/", fileName).replace('/app.asar', ''), //LINUX BUILD TILL SPRINT 2 TODO: Figure out how to handle this
           path.join(
@@ -101,7 +101,7 @@ document.addEventListener("keypress", (e) => {
           ), // WINDOWS BUILD
       // : path.join(__dirname, "../data/screenshot", fileName).replace('/app.asar', ''),
       imgpath: isDev
-        ? path.join("../controller/database/screenshot/")
+        ? path.join(__dirname, "../../../controller/database/screenshot/")
         : // : path.join("./backend/data/screenshot/", fileName), //LINUX BUILD TILL SPRINT 2 TODO: Figure out how to handle this
           // : path.join("./backend/data/screenshot/", fileName).replace('/app.asar', ''), //LINUX BUILD TILL SPRINT 2 TODO: Figure out how to handle this
           path.join(
