@@ -271,8 +271,14 @@ async function run_bot(BROWSER, mainWindow, PARAMS) {
                   break;
                 }
               } else {
-                elements = await page.$x(element.xpath);
-                await elements[0].type(dat);
+                // elements = await page.$x(element.xpath);
+                // await elements[0].type(dat);
+                await page
+                  .waitForXPath(element.xpath, { visible: true })
+                  .then(async () => {
+                    elements = await page.$x(element.xpath);
+                    await elements[0].type(dat);
+                  });
               }
             }
             loadingWindow.webContents.send("next-process");
