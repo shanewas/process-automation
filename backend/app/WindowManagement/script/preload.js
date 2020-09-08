@@ -1,3 +1,12 @@
+window.nodeRequire = require;
+delete window.require;
+delete window.exports;
+delete window.module;
+document.addEventListener("DOMNodeInserted", function (event) {
+  if (!!window && !!!window.$) {
+    window.$ = window.jQuery = require("jquery");
+  }
+});
 const xpath = require("../../modules/xpath");
 const { ipcRenderer, remote } = require("electron");
 // const isDev = require("electron-is-dev");
