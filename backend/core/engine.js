@@ -262,10 +262,17 @@ async function run_bot(BROWSER, mainWindow, PARAMS) {
             if (conditionStatus) {
               if (element.type === "radio" || element.type === "checkbox") {
                 if (element.ext.label === dat) {
-                  elements = await page.$x(element.xpath, {
-                    visible: true,
-                  });
-                  await elements[0].click();
+                  await page
+                    .waitForXPath(element.xpath, { visible: true })
+                    .then(async () => {
+                      elements = await page.$x(element.xpath);
+                      await elements[0].type(dat);
+                    });
+
+                  // elements = await page.$x(element.xpath, {
+                  //   visible: true,
+                  // });
+                  // await elements[0].click();
                 } else {
                   loadingWindow.webContents.send("next-process");
                   break;
@@ -317,28 +324,25 @@ async function run_bot(BROWSER, mainWindow, PARAMS) {
             break;
           case "upload":
             console.log("uploading element ...");
-            console.log("done -1");
             fs.readdir(element.folderPath, async function (err, files) {
               if (err) console.log(err);
               else {
-                console.log("done 0");
-
-                elements = await page.$x(element.xpath);
-                const [fileChooser] = await Promise.all([
-                  page.waitForFileChooser(),
-                  await elements[0].click(),
-                ]).finally(() => {
-                  console.log("done 1");
-                });
-                await fileChooser
-                  .accept([path.join(element.folderPath, files[1])])
-                  .then(() => {
-                    console.log("done 2");
-                    loadingWindow.webContents.send("next-process");
+                await page
+                  .waitForXPath(element.xpath, { visible: true })
+                  .then(async () => {
+                    elements = await page.$x(element.xpath);
+                    const [fileChooser] = await Promise.all([
+                      page.waitForFileChooser(),
+                      await elements[0].click(),
+                    ]);
+                    await fileChooser
+                      .accept([path.join(element.folderPath, files[1])])
+                      .then(() => {
+                        // loadingWindow.webContents.send("next-process");
+                      });
                   });
               }
             });
-            console.log("done 3");
             break;
           case "download":
             console.log("downloading element ...");
@@ -468,9 +472,9 @@ async function run_bot(BROWSER, mainWindow, PARAMS) {
         PARAMS.IDX++;
       } else {
         PARAMS.PROCESSCOUNTER++;
-        if (!autoLoad) {
-          loadingWindow.webContents.send("next-process");
-        }
+      }
+      if (!autoLoad) {
+        loadingWindow.webContents.send("next-process");
       }
     } else {
       let notification = await setNotification(
