@@ -277,6 +277,8 @@ async function run_bot(BROWSER, mainWindow, PARAMS) {
                   .waitForXPath(element.xpath, { visible: true })
                   .then(async () => {
                     elements = await page.$x(element.xpath);
+                    if (element.clearField)
+                      await elements[0].click({ clickCount: 3 });
                     await elements[0].type(dat, { delay: 100 });
                   });
               }
