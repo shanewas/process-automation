@@ -14,15 +14,15 @@ const isDev = true;
 const path = require("path");
 const showToast = require("show-toast");
 
-document.addEventListener("readystatechange", (event) => {
-  if (event.target.readyState === "complete") {
-    var style = document.createElement("style");
-    style.type = "text/css";
-    style.innerHTML = "#div { border: 1px dotted #000; position: absolute;}";
-    document.getElementsByTagName("head")[0].appendChild(style);
-    document.body.innerHTML += '<div id="div" hidden></div>';
-  }
-});
+// document.addEventListener("readystatechange", (event) => {
+//   if (event.target.readyState === "complete") {
+//     var style = document.createElement("style");
+//     style.type = "text/css";
+//     style.innerHTML = "#div { border: 1px dotted #000; position: absolute;}";
+//     document.getElementsByTagName("head")[0].appendChild(style);
+//     document.body.innerHTML += '<div id="div" hidden></div>';
+//   }
+// });
 let Xaxis, Yaxis;
 let width, height;
 
