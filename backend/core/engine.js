@@ -321,6 +321,7 @@ async function run_bot(BROWSER, mainWindow, PARAMS) {
                   };
                   if (postBody != null) {
                     const { data, contentType, boundary } = postBody;
+                    console.log(postBody);
                     loadOptions.postData = postBody.data;
                     loadOptions.extraHeaders = `content-type: ${contentType}; boundary=${boundary}`;
                   }
