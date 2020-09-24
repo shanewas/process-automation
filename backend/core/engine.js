@@ -5,6 +5,8 @@ const PIE = require("puppeteer-in-electron");
 const Tesseract = require("tesseract.js");
 const Jimp = require("jimp");
 const csv = require("csv-parser");
+const ProgressBar = require("progress");
+const https = require("https");
 
 const { createWindow } = require("../app/WindowManagement/window");
 const {
@@ -356,9 +358,42 @@ async function run_bot(BROWSER, mainWindow, PARAMS) {
             break;
           case "download":
             console.log("downloading element ...");
-            loadingWindow.webContents.on("will-navigate", (event, url) => {
-              autoLoad = true;
+            // elements = await page.$x(element.xpath);
+            // await page._client.send("Page.setDownloadBehavior", {
+            //   behavior: "allow",
+            //   downloadPath: element.folderPath,
+            // });
+            // await elements[0].click();
+
+            let pathTos = path.join(element.folderPath, "file.exe");
+            const file = fs.createWriteStream(pathTos);
+            const request = https.get(element.href).on("response", (res) => {
+              var len = parseInt(res.headers["content-length"], 10);
+              console.log();
+
+              var bar = new ProgressBar(
+                "  downloading [:bar] :rate/bps :percent :etas",
+                {
+                  complete: "=",
+                  incomplete: " ",
+                  width: 20,
+                  total: len,
+                }
+              );
+              res
+                .on("data", (chunk) => {
+                  bar.tick(chunk.length);
+                })
+                .pipe(file)
+                .on("end", () => {
+                  console.log("\n");
+                })
+                .on("error", (err) => {
+                  fs.unlink(file);
+                  // return callback(err);
+                });
             });
+
             break;
           case "KeyBoard":
             console.log(`Pressing ${element.value} ...`);
@@ -487,6 +522,7 @@ async function run_bot(BROWSER, mainWindow, PARAMS) {
         loadingWindow.webContents.send("next-process");
       }
     } else {
+      // await page.waitFor(5000);
       let notification = await setNotification(
         PARAMS.BOTS.botName,
         "log",
