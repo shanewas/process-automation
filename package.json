@@ -111,7 +111,7 @@
     "jquery": "^3.5.1",
     "moment": "^2.27.0",
     "nedb-promises": "^4.0.4",
-    "opencollective": "^1.0.3",
+    "progress": "^2.0.3",
     "puppeteer-core": "^5.2.1",
     "puppeteer-in-electron": "^3.0.3",
     "react-syntax-highlighter": "^13.5.1",

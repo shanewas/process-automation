@@ -9,7 +9,7 @@ function xpath(body) {
   // var messageRef = firebase.database().ref("xpaths");
   body.addEventListener(
     "click",
-    e => {
+    (e) => {
       if (e.shiftKey) {
         e.preventDefault();
         console.log(e.path[0].tagName);
@@ -28,7 +28,7 @@ function xpath(body) {
     },
     false
   );
-  body.addEventListener("click", e => {
+  body.addEventListener("click", (e) => {
     if (e.altKey) {
       e.preventDefault();
       // messageRef.remove();

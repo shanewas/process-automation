@@ -15,7 +15,7 @@ const path = require("path");
 const showToast = require("show-toast");
 
 document.addEventListener("readystatechange", (event) => {
-  if (event.target.readyState === "complete") {
+  if (event.target.readyState === "interactive") {
     var style = document.createElement("style");
     style.type = "text/css";
     style.innerHTML = "#div { border: 1px dotted #000; position: absolute;}";
@@ -40,11 +40,11 @@ document.addEventListener("click", (e) => {
     } catch (error) {
       label = undefined;
     }
-
     let xp = xpath.getXPath(e);
     xp.includes("//*[@id=") ? xp : (xp = `/HTML/${xp}`);
     let idSeq = {
       tagName: e.path[0].tagName,
+      href: e.path[0].href,
       type: type,
       placeholder: placeholder,
       value: e.path[0].innerHTML,

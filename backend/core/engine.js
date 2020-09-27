@@ -5,6 +5,8 @@ const PIE = require("puppeteer-in-electron");
 const Tesseract = require("tesseract.js");
 const Jimp = require("jimp");
 const csv = require("csv-parser");
+const ProgressBar = require("progress");
+const https = require("https");
 
 const { createWindow } = require("../app/WindowManagement/window");
 const {
@@ -266,61 +268,71 @@ async function run_bot(BROWSER, mainWindow, PARAMS) {
                     .waitForXPath(element.xpath, { visible: true })
                     .then(async () => {
                       elements = await page.$x(element.xpath);
-                      await elements[0].type(dat);
+                      await elements[0].type(dat, { delay: 100 });
                     });
-
-                  // elements = await page.$x(element.xpath, {
-                  //   visible: true,
-                  // });
-                  // await elements[0].click();
                 } else {
-                  loadingWindow.webContents.send("next-process");
+                  // loadingWindow.webContents.send("next-process");
                   break;
                 }
               } else {
-                // elements = await page.$x(element.xpath);
-                // await elements[0].type(dat);
                 await page
                   .waitForXPath(element.xpath, { visible: true })
                   .then(async () => {
                     elements = await page.$x(element.xpath);
-                    await elements[0].type(dat);
+                    if (element.clearField)
+                      await elements[0].click({ clickCount: 3 });
+                    await elements[0].type(dat, { delay: 100 });
                   });
               }
             }
-            loadingWindow.webContents.send("next-process");
+            // loadingWindow.webContents.send("next-process");
             break;
           case "click":
             console.log("clicking element ...");
-            // elements = await page.$x(element.xpath);
-            // await elements[0].click();
-            // loadingWindow.webContents.on(
-            //   "did-frame-finish-load",
-            //   (event, isMainFrame, frameProcessId, frameRoutingId) => {}
-            // );
-            // await Promise.all([
-            //   // page.click("button[type=submit]"),
-            //   elements[0].waitForSelector(),
-            //   elements[0].click(),
-            //   page.waitForNavigation({ timeout: 500 }),
-            // ]);
             await page
               .waitForXPath(element.xpath, { visible: true })
               .then(async () => {
                 elements = await page.$x(element.xpath);
-                await elements[0].click();
+                await elements[0].click({ delay: 100 });
               });
-            // const [response] = await Promise.all([
-            //   page.waitForNavigation(), // The promise resolves after navigation has finished
-            //   // page.click("a.my-link"), // Clicking the link will indirectly cause a navigation
-            //   await elements[0].click(),
-            // ]);
-            // await elements[0].click().then(async () => {
-            //   await page.waitForNavigation({ timeout: 1000 });
-            // });
             loadingWindow.webContents.on("will-navigate", (event, url) => {
               autoLoad = true;
             });
+
+            loadingWindow.webContents.on(
+              "new-window",
+              (
+                event,
+                url,
+                frameName,
+                disposition,
+                options,
+                additionalFeatures,
+                referrer,
+                postBody
+              ) => {
+                event.preventDefault();
+                // const win = new BrowserWindow({
+                //   webContents: options.webContents, // use existing webContents if provided
+                //   show: false,
+                // });
+                // win.once("ready-to-show", () => win.show());
+                if (!options.webContents) {
+                  const loadOptions = {
+                    httpReferrer: referrer,
+                  };
+                  if (postBody != null) {
+                    const { data, contentType, boundary } = postBody;
+                    console.log(postBody);
+                    loadOptions.postData = postBody.data;
+                    loadOptions.extraHeaders = `content-type: ${contentType}; boundary=${boundary}`;
+                  }
+
+                  loadingWindow.loadURL(url, loadOptions); // existing webContents will be navigated automatically
+                }
+                event.newGuest = loadingWindow;
+              }
+            );
             break;
           case "upload":
             console.log("uploading element ...");
@@ -346,9 +358,42 @@ async function run_bot(BROWSER, mainWindow, PARAMS) {
             break;
           case "download":
             console.log("downloading element ...");
-            loadingWindow.webContents.on("will-navigate", (event, url) => {
-              autoLoad = true;
+            // elements = await page.$x(element.xpath);
+            // await page._client.send("Page.setDownloadBehavior", {
+            //   behavior: "allow",
+            //   downloadPath: element.folderPath,
+            // });
+            // await elements[0].click();
+
+            let pathTos = path.join(element.folderPath, "file.exe");
+            const file = fs.createWriteStream(pathTos);
+            const request = https.get(element.href).on("response", (res) => {
+              var len = parseInt(res.headers["content-length"], 10);
+              console.log();
+
+              var bar = new ProgressBar(
+                "  downloading [:bar] :rate/bps :percent :etas",
+                {
+                  complete: "=",
+                  incomplete: " ",
+                  width: 20,
+                  total: len,
+                }
+              );
+              res
+                .on("data", (chunk) => {
+                  bar.tick(chunk.length);
+                })
+                .pipe(file)
+                .on("end", () => {
+                  console.log("\n");
+                })
+                .on("error", (err) => {
+                  fs.unlink(file);
+                  // return callback(err);
+                });
             });
+
             break;
           case "KeyBoard":
             console.log(`Pressing ${element.value} ...`);
@@ -477,6 +522,7 @@ async function run_bot(BROWSER, mainWindow, PARAMS) {
         loadingWindow.webContents.send("next-process");
       }
     } else {
+      // await page.waitFor(5000);
       let notification = await setNotification(
         PARAMS.BOTS.botName,
         "log",
