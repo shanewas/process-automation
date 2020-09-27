@@ -358,41 +358,48 @@ async function run_bot(BROWSER, mainWindow, PARAMS) {
             break;
           case "download":
             console.log("downloading element ...");
-            // elements = await page.$x(element.xpath);
-            // await page._client.send("Page.setDownloadBehavior", {
-            //   behavior: "allow",
-            //   downloadPath: element.folderPath,
-            // });
-            // await elements[0].click();
 
-            let pathTos = path.join(element.folderPath, "file.exe");
-            const file = fs.createWriteStream(pathTos);
-            const request = https.get(element.href).on("response", (res) => {
-              var len = parseInt(res.headers["content-length"], 10);
-              console.log();
-
-              var bar = new ProgressBar(
-                "  downloading [:bar] :rate/bps :percent :etas",
-                {
-                  complete: "=",
-                  incomplete: " ",
-                  width: 20,
-                  total: len,
-                }
-              );
-              res
-                .on("data", (chunk) => {
-                  bar.tick(chunk.length);
-                })
-                .pipe(file)
-                .on("end", () => {
-                  console.log("\n");
-                })
-                .on("error", (err) => {
-                  fs.unlink(file);
-                  // return callback(err);
-                });
+            let urls;
+            await page
+              .waitForXPath(element.xpath, { visible: true })
+              .then(async () => {
+                elements = await page.$x(element.xpath);
+              });
+            await page._client.send("Page.setDownloadBehavior", {
+              behavior: "allow",
+              downloadPath: element.folderPath,
             });
+            await elements[0].click({ delay: 100 });
+            // loadingWindow.webContents.on("will-navigate", (event, url) => {
+            //   urls = url;
+            //   // autoLoad = true;
+            // });
+            // let pathTos = path.join(element.folderPath, "file.pdf");
+            // const file = fs.createWriteStream(pathTos);
+            // const request = https.get(urls).on("response", (res) => {
+            //   var len = parseInt(res.headers["content-length"], 10);
+            //   console.log();
+            //   var bar = new ProgressBar(
+            //     "  downloading [:bar] :rate/bps :percent :etas",
+            //     {
+            //       complete: "=",
+            //       incomplete: " ",
+            //       width: 20,
+            //       total: len,
+            //     }
+            //   );
+            //   res
+            //     .on("data", (chunk) => {
+            //       bar.tick(chunk.length);
+            //     })
+            //     .pipe(file)
+            //     .on("end", () => {
+            //       console.log("\n");
+            //     })
+            //     .on("error", (err) => {
+            //       fs.unlink(file);
+            //       // return callback(err);
+            //     });
 
             break;
           case "KeyBoard":
@@ -465,7 +472,6 @@ async function run_bot(BROWSER, mainWindow, PARAMS) {
                         let variable_obj = PARAMS.BOT_VARIABLES.find(
                           (o) => o.name === element.variableName
                         );
-                        variable_obj.value = text;
                         fs.writeFile(saveTo, text, (err) => {
                           err
                             ? console.log("Canceled!")
