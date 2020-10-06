@@ -18,7 +18,7 @@ const {
 
 let loadingWindow;
 
-async function start_bot(botName, mainWindow, PARAMS) {
+async function start_bot(e, botName, mainWindow, PARAMS) {
   let botsReady = false;
   let procSeqReady = false;
   let fileReady = false;
@@ -151,7 +151,7 @@ async function start_bot(botName, mainWindow, PARAMS) {
   }
 }
 
-async function run_bot(BROWSER, mainWindow, PARAMS) {
+async function run_bot(e, BROWSER, mainWindow, PARAMS) {
   let isLoading = false;
   let autoLoad = false;
   let page = await PIE.getPage(BROWSER, loadingWindow, false).catch((err) => {
@@ -268,10 +268,9 @@ async function run_bot(BROWSER, mainWindow, PARAMS) {
                     .waitForXPath(element.xpath, { visible: true })
                     .then(async () => {
                       elements = await page.$x(element.xpath);
-                      await elements[0].type(dat, { delay: 100 });
+                      await elements[0].type(dat);
                     });
                 } else {
-                  // loadingWindow.webContents.send("next-process");
                   break;
                 }
               } else {
@@ -281,58 +280,48 @@ async function run_bot(BROWSER, mainWindow, PARAMS) {
                     elements = await page.$x(element.xpath);
                     if (element.clearField)
                       await elements[0].click({ clickCount: 3 });
-                    await elements[0].type(dat, { delay: 100 });
+                    await elements[0].type(dat);
                   });
               }
             }
-            // loadingWindow.webContents.send("next-process");
             break;
           case "click":
             console.log("clicking element ...");
-            await page
-              .waitForXPath(element.xpath, { visible: true })
-              .then(async () => {
-                elements = await page.$x(element.xpath);
-                await elements[0].click({ delay: 100 });
-              });
-            loadingWindow.webContents.on("will-navigate", (event, url) => {
-              autoLoad = true;
+            const button = await page.waitForXPath(element.xpath, {
+              visible: true,
             });
+            console.log(element.xpath);
+            await button.click().then(async () => {
+              loadingWindow.webContents.on(
+                "new-window",
+                (
+                  event,
+                  url,
+                  frameName,
+                  disposition,
+                  options,
+                  additionalFeatures,
+                  referrer,
+                  postBody
+                ) => {
+                  event.preventDefault();
+                  if (!options.webContents) {
+                    const loadOptions = {
+                      httpReferrer: referrer,
+                    };
+                    if (postBody != null) {
+                      const { data, contentType, boundary } = postBody;
+                      console.log(postBody);
+                      loadOptions.postData = postBody.data;
+                      loadOptions.extraHeaders = `content-type: ${contentType}; boundary=${boundary}`;
+                    }
 
-            loadingWindow.webContents.on(
-              "new-window",
-              (
-                event,
-                url,
-                frameName,
-                disposition,
-                options,
-                additionalFeatures,
-                referrer,
-                postBody
-              ) => {
-                event.preventDefault();
-                // const win = new BrowserWindow({
-                //   webContents: options.webContents, // use existing webContents if provided
-                //   show: false,
-                // });
-                // win.once("ready-to-show", () => win.show());
-                if (!options.webContents) {
-                  const loadOptions = {
-                    httpReferrer: referrer,
-                  };
-                  if (postBody != null) {
-                    const { data, contentType, boundary } = postBody;
-                    console.log(postBody);
-                    loadOptions.postData = postBody.data;
-                    loadOptions.extraHeaders = `content-type: ${contentType}; boundary=${boundary}`;
+                    loadingWindow.loadURL(url, loadOptions); // existing webContents will be navigated automatically
                   }
-
-                  loadingWindow.loadURL(url, loadOptions); // existing webContents will be navigated automatically
+                  event.newGuest = loadingWindow;
                 }
-                event.newGuest = loadingWindow;
-              }
-            );
+              );
+            });
             break;
           case "upload":
             console.log("uploading element ...");
@@ -347,11 +336,9 @@ async function run_bot(BROWSER, mainWindow, PARAMS) {
                       page.waitForFileChooser(),
                       await elements[0].click(),
                     ]);
-                    await fileChooser
-                      .accept([path.join(element.folderPath, files[1])])
-                      .then(() => {
-                        // loadingWindow.webContents.send("next-process");
-                      });
+                    await fileChooser.accept([
+                      path.join(element.folderPath, files[1]),
+                    ]);
                   });
               }
             });
@@ -369,7 +356,9 @@ async function run_bot(BROWSER, mainWindow, PARAMS) {
               behavior: "allow",
               downloadPath: element.folderPath,
             });
-            await elements[0].click({ delay: 100 });
+            await elements[0].click();
+            await page.waitForNavigation({ waitUntil: "domcontentloaded" });
+
             // loadingWindow.webContents.on("will-navigate", (event, url) => {
             //   urls = url;
             //   // autoLoad = true;
@@ -406,9 +395,6 @@ async function run_bot(BROWSER, mainWindow, PARAMS) {
             console.log(`Pressing ${element.value} ...`);
             elements = await page.$x(element.xpath);
             await elements[0].press(`${element.value}`);
-            loadingWindow.webContents.on("will-navigate", (event, url) => {
-              autoLoad = true;
-            });
             break;
           case "Extract Data":
             extracted_data = element[element.variableField];
@@ -416,7 +402,6 @@ async function run_bot(BROWSER, mainWindow, PARAMS) {
               (o) => o.name === element.variableName
             );
             variable_obj.value = extracted_data;
-            loadingWindow.webContents.send("next-process");
             console.log("Extracted Data " + extracted_data);
             break;
           case "ScreenShot":
@@ -483,9 +468,6 @@ async function run_bot(BROWSER, mainWindow, PARAMS) {
                       throw err;
                     });
                 }
-              })
-              .finally(() => {
-                loadingWindow.webContents.send("next-process");
               });
             break;
           case "link":
@@ -524,6 +506,9 @@ async function run_bot(BROWSER, mainWindow, PARAMS) {
       } else {
         PARAMS.PROCESSCOUNTER++;
       }
+      loadingWindow.webContents.on("will-navigate", async (event, url) => {
+        autoLoad = true;
+      });
       if (!autoLoad) {
         loadingWindow.webContents.send("next-process");
       }

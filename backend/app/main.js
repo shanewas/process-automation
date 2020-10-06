@@ -73,7 +73,7 @@ app
      */
     const { start_bot } = require("../core/engine");
     ipcMain.on("start-bot", (e, botName) => {
-      start_bot(botName, mainWindow, PARAMS);
+      start_bot(e, botName, mainWindow, PARAMS);
     });
 
     /**
@@ -81,7 +81,7 @@ app
      */
     const { run_bot } = require("../core/engine");
     ipcMain.on("need-process", (e) => {
-      run_bot(BROWSER, mainWindow, PARAMS);
+      run_bot(e, BROWSER, mainWindow, PARAMS);
     });
 
     /**
@@ -158,8 +158,6 @@ Menu.setApplicationMenu(mainMenu);
 //error example
 // console.log(new FancyError("An augmented error"));
 // { [Your fancy error: An augmented error] name: 'FancyError' }
-
-
 
 /*
 Handleing dataset
