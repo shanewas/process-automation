@@ -358,41 +358,77 @@ async function run_bot(BROWSER, mainWindow, PARAMS) {
             break;
           case "download":
             console.log("downloading element ...");
-            // elements = await page.$x(element.xpath);
-            // await page._client.send("Page.setDownloadBehavior", {
-            //   behavior: "allow",
-            //   downloadPath: element.folderPath,
-            // });
-            // await elements[0].click();
+            loadingWindow.webContents.session.on(
+              "will-download",
+              (event, item, webContents) => {
+                // Set the save path, making Electron not to prompt a save dialog.
+                item.setSavePath(`${element.folderPath}/blender.exe`);
 
-            let pathTos = path.join(element.folderPath, "file.exe");
-            const file = fs.createWriteStream(pathTos);
-            const request = https.get(element.href).on("response", (res) => {
-              var len = parseInt(res.headers["content-length"], 10);
-              console.log();
-
-              var bar = new ProgressBar(
-                "  downloading [:bar] :rate/bps :percent :etas",
-                {
-                  complete: "=",
-                  incomplete: " ",
-                  width: 20,
-                  total: len,
-                }
-              );
-              res
-                .on("data", (chunk) => {
-                  bar.tick(chunk.length);
-                })
-                .pipe(file)
-                .on("end", () => {
-                  console.log("\n");
-                })
-                .on("error", (err) => {
-                  fs.unlink(file);
-                  // return callback(err);
+                item.on("updated", (event, state) => {
+                  if (state === "interrupted") {
+                    console.log("Download is interrupted but can be resumed");
+                  } else if (state === "progressing") {
+                    if (item.isPaused()) {
+                      console.log("Download is paused");
+                    } else {
+                      console.log(`Received bytes: ${item.getReceivedBytes()}`);
+                    }
+                  }
                 });
+                item.once("done", (event, state) => {
+                  if (state === "completed") {
+                    console.log("Download successfully");
+                    a = true;
+                  } else {
+                    console.log(`Download failed: ${state}`);
+                  }
+                });
+              }
+            );
+            // elements = await page.$x(element.xpath);
+            // // await page._client.send("Page.setDownloadBehavior", {
+            // //   behavior: "allow",
+            // //   downloadPath: element.folderPath,
+            // // });
+            // await elements[0].click();
+            await page
+              .waitForXPath(element.xpath, { visible: true })
+              .then(async () => {
+                elements = await page.$x(element.xpath);
+                await elements[0].click();
+              });
+            loadingWindow.webContents.on("will-navigate", (event, url) => {
+              loadingWindow.webContents.downloadURL(url);
             });
+
+            // let pathTos = path.join(element.folderPath, "file.exe");
+            // const file = fs.createWriteStream(pathTos);
+            // const request = https.get(element.href).on("response", (res) => {
+            //   var len = parseInt(res.headers["content-length"], 10);
+            //   console.log();
+
+            //   var bar = new ProgressBar(
+            //     "  downloading [:bar] :rate/bps :percent :etas",
+            //     {
+            //       complete: "=",
+            //       incomplete: " ",
+            //       width: 20,
+            //       total: len,
+            //     }
+            //   );
+            //   res
+            //     .on("data", (chunk) => {
+            //       bar.tick(chunk.length);
+            //     })
+            //     .pipe(file)
+            //     .on("end", () => {
+            //       console.log("\n");
+            //     })
+            //     .on("error", (err) => {
+            //       fs.unlink(file);
+            //       // return callback(err);
+            //     });
+            // });
 
             break;
           case "KeyBoard":
