@@ -7,18 +7,19 @@ import {
   Redirect,
 } from "react-router-dom";
 // import login from "./components/loginPage/Login";
-import BotListPage from "./components/botListPage/BotListPage";
+import BotListPage from "./components/BotListPage";
 import BotBuildPage from "./components/botEditPage/BotBuildPage";
 import DataSetPage from "./components/DataSetPage/DatasetPage";
 import { ModalContextProvider } from "./context/ModalContext";
 import ModalManager from "./components/modals/ModalManager";
-import { ThemeProvider, Snackbar } from "@material-ui/core";
+import { ThemeProvider, CssBaseline } from "@material-ui/core";
 import theme from "./theme";
 import ToastrManager from "./components/toastrs/ToastrManager";
 
 function App() {
   return (
     <ThemeProvider theme={theme}>
+      <CssBaseline />
       <ModalContextProvider>
         <ModalManager />
         <ToastrManager />

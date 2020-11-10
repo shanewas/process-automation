@@ -1,6 +1,12 @@
 import { createMuiTheme } from "@material-ui/core";
 
 export default createMuiTheme({
+  palette: {
+    background: {
+      default: "#000",
+      paper: "#2D2D2D",
+    },
+  },
   overrides: {
     // MuiSnackbarContent: {
     //   root: {
