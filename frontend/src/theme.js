@@ -80,6 +80,9 @@ export default createMuiTheme({
       input: {
         padding: "13px 20px 10px",
       },
+      root: {
+        height: "55px",
+      },
     },
   },
 });
