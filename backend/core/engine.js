@@ -338,7 +338,7 @@ async function run_bot(BROWSER, mainWindow, PARAMS) {
             break;
           case "upload":
             console.log("uploading element ...");
-            fs.readdir(element.folderPath, async function (err, files) {
+            fs.readdir(element.uploadPath, async function (err, files) {
               if (err) console.log(err);
               else {
                 await page
@@ -350,7 +350,7 @@ async function run_bot(BROWSER, mainWindow, PARAMS) {
                       await elements[0].click(),
                     ]);
                     await fileChooser
-                      .accept([path.join(element.folderPath, files[1])])
+                      .accept([path.join(element.uploadPath, files[1])])
                       .then(() => {
                         // loadingWindow.webContents.send("next-process");
                       });
@@ -364,7 +364,7 @@ async function run_bot(BROWSER, mainWindow, PARAMS) {
               "will-download",
               (event, item, webContents) => {
                 // Set the save path, making Electron not to prompt a save dialog.
-                item.setSavePath(`${element.folderPath}/blender.exe`);
+                item.setSavePath(`${element.downloadPath}/blender.exe`);
 
                 item.on("updated", (event, state) => {
                   if (state === "interrupted") {
@@ -452,12 +452,12 @@ async function run_bot(BROWSER, mainWindow, PARAMS) {
             break;
           case "ScreenShot":
             console.log(`Taking screenshot ...`);
-            console.log(`will saving to ${element.imgpath}`);
-            if (!fs.existsSync(element.imgpath)) {
-              fs.mkdirSync(element.imgpath);
+            console.log(`will saving to ${element.screenshotPath}`);
+            if (!fs.existsSync(element.screenshotPath)) {
+              fs.mkdirSync(element.screenshotPath);
             }
             let img_filename = `${PARAMS.BOTS.botName}_${PARAMS.IDX}${PARAMS.PROCESSCOUNTER}.jpeg`;
-            let pathTo = path.join(element.imgpath, img_filename);
+            let pathTo = path.join(element.screenshotPath, img_filename);
             await page.evaluate((element) => {
               window.scroll(0, element.param.Yaxis);
             }, element);
@@ -478,7 +478,7 @@ async function run_bot(BROWSER, mainWindow, PARAMS) {
                     .then((screenshot) => {
                       let ocr_img_filename = `${PARAMS.BOTS.botName}_OCR_${PARAMS.IDX}${PARAMS.PROCESSCOUNTER}.jpeg`;
                       let ocr_pathTo = path.join(
-                        element.imgpath,
+                        element.screenshotPath,
                         "ocr_images/",
                         ocr_img_filename
                       );
@@ -491,13 +491,25 @@ async function run_bot(BROWSER, mainWindow, PARAMS) {
                         .write(ocr_pathTo);
                     })
                     .then(async () => {
-                      if (!fs.existsSync(element.ocrpath)) {
-                        fs.mkdirSync(element.ocrpath);
+                      if (!fs.existsSync(element.ocrPath)) {
+                        fs.mkdirSync(element.ocrPath);
                       }
                       let ocr_filename = `${PARAMS.BOTS.botName}_${PARAMS.IDX}${PARAMS.PROCESSCOUNTER}.txt`;
                       let saveTo = path.join(element.ocrpath, ocr_filename);
                       await Tesseract.recognize(pathTo, "eng", {
-                        logger: (m) => console.log(m),
+                        logger: async (m) => {
+                          console.log(m);
+                          // let notification = await setNotification(
+                          //   PARAMS.BOTS.botName,
+                          //   "OCR",
+                          //   ` ${JSON.stringify(m)}`,
+                          //   "null"
+                          // );
+                          // mainWindow.webContents.send(
+                          //   "notification-single",
+                          //   notification
+                          // );
+                        },
                       }).then(async ({ data: { text } }) => {
                         console.log(text);
                         let variable_obj = PARAMS.BOT_VARIABLES.find(

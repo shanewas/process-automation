@@ -100,24 +100,24 @@ document.addEventListener("keypress", (e) => {
         height: height,
       },
       ocr: false,
-      ocrpath: isDev
-        ? path.join(__dirname, "../../../controller/database/ocrOutput/")
-        : // : path.join("./backend/data/screenshot/", fileName), //LINUX BUILD TILL SPRINT 2 TODO: [AB-162] Figure out how to handle this
-          // : path.join("./backend/data/screenshot/", fileName).replace('/app.asar', ''), //LINUX BUILD TILL SPRINT 2 TODO: Figure out how to handle this
-          path.join(
-            remote.app.getAppPath("userData"),
-            "./backend/controller/database/ocrOutput/"
-          ), // WINDOWS BUILD
+      // ocrpath: isDev
+      //   ? path.join(__dirname, "../../../controller/database/ocrOutput/")
+      //   : // : path.join("./backend/data/screenshot/", fileName), //LINUX BUILD TILL SPRINT 2 TODO: [AB-162] Figure out how to handle this
+      //     // : path.join("./backend/data/screenshot/", fileName).replace('/app.asar', ''), //LINUX BUILD TILL SPRINT 2 TODO: Figure out how to handle this
+      //     path.join(
+      //       remote.app.getAppPath("userData"),
+      //       "./backend/controller/database/ocrOutput/"
+      //     ), // WINDOWS BUILD
       // : path.join(__dirname, "../data/screenshot", fileName).replace('/app.asar', ''),
-      imgpath: isDev
-        ? path.join(__dirname, "../../../controller/database/screenshot/")
-        : // : path.join("./backend/data/screenshot/", fileName), //LINUX BUILD TILL SPRINT 2 TODO: Figure out how to handle this
-          // : path.join("./backend/data/screenshot/", fileName).replace('/app.asar', ''), //LINUX BUILD TILL SPRINT 2 TODO: Figure out how to handle this
-          path.join(
-            remote.app.getAppPath("userData"),
-            "./backend/controller/database/screenshot/"
-          ), // WINDOWS BUILD
-      // : path.join(__dirname, "../data/screenshot", fileName).replace('/app.asar', ''),
+      // imgpath: isDev
+      //   ? path.join(__dirname, "../../../controller/database/screenshot/")
+      //   : // : path.join("./backend/data/screenshot/", fileName), //LINUX BUILD TILL SPRINT 2 TODO: Figure out how to handle this
+      //     // : path.join("./backend/data/screenshot/", fileName).replace('/app.asar', ''), //LINUX BUILD TILL SPRINT 2 TODO: Figure out how to handle this
+      //     path.join(
+      //       remote.app.getAppPath("userData"),
+      //       "./backend/controller/database/screenshot/"
+      //     ), // WINDOWS BUILD
+      // // : path.join(__dirname, "../data/screenshot", fileName).replace('/app.asar', ''),
     };
     showToast({
       str: "Select the area",
