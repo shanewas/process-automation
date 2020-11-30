@@ -118,6 +118,10 @@ class BotBuildPage extends Component {
     saveBotObject.headers = this.props.headers;
     saveBotObject.status = this.props.status;
     saveBotObject.botIteration = this.props.botIteration;
+    saveBotObject.downloadPath = this.props.downloadPath;
+    saveBotObject.uploadPath = this.props.uploadPath;
+    saveBotObject.screenshotPath = this.props.screenshotPath;
+    saveBotObject.ocrPath = this.props.ocrPath;
     let process = this.props.process;
     electron.ipcRenderer.send("update-bot-process", botName, process);
     electron.ipcRenderer.send("update-bot", botName, saveBotObject);
@@ -225,6 +229,10 @@ const mapState = (state) => {
     filepath: state.filepath,
     variables: state.variables,
     botIteration: state.botIteration,
+    downloadPath: state.downloadPath,
+    uploadPath: state.uploadPath,
+    screenshotPath: state.screenshotPath,
+    ocrPath: state.ocrPath,
   };
 };
 const mapDispatch = (dispatch) => {

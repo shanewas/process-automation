@@ -1,7 +1,7 @@
 import React from "react";
 import { TextField, Box, Button } from "@material-ui/core";
 
-export default ({ onChange, xpath, folderPath, getUploadFolderPath }) => {
+export default ({ onChange, xpath, uploadPath, getUploadFolderPath }) => {
   console.log("%c TYPE UPLOAD DATA ", "background: #222; color: #bada55");
 
   return (
@@ -20,8 +20,8 @@ export default ({ onChange, xpath, folderPath, getUploadFolderPath }) => {
         <TextField
           disabled
           variant="outlined"
-          value={folderPath}
-          label="Folder Path"
+          value={uploadPath}
+          label="Upload folder path"
           fullWidth
         />
       </Box>
