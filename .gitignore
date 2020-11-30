@@ -2,6 +2,7 @@
 /backend/controller/database/
 *.db
 *.jpeg
+*.lock
 *.jpg
 .DS_Store
 .env
