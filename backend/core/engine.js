@@ -289,12 +289,14 @@ async function run_bot(BROWSER, mainWindow, PARAMS) {
             break;
           case "click":
             console.log("clicking element ...");
-            await page
+            elements = await page
               .waitForXPath(element.xpath, { visible: true })
               .then(async () => {
+                // loadingWindow.webContents.on("dom-ready", async () => {
                 elements = await page.$x(element.xpath);
-                await elements[0].click({ delay: 100 });
+                await elements[0].click({ delay: 30 });
               });
+            // });
             loadingWindow.webContents.on("will-navigate", (event, url) => {
               autoLoad = true;
             });
@@ -556,6 +558,7 @@ async function run_bot(BROWSER, mainWindow, PARAMS) {
       }
       if (!autoLoad) {
         loadingWindow.webContents.send("next-process");
+        // console.log(loadingWindow.webContents.session.clearCache());
       }
     } else {
       // await page.waitFor(5000);
@@ -570,6 +573,8 @@ async function run_bot(BROWSER, mainWindow, PARAMS) {
       PARAMS.reset_var();
       PARAMS.BOTALREADYOPENED = false;
       loadingWindow.hide();
+      loadingWindow.webContents.session.clearCache();
+      loadingWindow.webContents.session.clearStorageData();
       loadingWindow.destroy();
       loadingWindow = null;
     }
