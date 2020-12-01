@@ -19,7 +19,8 @@ let mainWindow = createWindow(
 	null,
 	false,
 	true,
-	false
+	true,
+	"/script/load.js"
 );
 
 function splash(splashScreen) {

@@ -25,12 +25,13 @@ function createWindow(
     icon: path.join(__dirname, "../../../logo.png"),
     webPreferences: {
       webSecurity: true,
-      nodeIntegration: true, //default false
+      nodeIntegration: false, //default false
       javascript: true, //default true
-      nodeIntegrationInSubFrames: true, //Experimental option for enabling Node.js support in sub-frames such as iframes and child windows.
+      nodeIntegrationInSubFrames: false, //Experimental option for enabling Node.js support in sub-frames such as iframes and child windows.
       //All your preloads will load for every iframe, you can use process.isMainFrame to determine if you are in the main frame or not.
-      allowRunningInsecureContent: true, //Allow an https page to run JavaScript, CSS or plugins from http URLs. Default is false
+      allowRunningInsecureContent: false, //Allow an https page to run JavaScript, CSS or plugins from http URLs. Default is false
       //   sandbox: true,
+      enableRemoteModule: false,
       nodeIntegrationInWorker: false, //default false
       scrollBounce: true, //Enables scroll bounce (rubber banding) effect on macOS. Default is false.
       plugins: true, //Whether plugins should be enabled. Default is false
@@ -43,7 +44,7 @@ function createWindow(
       //The Electron API will only be available in the preload script and not the loaded page.
       //This option should be used when loading potentially untrusted remote content to ensure the loaded content cannot
       //tamper with the preload script and any Electron APIs being used.
-      //   worldSafeExecuteJavaScript: true, //If true, values returned from webFrame.executeJavaScript will be sanitized to ensure JS
+      worldSafeExecuteJavaScript: true, //If true, values returned from webFrame.executeJavaScript will be sanitized to ensure JS
       //values can't unsafely cross between worlds when using contextIsolation
       preload: preload ? path.join(__dirname, payload) : null,
       v8CacheOptions: "bypassHeatCheckAndEagerCompile",

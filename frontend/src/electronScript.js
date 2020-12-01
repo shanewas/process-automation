@@ -1,5 +1,5 @@
-export const electron = window.require("electron");
-export const { ipcRenderer } = electron;
+// export const electron = window.require("electron");
+export const { ipcRenderer } = window.electron;
 
 export const editBotChannel = "edit-bot";
 export const addBotChannel = "add-bot";
