@@ -2,7 +2,7 @@ const { ipcMain, dialog } = require("electron");
 
 ipcMain.on("get-synchronous-upload-folder-path", async (event) => {
   var path = await dialog.showOpenDialog({
-    properties: ["openDirectory"],
+    properties: ["openFile"],
   });
   event.returnValue = path.filePaths[0];
 });

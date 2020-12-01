@@ -334,25 +334,32 @@ async function run_bot(e, BROWSER, mainWindow, PARAMS) {
             break;
           case "upload":
             console.log("uploading element ...");
-            fs.readdir(element.uploadPath, async function (err, files) {
-              if (err) console.log(err);
-              else {
-                await page
-                  .waitForXPath(element.xpath, { visible: true })
-                  .then(async () => {
-                    elements = await page.$x(element.xpath);
-                    const [fileChooser] = await Promise.all([
-                      page.waitForFileChooser(),
-                      await elements[0].click(),
-                    ]);
-                    await fileChooser
-                      .accept([path.join(element.uploadPath, files[1])])
-                      .then(() => {
-                        // loadingWindow.webContents.send("next-process");
-                      });
-                  });
-              }
-            });
+            elements = await page
+              .waitForXPath(element.xpath, { visible: true })
+              .then(async () => {
+                elements = await page.$x(element.xpath);
+                await elements[0].uploadFile(element.uploadPath);
+                await elements[0].click();
+              });
+            // fs.readdir(element.uploadPath, async function (err, files) {
+            //   if (err) console.log(err);
+            //   else {
+            //     await page
+            //       .waitForXPath(element.xpath, { visible: true })
+            //       .then(async () => {
+            //         elements = await page.$x(element.xpath);
+            //         const [fileChooser] = await Promise.all([
+            //           page.waitForFileChooser(),
+            //           await elements[0].click(),
+            //         ]);
+            //         await fileChooser
+            //           .accept([path.join(element.uploadPath, files[1])])
+            //           .then(() => {
+            //             // loadingWindow.webContents.send("next-process");
+            //           });
+            //       });
+            //   }
+            // });
             break;
           case "download":
             console.log("downloading element ...");
