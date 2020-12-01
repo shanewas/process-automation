@@ -43,7 +43,10 @@ const inputTypes = ["null", "radio", "password", "text", "checkbox", "email"];
 const extractDataFields = ["xpath", "label", "placeholder", "value"];
 
 const resetFields = {
-  folderPath: "",
+  downloadPath: "",
+  uploadPath: "",
+  screenshotPath: "",
+  ocrPath: "",
   variableField: "",
   variableName: "",
   variableUsed: "",
@@ -114,17 +117,31 @@ export default ({
     const folderPath = await electron.ipcRenderer.sendSync(
       electron.getUploadFolderPath
     );
-    folderPath && setProcess((o) => ({ ...o, folderPath }));
+    folderPath && setProcess((o) => ({ ...o, uploadPath: folderPath }));
   };
 
   const getDownloadFolderPath = async () => {
     const folderPath = await electron.ipcRenderer.sendSync(
       electron.getDownloadFolderPath
     );
-    folderPath && setProcess((o) => ({ ...o, folderPath }));
+    folderPath && setProcess((o) => ({ ...o, downloadPath: folderPath }));
   };
 
-  console.log(process);
+  const getScreenshotFolderPath = async () => {
+    // change the electron func to fetch screenshotFolderPath instead
+    const folderPath = await electron.ipcRenderer.sendSync(
+      electron.getDownloadFolderPath
+    );
+    folderPath && setProcess((o) => ({ ...o, screenshotPath: folderPath }));
+  };
+
+  const getOcrFolderPath = async () => {
+    // change the electron func to fetch ocr instead
+    const folderPath = await electron.ipcRenderer.sendSync(
+      electron.getDownloadFolderPath
+    );
+    folderPath && setProcess((o) => ({ ...o, ocrPath: folderPath }));
+  };
 
   return (
     <Dialog open={open} fullWidth>
@@ -154,6 +171,10 @@ export default ({
             variables={variables}
             variableName={process.variableName}
             onChange={handleChange}
+            getScreenshotFolderPath={getScreenshotFolderPath}
+            screenshotPath={process.screenshotPath}
+            getOcrFolderPath={getOcrFolderPath}
+            ocrPath={process.ocrPath}
           />
         )}
         {process._type === "link" && (
@@ -186,17 +207,17 @@ export default ({
         {process._type === "upload" && (
           <TypeUpload
             getUploadFolderPath={getUploadFolderPath}
+            uploadPath={process.uploadPath}
             onChange={handleChange}
             xpath={process.xpath}
-            folderPath={process.folderPath}
           />
         )}
         {process._type === "download" && (
           <TypeDownload
             getDownloadFolderPath={getDownloadFolderPath}
+            downloadPath={process.downloadPath}
             onChange={handleChange}
             xpath={process.xpath}
-            folderPath={process.folderPath}
           />
         )}
       </DialogContent>
