@@ -269,7 +269,7 @@ async function run_bot(e, BROWSER, mainWindow, PARAMS) {
                     .waitForXPath(element.xpath, { visible: true })
                     .then(async () => {
                       elements = await page.$x(element.xpath);
-                      await elements[0].type(dat);
+                      await elements[0].type(dat, { delay: 200 });
                     });
                 } else {
                   break;
@@ -281,7 +281,7 @@ async function run_bot(e, BROWSER, mainWindow, PARAMS) {
                     elements = await page.$x(element.xpath);
                     if (element.clearField)
                       await elements[0].click({ clickCount: 3 });
-                    await elements[0].type(dat);
+                    await elements[0].type(dat, { delay: 200 });
                   });
               }
             }
@@ -293,44 +293,43 @@ async function run_bot(e, BROWSER, mainWindow, PARAMS) {
               .then(async () => {
                 // loadingWindow.webContents.on("dom-ready", async () => {
                 elements = await page.$x(element.xpath);
-                await elements[0].click({ delay: 30 });
+                await elements[0].click({ delay: 200 }).then(async () => {
+                  loadingWindow.webContents.on(
+                    "new-window",
+                    (
+                      event,
+                      url,
+                      frameName,
+                      disposition,
+                      options,
+                      additionalFeatures,
+                      referrer,
+                      postBody
+                    ) => {
+                      event.preventDefault();
+                      if (!options.webContents) {
+                        const loadOptions = {
+                          httpReferrer: referrer,
+                        };
+                        if (postBody != null) {
+                          const { data, contentType, boundary } = postBody;
+                          console.log(postBody);
+                          loadOptions.postData = postBody.data;
+                          loadOptions.extraHeaders = `content-type: ${contentType}; boundary=${boundary}`;
+                        }
+
+                        loadingWindow.loadURL(url, loadOptions); // existing webContents will be navigated automatically
+                      }
+                      event.newGuest = loadingWindow;
+                    }
+                  );
+                });
               });
             // });
             loadingWindow.webContents.on("will-navigate", (event, url) => {
               autoLoad = true;
             });
             console.log(element.xpath);
-            await button.click().then(async () => {
-              loadingWindow.webContents.on(
-                "new-window",
-                (
-                  event,
-                  url,
-                  frameName,
-                  disposition,
-                  options,
-                  additionalFeatures,
-                  referrer,
-                  postBody
-                ) => {
-                  event.preventDefault();
-                  if (!options.webContents) {
-                    const loadOptions = {
-                      httpReferrer: referrer,
-                    };
-                    if (postBody != null) {
-                      const { data, contentType, boundary } = postBody;
-                      console.log(postBody);
-                      loadOptions.postData = postBody.data;
-                      loadOptions.extraHeaders = `content-type: ${contentType}; boundary=${boundary}`;
-                    }
-
-                    loadingWindow.loadURL(url, loadOptions); // existing webContents will be navigated automatically
-                  }
-                  event.newGuest = loadingWindow;
-                }
-              );
-            });
             break;
           case "upload":
             console.log("uploading element ...");
@@ -582,10 +581,10 @@ async function run_bot(e, BROWSER, mainWindow, PARAMS) {
       mainWindow.setProgressBar(0.0);
       PARAMS.reset_var();
       PARAMS.BOTALREADYOPENED = false;
-      loadingWindow.hide();
+      // loadingWindow.hide();
       loadingWindow.webContents.session.clearCache();
       loadingWindow.webContents.session.clearStorageData();
-      loadingWindow.destroy();
+      // loadingWindow.destroy();
       loadingWindow = null;
     }
     mainWindow.setProgressBar(PARAMS.IDX / PARAMS.ITERATION);
