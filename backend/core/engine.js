@@ -581,10 +581,10 @@ async function run_bot(e, BROWSER, mainWindow, PARAMS) {
       mainWindow.setProgressBar(0.0);
       PARAMS.reset_var();
       PARAMS.BOTALREADYOPENED = false;
-      // loadingWindow.hide();
+      loadingWindow.hide();
       loadingWindow.webContents.session.clearCache();
       loadingWindow.webContents.session.clearStorageData();
-      // loadingWindow.destroy();
+      loadingWindow.destroy();
       loadingWindow = null;
     }
     mainWindow.setProgressBar(PARAMS.IDX / PARAMS.ITERATION);
