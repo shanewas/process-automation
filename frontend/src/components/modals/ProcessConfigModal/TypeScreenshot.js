@@ -2,7 +2,7 @@ import React from "react";
 import { Switch, Grid, Typography, Box } from "@material-ui/core";
 import SelectorInput from "../../layout/input/SelectorInput";
 
-export default ({ value, onChange, onSwitch, variableName, variables }) => {
+export default ({ value, onChange, onSwitch, saveToVariable, variables }) => {
   console.log("%c TYPE SCREENSHOT ", "background: #222; color: #bada55");
   return (
     <Box>
@@ -18,11 +18,11 @@ export default ({ value, onChange, onSwitch, variableName, variables }) => {
         <Grid container>
           <SelectorInput
             options={variables}
-            name="variableName"
-            value={variableName}
+            name="saveToVariable"
+            value={saveToVariable}
             onChange={onChange}
             optionsConfigure={{ id: "id", label: "name", value: "name" }}
-            placeholder="Use Variable"
+            placeholder="Save to a variable"
           />
         </Grid>
       )}

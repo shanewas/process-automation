@@ -8,7 +8,7 @@ import {
   ListItemText,
   Typography,
 } from "@material-ui/core";
-import { Link, useLocation } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import {
   FormatListNumberedRounded as BotsIcon,
   ImageAspectRatioRounded as TemplateIcon,
@@ -18,7 +18,7 @@ import {
   PlayCircleFilledRounded as RunIcon,
   SaveRounded as SaveIcon,
   CodeRounded as CodeIcon,
-  InfoRounded as InfoIcon,
+  SettingsRounded as SettingsIcon,
 } from "@material-ui/icons";
 
 const links = [
@@ -36,7 +36,7 @@ const links = [
     Icon: NotificationsIcon,
   },
   {
-    name: "learn",
+    name: "academy",
     Icon: LearnIcon,
   },
 ];
@@ -49,9 +49,10 @@ const General = (
       </Box>
       {links.map(({ name, Icon, location }) => (
         <ListItem
+          exact
           key={name}
           button
-          component={Link}
+          component={NavLink}
           to={location ? location : name}
         >
           <ListItemIcon>
@@ -120,9 +121,9 @@ const BotSidebar = (
       </ListItem>
       <ListItem button>
         <ListItemIcon>
-          <InfoIcon />
+          <SettingsIcon />
         </ListItemIcon>
-        <ListItemText>Details</ListItemText>
+        <ListItemText>Configure</ListItemText>
       </ListItem>
       <ListItem button>
         <ListItemIcon>

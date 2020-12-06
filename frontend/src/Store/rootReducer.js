@@ -8,15 +8,33 @@ const initState = {
   botName: null,
   prevStatus: null,
   botIteration: 1,
+  // change name to csvInfo
   datasetProperties: null,
+  csvInfo: null,
 };
+
+const createVariable = (state, name) => ({
+  ...state,
+  variables: [...state.variables, { name, associatedWith: [] }],
+});
+
+const removeVariable = (state, name) => ({
+  ...state,
+  variables: state.variables.filter((variable) => variable.name !== name),
+});
 
 const saveVariables = (state, variables) => ({
   ...state,
   variables,
 });
 
+const loadCsv = (state, { headers: tHeaders, csvInfo }) => {
+  const headers = tHeaders.map((h) => ({ name: h, usedBy: [] }));
+  return { ...state, headers, csvInfo };
+};
+
 const loadHeaders = (state, headers, path) => {
+  // console.log({ headers, path });
   const headerExample = headers;
   const status = new Array(headerExample.length).fill("notSelected");
   return {
@@ -27,6 +45,7 @@ const loadHeaders = (state, headers, path) => {
   };
 };
 const changeHeaders = (state, index) => {
+  console.log("!!!! change headers ", index);
   if (state.selectedHeader === null) {
     const newstatus = [...state.status];
     const prev = newstatus[index];
@@ -98,8 +117,9 @@ const UnselectHeader = (state, index) => {
     status: newstatus,
   };
 };
-const EntryProcess = (state, process) => {
+const newProcess = (state, process) => {
   const newprocess = [...state.process, process];
+  console.log(newprocess);
   return {
     ...state,
     process: newprocess,
@@ -110,63 +130,77 @@ const editProcess = (state, process, index) => {
     dataEntry,
     entryType,
     // variableField,
-    variableName,
+    saveToVariable,
     // variableUsed,
     id,
   } = process;
   const oldProcess = state.process.find((p) => p.id === id);
   let variables = [...state.variables];
 
-  // Using (Load Data - DATA ENTRY)
+  // Using variable for dataEntry value
   if (entryType === "variable") {
+    // Using variable for first time
     if (oldProcess.entryType !== "variable") {
-      console.log("using variable first time [DE]");
-      // ADD - first time using
+      // mapping over variables and finding the one to add 'this' particular step's id into it
       variables = variables.map((v) =>
-        v.name === dataEntry ? { ...v, usedBy: [...v.usedBy, id] } : v
+        v.name === dataEntry
+          ? { ...v, associatedWith: [...v.associatedWith, id] }
+          : v
       );
-    } else if (
+    }
+    // Changed the variable to some other value
+    else if (
       oldProcess.entryType === "variable" &&
       dataEntry !== oldProcess.dataEntry
     ) {
       // REMOVE AND ADD (Variable changed)
       variables = variables.map((v) => {
         if (v.name === oldProcess.dataEntry)
-          return { ...v, usedBy: v.usedBy.filter((tv) => tv !== id) };
+          return {
+            ...v,
+            associatedWith: v.associatedWith.filter((tv) => tv !== id),
+          };
         else if (v.name === dataEntry)
-          return { ...v, usedBy: [...v.usedBy, id] };
+          return { ...v, associatedWith: [...v.associatedWith, id] };
         else return v;
       });
     }
-  } else if (oldProcess.entryType === "variable" && entryType !== "variable") {
+  }
+  // Changed the type to something else, so gotta remove the previously used variable
+  else if (oldProcess.entryType === "variable" && entryType !== "variable") {
     // remove entryType changed from variable
     variables = variables.map((v) =>
       v.name === oldProcess.dataEntry
-        ? { ...v, usedBy: v.usedBy.filter((tv) => tv !== id) }
+        ? { ...v, associatedWith: v.associatedWith.filter((tv) => tv !== id) }
         : v
     );
   }
 
   // Assigning (Extract Data, OCR?)
-  if (oldProcess.variableName !== variableName && !oldProcess.variableName) {
+  if (
+    oldProcess.saveToVariable !== saveToVariable &&
+    !oldProcess.saveToVariable
+  ) {
     console.log("assigning variable first time");
     // first time assigning a variable
     variables = variables.map((v) =>
-      v.name === variableName ? { ...v, assignors: [...v.assignors, id] } : v
+      v.name === saveToVariable
+        ? { ...v, associatedWith: [...v.associatedWith, id] }
+        : v
     );
-  } else if (oldProcess.variableName !== variableName) {
+  } else if (oldProcess.saveToVariable !== saveToVariable) {
     console.log("removing previous one and adding new one");
     // changed
     variables = variables.map((v) => {
-      // remove the process id from the previous variable assignors array
-      if (v.name === oldProcess.variableName)
+      // remove the process id from the previous variable associatedWith array
+      if (v.name === oldProcess.saveToVariable)
         return {
           ...v,
-          assignors: v.assignors.filter((tv) => tv !== id),
+          associatedWith: v.associatedWith.filter((tv) => tv !== id),
         };
-      // add the process id to  the new variable assignors array
-      else if (v.name === variableName)
-        return { ...v, assignors: [...v.assignors, id] };
+      // add the process id to  the new variable associatedWith array
+      else if (v.name === saveToVariable)
+        return { ...v, associatedWith: [...v.associatedWith, id] };
       else return v;
     });
   }
@@ -213,12 +247,29 @@ const clearDataset = (state) => {
     status: [],
   };
 };
-const removeStep = (state, index, num_of_step) => {
-  let newprocess = [...state.process];
-  newprocess.splice(index, num_of_step);
+const removeStep = (state, stepIdx) => {
+  const process = state.process[stepIdx];
+  let variables = [...state.variables];
+  // check if entryType is variable, if yes de-associate the variable
+  if (process.entryType === "variable" || !!process.saveToVariable) {
+    variables = variables.map((tv) =>
+      tv.name === process.dataEntry || tv.name === process.saveToVariable
+        ? {
+            ...tv,
+            associatedWith: tv.associatedWith.filter(
+              (stepId) => stepId !== process.id
+            ),
+          }
+        : tv
+    );
+  }
+
+  let newProcess = state.process.filter((step, idx) => idx !== stepIdx);
+
   return {
     ...state,
-    process: newprocess,
+    variables,
+    process: newProcess,
   };
 };
 
@@ -264,6 +315,7 @@ const changeIteration = (state, iterationNumber) => {
 };
 
 const changeDatasetProperties = (state, datasetProperties) => {
+  // console.log(datasetProperties);
   return {
     ...state,
     datasetProperties: datasetProperties,
@@ -273,6 +325,12 @@ const rootReducer = (state = initState, action) => {
   console.log(action.type);
 
   switch (action.type) {
+    case "LOAD_CSV":
+      return loadCsv(state, action.csv);
+    case "CREATE_VARIABLE":
+      return createVariable(state, action.name);
+    case "REMOVE_VARIABLE":
+      return removeVariable(state, action.name);
     case "SAVE_VARIABLES":
       return saveVariables(state, action.variables);
     case "LOAD_HEADERS":
@@ -283,8 +341,8 @@ const rootReducer = (state = initState, action) => {
       return selectHeaders(state, action.index);
     case "UNSELECT_HEADER":
       return UnselectHeader(state, action.index);
-    case "SEND_PROCESS":
-      return EntryProcess(state, action.process);
+    case "NEW_PROCESS":
+      return newProcess(state, action.process);
     case "EDIT_PROCESS":
       return editProcess(state, action.process, action.index);
     case "CLEAR_All":
@@ -294,7 +352,7 @@ const rootReducer = (state = initState, action) => {
     case "CLEAR_DATASET":
       return clearDataset(state);
     case "REMOVE_STEP":
-      return removeStep(state, action.index, action.num_of_step);
+      return removeStep(state, action.stepIdx);
     case "LOAD_BOT":
       return loadBot(state, action.bot);
     case "MANUAL_DATA_ENTRY":

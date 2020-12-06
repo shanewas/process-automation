@@ -18,6 +18,7 @@ import {
 } from "@material-ui/icons";
 import { useDispatch } from "react-redux";
 import * as electron from "../../electronScript";
+import formatDistanceToNow from "date-fns/formatDistanceToNow";
 
 const useStyles = makeStyles((theme) => ({
   tableHead: {
@@ -68,6 +69,7 @@ export default (props) => {
 
   const fetchBots = async () => {
     const bots = await electron.ipcRenderer.invoke("bots");
+    console.log(bots);
     setState((o) => ({ ...o, bots }));
   };
 
@@ -77,7 +79,7 @@ export default (props) => {
 
   useEffect(() => {
     fetchBots();
-  });
+  }, []);
 
   return (
     <Box bgcolor="background.paper">
@@ -92,10 +94,10 @@ export default (props) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {state.bots.map((flow) => (
-            <TableRow hover className={classes.tr} key={flow.id}>
-              <TableCell>{flow.name}</TableCell>
-              <TableCell>{flow.lastActive}</TableCell>
+          {state.bots.map((bot) => (
+            <TableRow hover className={classes.tr} key={bot._id}>
+              <TableCell>{bot.botName}</TableCell>
+              <TableCell>{formatDistanceToNow(bot.lastActive)} ago</TableCell>
               <TableCell align="right" className={classes.actions}>
                 <Tooltip title="Run bot">
                   <IconButton size="small">

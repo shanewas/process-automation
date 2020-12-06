@@ -13,7 +13,7 @@ import ToastrManager from "./components/toastrs/ToastrManager";
 import SideBar from "./components/layout/general/Sidebar";
 import Templates from "./components/Templates";
 import Notifications from "./components/Notifications";
-import Learn from "./components/Learn";
+import Academy from "./components/Academy";
 
 function App() {
   return (
@@ -28,7 +28,7 @@ function App() {
             <Route exact path="/" component={BotListPage} />
             <Route exact path="/templates" component={Templates} />
             <Route exact path="/notifications" component={Notifications} />
-            <Route exact path="/learn" component={Learn} />
+            <Route exact path="/academy" component={Academy} />
             <Route exact path="/build" component={BotBuildPage} />
           </Box>
         </Router>

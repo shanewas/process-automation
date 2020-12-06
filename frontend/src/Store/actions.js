@@ -1,3 +1,6 @@
+export const loadCsv = (csv) => {
+  return { type: "LOAD_CSV", csv };
+};
 export const loadHeaderAction = (headers, path) => {
   return { type: "LOAD_HEADERS", headers, path };
 };
@@ -14,8 +17,8 @@ export function UnselectHeaderAction(index) {
   return { type: "UNSELECT_HEADER", index };
 }
 
-export function SendProcessAction(process) {
-  return { type: "SEND_PROCESS", process };
+export function newProcessAction(process) {
+  return { type: "NEW_PROCESS", process };
 }
 export function editProcessAction(process, index) {
   return { type: "EDIT_PROCESS", process, index };
@@ -32,9 +35,7 @@ export function clearFlowchartAction() {
 export function clearDatasetAction() {
   return { type: "CLEAR_DATASET" };
 }
-export function removeStepAction(index, num_of_step) {
-  return { type: "REMOVE_STEP", index, num_of_step };
-}
+export const removeStep = (stepIdx) => ({ type: "REMOVE_STEP", stepIdx });
 
 export function loadBotAction(bot) {
   return { type: "LOAD_BOT", bot };
@@ -51,6 +52,15 @@ export function iterationChangeAction(iterationNumber) {
 export function loadDatasetProperties(properties) {
   return { type: "LOADED_DATASET_PROPERTIES", properties };
 }
+
+export const createVariable = (name) => ({
+  type: "CREATE_VARIABLE",
+  name,
+});
+export const removeVariable = (name) => ({
+  type: "REMOVE_VARIABLE",
+  name,
+});
 
 export const saveVariables = (variables) => ({
   type: "SAVE_VARIABLES",

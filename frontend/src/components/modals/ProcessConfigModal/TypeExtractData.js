@@ -24,7 +24,7 @@ export default ({
       <Grid item>
         <SelectorInput
           options={variables}
-          name="variableName"
+          name="saveToVariable"
           value={variable}
           onChange={onChange}
           optionsConfigure={{ id: "id", label: "name", value: "name" }}

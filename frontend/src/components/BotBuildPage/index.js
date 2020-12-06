@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Grid,
   Box,
@@ -9,7 +9,13 @@ import {
   makeStyles,
 } from "@material-ui/core";
 import { KeyboardRounded as KeyboardIcon } from "@material-ui/icons";
-import StepCard from "./StepCard";
+import StatusSidebar from "./StatusSidebar";
+import StepsFlowchart from "./StepsFlowchart";
+import * as electron from "../../electronScript";
+import { useDispatch, useSelector } from "react-redux";
+import { newProcessAction } from "../../Store/actions";
+import shortId from "shortid";
+import generateStepObject from "./utils/generateStepObject";
 
 const useStyles = makeStyles((theme) => ({
   startBtn: {
@@ -20,31 +26,28 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const steps = [
-  {
-    id: 1,
-    type: "Link",
-    text: "https://google.com",
-  },
-  {
-    id: 2,
-    type: "Conditions",
-    text: "https://google.com",
-  },
-  {
-    id: 3,
-    type: "Clicked",
-    text: "Clicke on a button",
-  },
-  {
-    id: 4,
-    type: "Clicked",
-    text: "Clicked on a button",
-  },
-];
-
 export default (props) => {
   const classes = useStyles();
+  const [selectedVariable, setSelectedVariable] = useState("");
+  const [selectedStep, setSelectedStep] = useState("");
+  const [url, setUrl] = useState("");
+  const dispatch = useDispatch();
+  const steps = useSelector((state) => state.process);
+
+  useEffect(() => {
+    electron.ipcRenderer.on(electron.ProcessLinkChannel, (e, content) => {
+      const process = { ...content, id: shortId() };
+      dispatch(newProcessAction(generateStepObject(process)));
+
+      return electron.ipcRenderer.removeAllListeners(
+        electron.ProcessLinkChannel
+      );
+    });
+  }, [steps]);
+
+  const startRecording = () => {
+    electron.send(electron.SearchLinkChannel, url);
+  };
   return (
     <Grid container>
       <Grid item xs={8}>
@@ -64,22 +67,40 @@ export default (props) => {
             <KeyboardIcon />
           </IconButton>
         </Box>
-        <Box mb={6} display="flex" alignItems="center">
-          <FilledInput disableUnderline fullWidth placeholder="Enter URL" />
+        <Box mb={8} display="flex" alignItems="center">
+          <FilledInput
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+            disableUnderline
+            fullWidth
+            placeholder="Enter URL"
+          />
           <Button
             className={classes.startBtn}
             variant="contained"
             color="primary"
+            onClick={startRecording}
           >
             Start
           </Button>
         </Box>
-        <Box>
-          {steps.map((step) => (
-            <StepCard key={step.id} />
-          ))}
+        <Box position="relative">
+          <StepsFlowchart
+            selectStep={setSelectedStep}
+            selectedStep={selectedStep}
+            steps={steps}
+            ß
+            selectedVariable={selectedVariable}
+          />
         </Box>
       </Grid>
+      <StatusSidebar
+        selectStep={setSelectedStep}
+        selectedStep={selectedStep}
+        steps={steps}
+        selectedVariable={selectedVariable}
+        selectVariable={setSelectedVariable}
+      />
     </Grid>
   );
 };

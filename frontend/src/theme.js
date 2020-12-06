@@ -16,11 +16,27 @@ export default createMuiTheme({
   },
   typography: {
     fontFamily: "Nunito, sans-serif",
+
+    h6: {
+      fontWeight: 700,
+    },
   },
   overrides: {
+    MuiDivider: {
+      root: {
+        backgroundColor: "#7D7D7D",
+      },
+    },
     MuiTooltip: {
       tooltip: {
         fontSize: "16px",
+      },
+    },
+    MuiListItem: {
+      root: {
+        "&.active": {
+          backgroundColor: "#3C3D45",
+        },
       },
     },
     MuiListItemText: {
@@ -49,7 +65,7 @@ export default createMuiTheme({
     },
     MuiListItemIcon: {
       root: {
-        paddingLeft: "16px",
+        minWidth: "44px",
       },
     },
 

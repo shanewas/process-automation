@@ -9,7 +9,7 @@ import BotConfigModal from "./BotConfigModal";
 import ProcessConfigModal from "./ProcessConfigModal";
 import VariableAddModal from "./VariableAddModal";
 
-const Modals = {
+export const Modals = {
   DataConditionsModal,
   BotDeleteModal,
   BotSaveModal,
