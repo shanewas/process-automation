@@ -8,7 +8,7 @@ import {
   ListItemText,
   Typography,
 } from "@material-ui/core";
-import { NavLink, useLocation } from "react-router-dom";
+import { Link, NavLink, useLocation } from "react-router-dom";
 import {
   FormatListNumberedRounded as BotsIcon,
   ImageAspectRatioRounded as TemplateIcon,
@@ -125,7 +125,7 @@ const BotSidebar = (
         </ListItemIcon>
         <ListItemText>Configure</ListItemText>
       </ListItem>
-      <ListItem button>
+      <ListItem button component={Link} to="/">
         <ListItemIcon>
           <LogoutIcon />
         </ListItemIcon>
