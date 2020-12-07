@@ -1,6 +1,10 @@
 export const loadCsv = (csv) => {
   return { type: "LOAD_CSV", csv };
 };
+
+export const unlinkCsv = () => {
+  return { type: "UNLINK_CSV" };
+};
 export const loadHeaderAction = (headers, path) => {
   return { type: "LOAD_HEADERS", headers, path };
 };

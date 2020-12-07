@@ -28,11 +28,13 @@ const useStyles = makeStyles((theme) => ({
     cursor: "pointer",
     borderRadius: theme.spacing(0.5),
     border: "2px solid rgba(0,0,0,0)",
+    transition: ".2s",
     "&:hover": {
       border: "2px solid #3B93FF",
     },
 
     "&.active": {
+      border: "2px solid #3B93FF",
       background: "rgba(105, 172, 255, 0.3)",
     },
   },

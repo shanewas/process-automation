@@ -46,6 +46,8 @@ export default (props) => {
       {props.steps.length ? (
         props.steps.map((step, idx) => (
           <StepCard
+            selectedHeader={props.selectedHeader}
+            selectedVariable={props.selectedVariable}
             selectedVariable={props.selectedVariable}
             selected={props.selectedStep === idx}
             selectStep={props.selectStep}

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
   Box,
   Button,
@@ -9,8 +9,9 @@ import {
 } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
 import * as Papa from "papaparse";
-import { loadCsv } from "../../../Store/actions";
+import { loadCsv, unlinkCsv } from "../../../Store/actions";
 import { LinkOff as UnlinkIcon } from "@material-ui/icons";
+import { ModalContext } from "../../../context/ModalContext";
 
 const useStyles = makeStyles((theme) => ({
   csvText: {
@@ -25,6 +26,16 @@ const useStyles = makeStyles((theme) => ({
     background: "#282828",
     cursor: "pointer",
     borderRadius: "4px",
+    transition: ".2s",
+    border: "2px solid rgba(0,0,0,0)",
+    "&:hover": {
+      border: "2px solid #3B93FF",
+    },
+
+    "&.active": {
+      border: "2px solid #3B93FF",
+      background: "rgba(105, 172, 255, 0.3)",
+    },
   },
   headerText: {
     color: theme.palette.grey[400],
@@ -47,6 +58,7 @@ const useStyles = makeStyles((theme) => ({
 export default (props) => {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const { setCurrentToastr } = useContext(ModalContext);
   const { headers, csvInfo } = useSelector(({ headers, csvInfo }) => ({
     headers,
     csvInfo,
@@ -60,7 +72,6 @@ export default (props) => {
         const headers = result.data[0];
         const csvInfo = file;
         csvInfo["rowNumber"] = result.data.length;
-
         dispatch(
           loadCsv({
             headers,
@@ -69,6 +80,15 @@ export default (props) => {
         );
       },
     });
+  };
+
+  const handleUnlinkCsv = () => {
+    const isAnyStepConnected = headers.find((h) => !!h.usedBy.length);
+    if (isAnyStepConnected)
+      return setCurrentToastr({
+        msg: "Cannot unlink as this CSV is under use.",
+      });
+    dispatch(unlinkCsv());
   };
   return (
     <>
@@ -98,8 +118,8 @@ export default (props) => {
                   <Typography variant="caption">{csvInfo.path}</Typography>
                 </Tooltip>
               </Box>
-              <Tooltip title="Unlink with this CSV">
-                <IconButton size="small">
+              <Tooltip title="Unlink this CSV">
+                <IconButton onClick={handleUnlinkCsv} size="small">
                   <UnlinkIcon />
                 </IconButton>
               </Tooltip>
@@ -113,10 +133,19 @@ export default (props) => {
               display="flex"
               alignItems="center"
               justifyContent="space-between"
-              className={classes.header}
+              onClick={() =>
+                props.selectedHeader === header.name
+                  ? props.selectHeader("")
+                  : props.selectHeader(header.name)
+              }
+              className={`${classes.header} ${
+                props.selectedHeader === header.name && "active"
+              }`}
             >
               <Box className={classes.headerText}>{header.name}</Box>
-              <Box className={classes.usedBy}>{header.usedBy.length}</Box>
+              <Tooltip title={`Used by ${header.usedBy.length} step(s)`}>
+                <Box className={classes.usedBy}>{header.usedBy.length}</Box>
+              </Tooltip>
             </Box>
           ))}
         </Box>

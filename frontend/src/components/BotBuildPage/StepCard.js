@@ -69,8 +69,15 @@ const useStyles = makeStyles((theme) => ({
       opacity: "0",
       transition: ".3s",
       fontWeight: 700,
-      fontWeight: "16px",
+      fontSize: "16px",
       fontFamily: theme.typography.fontFamily,
+    },
+
+    "&.active &-indicator": {
+      backgroundColor: props.color,
+    },
+    "&.active &-step": {
+      border: `.8px solid ${props.color}`,
     },
 
     "&-indicator": {
@@ -143,6 +150,11 @@ export default (props) => {
     props.dataEntry === props.selectedVariable;
   const isSavingToVariable =
     props.saveToVariable && props.saveToVariable === props.selectedVariable;
+  const isUsingHeader =
+    props.entryType === "dataHeader" &&
+    props.dataEntry === props.selectedHeader;
+
+  console.log({ selectedHeader: props.selectedHeader, isUsingHeader });
   const { color, bgcolor, Icon } = type[props._type];
   const classes = useStyles({
     selected: props.selected,
@@ -156,11 +168,9 @@ export default (props) => {
       display="flex"
       alignItems="center"
       justifyContent="space-around"
-      className={classes.stepWrapper}
+      className={`${classes.stepWrapper} ${isUsingHeader ? "active" : ""}`}
     >
-      <Box className={`${classes.stepWrapper}-indicator`}>
-        <Box className={classes.line} />
-      </Box>
+      <Box className={`${classes.stepWrapper}-indicator`}> </Box>
       <Box
         onClick={() => props.selectStep(props.idx)}
         onMouseLeave={(e) => props.selectStep("")}

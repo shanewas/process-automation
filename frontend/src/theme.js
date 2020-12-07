@@ -24,7 +24,7 @@ export default createMuiTheme({
   overrides: {
     MuiDivider: {
       root: {
-        backgroundColor: "#7D7D7D",
+        backgroundColor: "#494B53",
       },
     },
     MuiTooltip: {

@@ -18,12 +18,12 @@ class BotTable extends Component {
   };
 
   buildbot = (botName) => {
+    let process;
+    let iteration;
+    let variables;
     let filepath;
     let status;
     let header;
-    let variables;
-    let process;
-    let iteration;
     Promise.all([
       electron.ipcRenderer.invoke("get-process", botName).then((data) => {
         if (data) process = data;

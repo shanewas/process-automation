@@ -2,7 +2,7 @@ import React from "react";
 import "./electronScript";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 // import login from "./components/loginPage/Login";
-import BotListPage from "./components/BotListPage";
+import BotListPage from "./components/BotListPage/";
 import BotBuildPage from "./components/BotBuildPage/";
 // import DataSetPage from "./components/DataSetPage/DatasetPage";
 import { ModalContextProvider } from "./context/ModalContext";

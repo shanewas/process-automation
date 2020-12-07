@@ -12,6 +12,11 @@ export default (props) => {
   const importBot = () => {
     electron.ipcRenderer.send(electron.importBot);
   };
+
+  // const loadBot = name => {
+
+  // }
+
   return (
     <>
       <Box
@@ -27,6 +32,7 @@ export default (props) => {
           <Button
             component={Link}
             to="/build"
+            // onClick={loadBot}
             variant="contained"
             color="primary"
           >

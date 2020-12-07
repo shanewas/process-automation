@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Grid,
   Box,
@@ -16,6 +16,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { newProcessAction } from "../../Store/actions";
 import shortId from "shortid";
 import generateStepObject from "./utils/generateStepObject";
+import { ModalContext } from "../../context/ModalContext";
 
 const useStyles = makeStyles((theme) => ({
   startBtn: {
@@ -30,23 +31,32 @@ export default (props) => {
   const classes = useStyles();
   const [selectedVariable, setSelectedVariable] = useState("");
   const [selectedStep, setSelectedStep] = useState("");
+  const [selectedHeader, setSelectedHeader] = useState("");
   const [url, setUrl] = useState("");
   const dispatch = useDispatch();
   const steps = useSelector((state) => state.process);
+  const botName = useSelector((state) => state.botName);
+  const { setCurrentModal } = useContext(ModalContext);
+
+  const handleProcessLink = (e, content) => {
+    const process = { ...content, id: shortId() };
+    dispatch(newProcessAction(generateStepObject(process)));
+  };
 
   useEffect(() => {
-    electron.ipcRenderer.on(electron.ProcessLinkChannel, (e, content) => {
-      const process = { ...content, id: shortId() };
-      dispatch(newProcessAction(generateStepObject(process)));
-
-      return electron.ipcRenderer.removeAllListeners(
-        electron.ProcessLinkChannel
-      );
-    });
-  }, [steps]);
+    electron.ipcRenderer.on(electron.ProcessLinkChannel, handleProcessLink);
+    return () =>
+      electron.ipcRenderer.removeAllListeners(electron.ProcessLinkChannel);
+  }, []);
 
   const startRecording = () => {
     electron.send(electron.SearchLinkChannel, url);
+  };
+
+  const openShortcutModal = () => {
+    setCurrentModal({
+      name: "KeyboardShortcutsModal",
+    });
   };
   return (
     <Grid container>
@@ -63,7 +73,7 @@ export default (props) => {
             </Box>
             <Typography variant="h4">New Bot</Typography>
           </Box>
-          <IconButton>
+          <IconButton onClick={openShortcutModal}>
             <KeyboardIcon />
           </IconButton>
         </Box>
@@ -89,8 +99,8 @@ export default (props) => {
             selectStep={setSelectedStep}
             selectedStep={selectedStep}
             steps={steps}
-            ß
             selectedVariable={selectedVariable}
+            selectedHeader={selectedHeader}
           />
         </Box>
       </Grid>
@@ -100,6 +110,8 @@ export default (props) => {
         steps={steps}
         selectedVariable={selectedVariable}
         selectVariable={setSelectedVariable}
+        selectedHeader={selectedHeader}
+        selectHeader={setSelectedHeader}
       />
     </Grid>
   );
