@@ -45,9 +45,8 @@ const useStyles = makeStyles((theme) => ({
   usedBy: {
     width: "25px",
     height: "auto",
-    color: "white",
-    backgroundColor: "#2ED3C5",
-    color: "#000",
+    border: "1px solid #2ED3C5",
+    color: "#2ED3C5",
     fontSize: "15px",
     fontWeight: 700,
     borderRadius: "4px",

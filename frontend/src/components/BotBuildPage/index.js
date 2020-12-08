@@ -71,7 +71,7 @@ export default (props) => {
             <Box mr={1}>
               <Typography variant="h6">Bots / </Typography>
             </Box>
-            <Typography variant="h4">New Bot</Typography>
+            <Typography variant="h4">{botName}</Typography>
           </Box>
           <IconButton onClick={openShortcutModal}>
             <KeyboardIcon />

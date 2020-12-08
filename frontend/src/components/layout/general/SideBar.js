@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
   Box,
   Button,
@@ -20,6 +20,7 @@ import {
   CodeRounded as CodeIcon,
   SettingsRounded as SettingsIcon,
 } from "@material-ui/icons";
+import { ModalContext } from "../../../context/ModalContext";
 
 const links = [
   {
@@ -41,102 +42,113 @@ const links = [
   },
 ];
 
-const General = (
-  <Drawer variant="permanent">
-    <Box>
-      <Box my={4} minWidth="220px" textAlign="center">
-        <img src="/assets/images/logo.png" />
+const General = () => {
+  return (
+    <Drawer variant="permanent">
+      <Box>
+        <Box my={4} minWidth="220px" textAlign="center">
+          <img src="/assets/images/logo.png" />
+        </Box>
+        {links.map(({ name, Icon, location }) => (
+          <ListItem
+            exact
+            key={name}
+            button
+            component={NavLink}
+            to={location ? location : name}
+          >
+            <ListItemIcon>
+              <Icon />
+            </ListItemIcon>
+            <ListItemText>{name}</ListItemText>
+          </ListItem>
+        ))}
       </Box>
-      {links.map(({ name, Icon, location }) => (
-        <ListItem
-          exact
-          key={name}
-          button
-          component={NavLink}
-          to={location ? location : name}
+      <Box>
+        <Box
+          borderRadius="16px"
+          mb={2}
+          textAlign="center"
+          bgcolor="background.default"
+          mx={2}
+          px={2}
+          py={4}
         >
-          <ListItemIcon>
-            <Icon />
-          </ListItemIcon>
-          <ListItemText>{name}</ListItemText>
-        </ListItem>
-      ))}
-    </Box>
-    <Box>
-      <Box
-        borderRadius="16px"
-        mb={2}
-        textAlign="center"
-        bgcolor="background.default"
-        mx={2}
-        px={2}
-        py={4}
-      >
-        <Typography>
-          Got stuck? We are
-          <br />
-          here to help.
-        </Typography>
-        <Box mt={2}>
-          <Button color="primary" variant="contained" disableElevation>
-            Chat now
-          </Button>
+          <Typography>
+            Got stuck? We are
+            <br />
+            here to help.
+          </Typography>
+          <Box mt={2}>
+            <Button color="primary" variant="contained" disableElevation>
+              Chat now
+            </Button>
+          </Box>
+        </Box>
+        <Box mb={1.5}>
+          <ListItem button>
+            <ListItemIcon>
+              <LogoutIcon />
+            </ListItemIcon>
+            <ListItemText>Logout</ListItemText>
+          </ListItem>
         </Box>
       </Box>
-      <Box mb={1.5}>
+    </Drawer>
+  );
+};
+
+const BotSidebar = () => {
+  const { setCurrentModal } = useContext(ModalContext);
+
+  const openGenerateCodeModal = () =>
+    setCurrentModal({
+      name: "GenerateCodeModal",
+    });
+
+  return (
+    <Drawer variant="permanent">
+      <Box>
+        <Box my={4} minWidth="220px" textAlign="center">
+          <img src="/assets/images/logo.png" />
+        </Box>
         <ListItem button>
+          <ListItemIcon>
+            <RunIcon />
+          </ListItemIcon>
+          <ListItemText>Run bot</ListItemText>
+        </ListItem>
+        <ListItem button>
+          <ListItemIcon>
+            <SaveIcon />
+          </ListItemIcon>
+          <ListItemText>Save bot</ListItemText>
+        </ListItem>
+        <ListItem button onClick={openGenerateCodeModal}>
+          <ListItemIcon>
+            <CodeIcon />
+          </ListItemIcon>
+          <ListItemText>Generate Code</ListItemText>
+        </ListItem>
+        <ListItem button>
+          <ListItemIcon>
+            <SettingsIcon />
+          </ListItemIcon>
+          <ListItemText>Configure</ListItemText>
+        </ListItem>
+        <ListItem button component={Link} to="/">
           <ListItemIcon>
             <LogoutIcon />
           </ListItemIcon>
-          <ListItemText>Logout</ListItemText>
+          <ListItemText>Exit</ListItemText>
         </ListItem>
       </Box>
-    </Box>
-  </Drawer>
-);
-
-const BotSidebar = (
-  <Drawer variant="permanent">
-    <Box>
-      <Box my={4} minWidth="220px" textAlign="center">
-        <img src="/assets/images/logo.png" />
-      </Box>
-      <ListItem button>
-        <ListItemIcon>
-          <RunIcon />
-        </ListItemIcon>
-        <ListItemText>Run bot</ListItemText>
-      </ListItem>
-      <ListItem button>
-        <ListItemIcon>
-          <SaveIcon />
-        </ListItemIcon>
-        <ListItemText>Save bot</ListItemText>
-      </ListItem>
-      <ListItem button>
-        <ListItemIcon>
-          <CodeIcon />
-        </ListItemIcon>
-        <ListItemText>Generate Code</ListItemText>
-      </ListItem>
-      <ListItem button>
-        <ListItemIcon>
-          <SettingsIcon />
-        </ListItemIcon>
-        <ListItemText>Configure</ListItemText>
-      </ListItem>
-      <ListItem button component={Link} to="/">
-        <ListItemIcon>
-          <LogoutIcon />
-        </ListItemIcon>
-        <ListItemText>Exit</ListItemText>
-      </ListItem>
-    </Box>
-  </Drawer>
-);
+    </Drawer>
+  );
+};
 
 export default (props) => {
   const { pathname } = useLocation();
   console.log(pathname);
-  return pathname === "/build" ? BotSidebar : General;
+  return pathname === "/build" ? <BotSidebar /> : <General />;
 };

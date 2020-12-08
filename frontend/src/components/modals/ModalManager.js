@@ -9,6 +9,7 @@ import BotConfigModal from "./BotConfigModal";
 import ProcessConfigModal from "./ProcessConfigModal";
 import VariableAddModal from "./VariableAddModal";
 import KeyboardShortcutsModal from "./KeyboardShortcutsModal";
+import NewBotModal from "./NewBotModal";
 
 export const Modals = {
   DataConditionsModal,
@@ -20,6 +21,7 @@ export const Modals = {
   ProcessConfigModal,
   VariableAddModal,
   KeyboardShortcutsModal,
+  NewBotModal,
 };
 
 const ModalManager = (props) => {

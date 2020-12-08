@@ -10,10 +10,23 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { atomDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { Grid, IconButton } from "@material-ui/core";
 import { Close as CloseIcon, Save as SaveIcon } from "@material-ui/icons";
+import { SeleniumCode } from "../../../CodeGeneration";
+import { useSelector } from "react-redux";
+import * as electron from "../../../electronScript";
 
-export default ({ open, handleClose, code, saveCode }) => {
+export default ({ open, handleClose }) => {
+  const { botIteration, process, path = null } = useSelector(
+    ({ botIteration, process, csvInfo }) => ({
+      botIteration,
+      process,
+      path: csvInfo?.path,
+    })
+  );
+  const code = SeleniumCode(process, botIteration, path);
+  const saveCode = () => electron.ipcRenderer.send("code-generation", code);
+
   return (
-    <Dialog open={open}>
+    <Dialog open={open} fullWidth>
       <DialogTitle>
         <Grid container justify="space-between" alignItems="center">
           <Grid item>Selemium Code Generation</Grid>

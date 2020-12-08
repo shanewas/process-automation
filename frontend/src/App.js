@@ -20,9 +20,9 @@ function App() {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <ModalContextProvider>
-        <ModalManager />
-        <ToastrManager />
         <Router>
+          <ModalManager />
+          <ToastrManager />
           <SideBar />
           <Box py={4} pl={32} pr={4}>
             <Route exact path="/" component={BotListPage} />

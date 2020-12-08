@@ -1,21 +1,24 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Box, Button, Typography } from "@material-ui/core";
-import { Link } from "react-router-dom";
+
 import {
   CloudUploadRounded as ImportIcon,
   AddCircleRounded as AddIcon,
 } from "@material-ui/icons";
 import BotTable from "./BotTable";
 import * as electron from "../../electronScript";
+import { ModalContext } from "../../context/ModalContext";
 
 export default (props) => {
+  const { setCurrentModal } = useContext(ModalContext);
   const importBot = () => {
     electron.ipcRenderer.send(electron.importBot);
   };
 
-  // const loadBot = name => {
-
-  // }
+  const openNewBotModal = (name) =>
+    setCurrentModal({
+      name: "NewBotModal",
+    });
 
   return (
     <>
@@ -29,13 +32,7 @@ export default (props) => {
           <Box mr={2}>
             <Typography variant="h4">Bots</Typography>
           </Box>
-          <Button
-            component={Link}
-            to="/build"
-            // onClick={loadBot}
-            variant="contained"
-            color="primary"
-          >
+          <Button onClick={openNewBotModal} variant="contained" color="primary">
             <AddIcon />
             Create new
           </Button>

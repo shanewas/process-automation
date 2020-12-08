@@ -33,6 +33,10 @@ const unlinkCsv = (state) => ({
   headers: [],
   csvInfo: null,
 });
+const newBot = (state, botName) => ({
+  ...state,
+  botName,
+});
 
 const loadCsv = (state, { headers: tHeaders, csvInfo }) => {
   const headers = tHeaders.map((h) => ({ name: h, usedBy: [] }));
@@ -380,6 +384,8 @@ const rootReducer = (state = initState, action) => {
   console.log(action.type);
 
   switch (action.type) {
+    case "NEW_BOT":
+      return newBot(state, action.botName);
     case "LOAD_CSV":
       return loadCsv(state, action.csv);
     case "UNLINK_CSV":

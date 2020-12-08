@@ -1,3 +1,6 @@
+export const newBot = (botName) => {
+  return { type: "NEW_BOT", botName };
+};
 export const loadCsv = (csv) => {
   return { type: "LOAD_CSV", csv };
 };

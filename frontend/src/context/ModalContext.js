@@ -3,7 +3,7 @@ import React, { createContext, useState } from "react";
 export const ModalContext = createContext();
 
 export const ModalContextProvider = (props) => {
-  const [currentModal, setCurrentModal] = useState(null);
+  const [currentModal, setCurrentModal] = useState();
   const [currentToastr, setCurrentToastr] = useState({});
 
   return (
