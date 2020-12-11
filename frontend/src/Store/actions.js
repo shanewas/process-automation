@@ -1,3 +1,8 @@
+export const loadBot = (bot) => ({ type: "LOAD_BOT", bot });
+
+export const updateBot = (data) => {
+  return { type: "UPDATE_BOT", data };
+};
 export const newBot = (botName) => {
   return { type: "NEW_BOT", botName };
 };
@@ -43,10 +48,6 @@ export function clearDatasetAction() {
   return { type: "CLEAR_DATASET" };
 }
 export const removeStep = (stepIdx) => ({ type: "REMOVE_STEP", stepIdx });
-
-export function loadBotAction(bot) {
-  return { type: "LOAD_BOT", bot };
-}
 
 export function manualDataEntry(dataEntry, processIndex) {
   return { type: "MANUAL_DATA_ENTRY", dataEntry, processIndex };

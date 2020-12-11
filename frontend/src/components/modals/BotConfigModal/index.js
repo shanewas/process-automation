@@ -7,19 +7,32 @@ import {
   TextField,
   Grid,
   IconButton,
+  Button,
+  Box,
 } from "@material-ui/core";
 import { Close as CloseIcon } from "@material-ui/icons";
-import Button from "react-bootstrap/Button";
+import { useDispatch, useSelector } from "react-redux";
+import { updateBot } from "../../../Store/actions";
 
-export default ({ open, handleClose, botIteration, saveIteration }) => {
-  const [iteration, setIteration] = useState(botIteration);
-  const handleIterationChange = (e) => setIteration(e.target.value);
+export default ({ open, handleClose }) => {
+  const dispatch = useDispatch();
+  const {
+    botName: botname,
+    botIteration: botiteration,
+  } = useSelector(({ botName, botIteration }) => ({ botName, botIteration }));
+
+  const [botName, setBotName] = useState(botname);
+  const [botIteration, setBotIteration] = useState(botiteration);
   const [errors, setErrors] = useState({});
-  console.log(errors);
-  const onSave = () => {
-    if (isNaN(iteration) || iteration <= 0)
-      return setErrors({ iteration: "Must be a number and greater than 0" });
-    saveIteration(Number(iteration));
+
+  const handleUpdateBot = () => {
+    if (!botName || !botName.trim)
+      return setErrors({ botName: "Field required." });
+
+    if (isNaN(botIteration) || botIteration <= 0)
+      return setErrors({ botIteration: "Must be a number and greater than 0" });
+
+    dispatch(updateBot({ botName, botIteration }));
     handleClose();
   };
 
@@ -36,19 +49,30 @@ export default ({ open, handleClose, botIteration, saveIteration }) => {
         </Grid>
       </DialogTitle>
       <DialogContent>
+        <Box mb={4}>
+          <TextField
+            error={!!errors.botName}
+            helperText={errors.botName}
+            label="Bot name"
+            onChange={(e) => setBotName(e.target.value)}
+            value={botName}
+            variant="outlined"
+            fullWidth
+          />
+        </Box>
         <TextField
-          error={!!errors.iteration}
-          helperText={errors.iteration}
+          error={!!errors.botIteration}
+          helperText={errors.botIteration}
           label="Bot Iteration"
-          onChange={handleIterationChange}
-          value={iteration}
+          onChange={(e) => setBotIteration(e.target.value)}
+          value={botIteration}
           variant="outlined"
           fullWidth
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={onSave} variant="primary">
-          Apply
+        <Button variant="contained" color="primary" onClick={handleUpdateBot}>
+          Update
         </Button>
       </DialogActions>
     </Dialog>

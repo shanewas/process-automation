@@ -19,6 +19,8 @@ import {
 import { useDispatch } from "react-redux";
 import * as electron from "../../electronScript";
 import formatDistanceToNow from "date-fns/formatDistanceToNow";
+import { loadBot } from "../../Store/actions";
+import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   tableHead: {
@@ -60,6 +62,7 @@ const bots = [
 
 export default (props) => {
   const classes = useStyles();
+  const history = useHistory();
   const [state, setState] = useState({
     bots: [],
     botSearch: "",
@@ -75,6 +78,28 @@ export default (props) => {
 
   const exportBot = (botName) => {
     electron.ipcRenderer.send(electron.exportBot, botName);
+  };
+
+  const loadSavedBot = async (botName) => {
+    const process =
+      (await electron.ipcRenderer.invoke("get-process", botName)) || [];
+    const {
+      headers,
+      variables,
+      csvInfo,
+      botIteration,
+    } = await electron.ipcRenderer.invoke("bot-name", botName);
+    dispatch(
+      loadBot({
+        process,
+        headers,
+        variables,
+        botName,
+        csvInfo,
+        botIteration,
+      })
+    );
+    history.push("/build");
   };
 
   useEffect(() => {
@@ -105,7 +130,10 @@ export default (props) => {
                   </IconButton>
                 </Tooltip>
                 <Tooltip title="Edit bot">
-                  <IconButton size="small">
+                  <IconButton
+                    size="small"
+                    onClick={() => loadSavedBot(bot.botName)}
+                  >
                     <EditIcon />
                   </IconButton>
                 </Tooltip>

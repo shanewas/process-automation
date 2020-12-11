@@ -7,6 +7,7 @@ import {
   FilledInput,
   Button,
   makeStyles,
+  responsiveFontSizes,
 } from "@material-ui/core";
 import { KeyboardRounded as KeyboardIcon } from "@material-ui/icons";
 import StatusSidebar from "./StatusSidebar";
@@ -25,10 +26,31 @@ const useStyles = makeStyles((theme) => ({
     height: "55px",
     width: "120px",
   },
+  saveStatus: {
+    padding: "10px 25px",
+    border: "1px solid #6AD9C4",
+    borderColor: (props) => (props.saved ? "inherit" : "#FED47E"),
+    borderRadius: "25px",
+    color: (props) => (props.saved ? "#6AD9C4" : "#FED47E"),
+    fontFamily: "Fira Code",
+    fontWeight: 600,
+    fontSize: "16px",
+    display: "flex",
+    alignItems: "center",
+
+    "& > .circle": {
+      height: "10px",
+      width: "10px",
+      borderRadius: "50%",
+      backgroundColor: (props) => (props.saved ? "#6AD9C4" : "#FED47E"),
+      marginRight: "10px",
+    },
+  },
 }));
 
 export default (props) => {
-  const classes = useStyles();
+  const saved = useSelector((state) => state.saved);
+  const classes = useStyles({ saved });
   const [selectedVariable, setSelectedVariable] = useState("");
   const [selectedStep, setSelectedStep] = useState("");
   const [selectedHeader, setSelectedHeader] = useState("");
@@ -72,6 +94,10 @@ export default (props) => {
               <Typography variant="h6">Bots / </Typography>
             </Box>
             <Typography variant="h4">{botName}</Typography>
+            <Box ml={2} className={classes.saveStatus}>
+              <Box className="circle" />
+              {saved ? "Updated" : "Not Updated"}
+            </Box>
           </Box>
           <IconButton onClick={openShortcutModal}>
             <KeyboardIcon />

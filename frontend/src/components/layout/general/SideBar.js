@@ -106,6 +106,11 @@ const BotSidebar = () => {
       name: "GenerateCodeModal",
     });
 
+  const openBotConfigModal = () =>
+    setCurrentModal({
+      name: "BotConfigModal",
+    });
+
   return (
     <Drawer variant="permanent">
       <Box>
@@ -130,7 +135,7 @@ const BotSidebar = () => {
           </ListItemIcon>
           <ListItemText>Generate Code</ListItemText>
         </ListItem>
-        <ListItem button>
+        <ListItem button onClick={openBotConfigModal}>
           <ListItemIcon>
             <SettingsIcon />
           </ListItemIcon>
