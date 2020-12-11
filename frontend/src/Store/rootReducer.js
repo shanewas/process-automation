@@ -16,6 +16,8 @@ const initState = {
   // datasetProperties: null,
 };
 
+const saveBot = (state) => ({ ...state, saved: true });
+
 const createVariable = (state, name) => ({
   ...state,
   saved: false,
@@ -161,14 +163,7 @@ const newProcess = (state, process) => {
 };
 
 const editProcess = (state, process, index) => {
-  const {
-    dataEntry,
-    entryType,
-    // variableField,
-    saveToVariable = "",
-    // variableUsed,
-    id,
-  } = process;
+  const { dataEntry, entryType, saveToVariable = "", id } = process;
   const oldProcess = state.process.find((p) => p.id === id);
   let variables = [...state.variables];
   let headers = [...state.headers];
@@ -444,6 +439,8 @@ const rootReducer = (state = initState, action) => {
       return clearAll(state);
     case "NEW_PROCESS":
       return newProcess(state, action.process);
+    case "SAVE_BOT":
+      return saveBot(state);
     // case "LOAD_HEADERS":
     //   return loadHeaders(state, action.headers, action.path);
     // case "CHANGE_HEADER":

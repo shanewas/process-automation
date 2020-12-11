@@ -4,7 +4,7 @@ import { Snackbar, makeStyles } from "@material-ui/core";
 
 const useStyles = makeStyles({
   snackbar: {
-    backgroundColor: "#EA8103",
+    backgroundColor: (props) => (props.success ? "#4EC3B2" : "#EA8103"),
     color: "#fff",
     fontSize: "16px",
     fontWeight: 700,
@@ -12,8 +12,8 @@ const useStyles = makeStyles({
 });
 
 const ToastrManager = (props) => {
-  const classes = useStyles();
   const { currentToastr, setCurrentToastr } = useContext(ModalContext);
+  const classes = useStyles({ success: !!currentToastr.success });
   const onClose = () => setCurrentToastr({});
 
   return (

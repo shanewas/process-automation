@@ -1,8 +1,11 @@
 export const loadBot = (bot) => ({ type: "LOAD_BOT", bot });
 
+export const saveBot = () => ({ type: "SAVE_BOT" });
+
 export const updateBot = (data) => {
   return { type: "UPDATE_BOT", data };
 };
+
 export const newBot = (botName) => {
   return { type: "NEW_BOT", botName };
 };

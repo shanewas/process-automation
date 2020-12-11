@@ -63,14 +63,16 @@ export default (props) => {
     csvInfo,
   }));
 
-  console.log({ csvInfo });
-
   const handleLoadCsv = (file) => {
     Papa.parse(file, {
       complete: (result) => {
         const headers = result.data[0];
-        const csvInfo = file;
-        csvInfo["rowNumber"] = result.data.length;
+        const csvInfo = {
+          name: file.name,
+          path: file.path,
+          rowNumber: result.data.length,
+        };
+        console.log({ csvInfo });
         dispatch(
           loadCsv({
             headers,

@@ -651,14 +651,15 @@ ipcMain.on("update-bot-process", async (event, botName, BOTPROCESS) => {
   await botlist.updateBotProcess(botName, BOTPROCESS);
 });
 
-ipcMain.on("update-bot", async (event, botName, saveBotObj) => {
+ipcMain.on("update-bot", async (event, botName, bot) => {
   await botlist.editBot(
     botName,
-    saveBotObj.filepath,
-    saveBotObj.headers,
-    saveBotObj.status,
-    saveBotObj.botIteration,
-    saveBotObj.variables
+    bot
+    // saveBotObj.filepath,
+    // saveBotObj.headers,
+    // saveBotObj.status,
+    // saveBotObj.botIteration,
+    // saveBotObj.variables
   );
 });
 

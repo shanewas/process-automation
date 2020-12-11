@@ -51,6 +51,7 @@ export default ({ open, handleClose }) => {
       <DialogContent>
         <Box mb={4}>
           <TextField
+            disabled
             error={!!errors.botName}
             helperText={errors.botName}
             label="Bot name"

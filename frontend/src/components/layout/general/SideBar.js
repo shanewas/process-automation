@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import {
   Box,
   Button,
@@ -21,6 +21,10 @@ import {
   SettingsRounded as SettingsIcon,
 } from "@material-ui/icons";
 import { ModalContext } from "../../../context/ModalContext";
+
+import * as electron from "../../../electronScript";
+import { useDispatch, useSelector } from "react-redux";
+import { saveBot } from "../../../Store/actions";
 
 const links = [
   {
@@ -99,7 +103,10 @@ const General = () => {
 };
 
 const BotSidebar = () => {
-  const { setCurrentModal } = useContext(ModalContext);
+  const { setCurrentModal, setCurrentToastr } = useContext(ModalContext);
+  const { saved, warnings, process, ...bot } = useSelector((state) => state);
+  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
 
   const openGenerateCodeModal = () =>
     setCurrentModal({
@@ -110,6 +117,18 @@ const BotSidebar = () => {
     setCurrentModal({
       name: "BotConfigModal",
     });
+
+  const handleSaveBot = async () => {
+    setLoading(true);
+    await electron.ipcRenderer.send("update-bot-process", bot.botName, process);
+    await electron.ipcRenderer.send("update-bot", bot.botName, bot);
+    setLoading(false);
+    dispatch(saveBot());
+    setCurrentToastr({
+      msg: "Bot saved!",
+      success: true,
+    });
+  };
 
   return (
     <Drawer variant="permanent">
@@ -123,7 +142,7 @@ const BotSidebar = () => {
           </ListItemIcon>
           <ListItemText>Run bot</ListItemText>
         </ListItem>
-        <ListItem button>
+        <ListItem button disabled={loading} onClick={handleSaveBot}>
           <ListItemIcon>
             <SaveIcon />
           </ListItemIcon>

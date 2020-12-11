@@ -84,10 +84,10 @@ export default (props) => {
     const process =
       (await electron.ipcRenderer.invoke("get-process", botName)) || [];
     const {
-      headers,
-      variables,
-      csvInfo,
-      botIteration,
+      headers = [],
+      variables = [],
+      csvInfo = null,
+      botIteration = 1,
     } = await electron.ipcRenderer.invoke("bot-name", botName);
     dispatch(
       loadBot({
@@ -99,6 +99,15 @@ export default (props) => {
         botIteration,
       })
     );
+
+    console.log({
+      process,
+      headers,
+      variables,
+      botName,
+      csvInfo,
+      botIteration,
+    });
     history.push("/build");
   };
 
