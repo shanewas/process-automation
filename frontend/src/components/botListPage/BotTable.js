@@ -80,6 +80,15 @@ export default (props) => {
     electron.ipcRenderer.send(electron.exportBot, botName);
   };
 
+  const runBot = async (botName) => {
+    await electron.ipcRenderer.send(electron.startBotChannel, botName);
+  };
+
+  const deleteBot = async (botName) => {
+    electron.ipcRenderer.send(electron.deleteBotChannel, botName);
+    fetchBots();
+  };
+
   const loadSavedBot = async (botName) => {
     const process =
       (await electron.ipcRenderer.invoke("get-process", botName)) || [];
@@ -99,15 +108,6 @@ export default (props) => {
         botIteration,
       })
     );
-
-    console.log({
-      process,
-      headers,
-      variables,
-      botName,
-      csvInfo,
-      botIteration,
-    });
     history.push("/build");
   };
 
@@ -134,7 +134,7 @@ export default (props) => {
               <TableCell>{formatDistanceToNow(bot.lastActive)} ago</TableCell>
               <TableCell align="right" className={classes.actions}>
                 <Tooltip title="Run bot">
-                  <IconButton size="small">
+                  <IconButton size="small" onClick={() => runBot(bot.botName)}>
                     <RunIcon />
                   </IconButton>
                 </Tooltip>
@@ -148,12 +148,18 @@ export default (props) => {
                 </Tooltip>
 
                 <Tooltip title="Delete bot">
-                  <IconButton size="small">
+                  <IconButton
+                    size="small"
+                    onClick={() => deleteBot(bot.botName)}
+                  >
                     <DeleteIcon />
                   </IconButton>
                 </Tooltip>
                 <Tooltip title="Export bot">
-                  <IconButton size="small">
+                  <IconButton
+                    size="small"
+                    onClick={() => exportBot(bot.botName)}
+                  >
                     <ExportIcon />
                   </IconButton>
                 </Tooltip>

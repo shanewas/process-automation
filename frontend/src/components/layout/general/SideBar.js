@@ -8,7 +8,7 @@ import {
   ListItemText,
   Typography,
 } from "@material-ui/core";
-import { Link, NavLink, useLocation } from "react-router-dom";
+import { Link, NavLink, useHistory, useLocation } from "react-router-dom";
 import {
   FormatListNumberedRounded as BotsIcon,
   ImageAspectRatioRounded as TemplateIcon,
@@ -24,7 +24,7 @@ import { ModalContext } from "../../../context/ModalContext";
 
 import * as electron from "../../../electronScript";
 import { useDispatch, useSelector } from "react-redux";
-import { saveBot } from "../../../Store/actions";
+import { clearAll, saveBot } from "../../../Store/actions";
 
 const links = [
   {
@@ -103,6 +103,7 @@ const General = () => {
 };
 
 const BotSidebar = () => {
+  const history = useHistory();
   const { setCurrentModal, setCurrentToastr } = useContext(ModalContext);
   const { saved, warnings, process, ...bot } = useSelector((state) => state);
   const [loading, setLoading] = useState(false);
@@ -130,13 +131,22 @@ const BotSidebar = () => {
     });
   };
 
+  const handleRunBot = async () => {
+    await electron.ipcRenderer.send(electron.startBotChannel, bot.botName);
+  };
+
+  const exitToMain = async () => {
+    dispatch(clearAll());
+    history.push("/");
+  };
+
   return (
     <Drawer variant="permanent">
       <Box>
         <Box my={4} minWidth="220px" textAlign="center">
           <img src="/assets/images/logo.png" />
         </Box>
-        <ListItem button>
+        <ListItem button onClick={handleRunBot}>
           <ListItemIcon>
             <RunIcon />
           </ListItemIcon>
@@ -160,7 +170,7 @@ const BotSidebar = () => {
           </ListItemIcon>
           <ListItemText>Configure</ListItemText>
         </ListItem>
-        <ListItem button component={Link} to="/">
+        <ListItem button onClick={exitToMain}>
           <ListItemIcon>
             <LogoutIcon />
           </ListItemIcon>

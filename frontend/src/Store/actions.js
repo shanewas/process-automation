@@ -1,5 +1,7 @@
 export const loadBot = (bot) => ({ type: "LOAD_BOT", bot });
 
+export const clearAll = () => ({ type: "CLEAR_All" });
+
 export const saveBot = () => ({ type: "SAVE_BOT" });
 
 export const updateBot = (data) => {
@@ -41,9 +43,9 @@ export function editProcessAction(process, index) {
 export function selectBotAction(bot) {
   return { type: "SELECT_BOT", bot };
 }
-export function clearAllAction() {
-  return { type: "CLEAR_All" };
-}
+// export function clearAllAction() {
+//   return { type: "CLEAR_All" };
+// }
 export function clearFlowchartAction() {
   return { type: "CLEAR_FLOWCHART" };
 }
