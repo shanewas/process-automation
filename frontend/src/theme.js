@@ -22,6 +22,13 @@ export default createMuiTheme({
     },
   },
   overrides: {
+    MuiBadge: {
+      dot: {
+        height: "10px",
+        width: "10px",
+        borderRadius: "20px",
+      },
+    },
     MuiDivider: {
       root: {
         backgroundColor: "#494B53",

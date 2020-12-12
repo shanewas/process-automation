@@ -24,7 +24,8 @@ import { ModalContext } from "../../../context/ModalContext";
 
 import * as electron from "../../../electronScript";
 import { useDispatch, useSelector } from "react-redux";
-import { clearAll, saveBot } from "../../../Store/actions";
+import { clearAll, saveBot, updateErrors } from "../../../Store/actions";
+import checkBot from "../../BotBuildPage/checkBot";
 
 const links = [
   {
@@ -105,7 +106,7 @@ const General = () => {
 const BotSidebar = () => {
   const history = useHistory();
   const { setCurrentModal, setCurrentToastr } = useContext(ModalContext);
-  const { saved, warnings, process, ...bot } = useSelector((state) => state);
+  const { saved, errors, process, ...bot } = useSelector((state) => state);
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
 
@@ -120,6 +121,13 @@ const BotSidebar = () => {
     });
 
   const handleSaveBot = async () => {
+    const errors = checkBot(process);
+    if (Object.keys(errors).length) {
+      dispatch(updateErrors(errors));
+      return setCurrentToastr({
+        msg: "Could not save, please fix the errors",
+      });
+    }
     setLoading(true);
     await electron.ipcRenderer.send("update-bot-process", bot.botName, process);
     await electron.ipcRenderer.send("update-bot", bot.botName, bot);

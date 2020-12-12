@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import {
+  Badge,
   Box,
   Drawer,
   IconButton,
   makeStyles,
   Tooltip,
   Typography,
+  withStyles,
 } from "@material-ui/core";
 import {
   CropFreeRounded as OutlineIcon,
@@ -17,6 +19,7 @@ import Outline from "./Outline";
 import Dataset from "./Dataset";
 import Errors from "./Errors";
 import Variables from "./Variables";
+import { useSelector } from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
   wrapper: {
@@ -70,6 +73,26 @@ const Screens = {
   Variables,
 };
 
+const CustomPulseBadge = withStyles({
+  badge: {
+    animation: "$pulse 2s infinite",
+  },
+  "@keyframes pulse": {
+    "0%": {
+      boxShadow: "0 0 0 0px rgba(244,67,54, 0.4)",
+    },
+    "100%": {
+      boxShadow: "0 0 0 20px rgba(244,67,54, 0.0)",
+    },
+  },
+})(Badge);
+
+const ErrorBadge = ({ errors }) => (
+  <CustomPulseBadge color="error" variant="dot" invisible={!errors}>
+    <ErrorsIcon />
+  </CustomPulseBadge>
+);
+
 const links = [
   {
     text: "Outline",
@@ -81,7 +104,7 @@ const links = [
   },
   {
     text: "Errors",
-    Icon: ErrorsIcon,
+    Icon: ErrorBadge,
   },
   {
     text: "Variables",
@@ -91,6 +114,7 @@ const links = [
 
 export default (props) => {
   const [screen, setScreen] = useState("Outline");
+  const errors = useSelector((state) => state.errors);
   const classes = useStyles();
 
   const Screen = Screens[screen];
@@ -109,7 +133,7 @@ export default (props) => {
               className={screen === text ? "active" : ""}
               onClick={() => setScreen(text)}
             >
-              <Icon />
+              <Icon errors={Object.keys(errors).length} />
             </IconButton>
           </Tooltip>
         ))}

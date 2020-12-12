@@ -1,3 +1,8 @@
+export const updateErrors = (errors) => ({
+  type: "UPDATE_ERRORS",
+  errors,
+});
+
 export const loadBot = (bot) => ({ type: "LOAD_BOT", bot });
 
 export const clearAll = () => ({ type: "CLEAR_All" });

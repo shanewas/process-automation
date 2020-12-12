@@ -5,7 +5,7 @@ const initState = {
   process: [],
   botName: null,
   csvInfo: null,
-  warnings: {},
+  errors: {},
   botIteration: 1,
   saved: true,
   // selectedHeader: null,
@@ -15,6 +15,8 @@ const initState = {
   // change name to csvInfo
   // datasetProperties: null,
 };
+
+const updateErrors = (state, errors) => ({ ...state, errors });
 
 const saveBot = (state) => ({ ...state, saved: true });
 
@@ -441,6 +443,8 @@ const rootReducer = (state = initState, action) => {
       return newProcess(state, action.process);
     case "SAVE_BOT":
       return saveBot(state);
+    case "UPDATE_ERRORS":
+      return updateErrors(state, action.errors);
     // case "LOAD_HEADERS":
     //   return loadHeaders(state, action.headers, action.path);
     // case "CHANGE_HEADER":
