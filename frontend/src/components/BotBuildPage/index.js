@@ -54,6 +54,7 @@ export default (props) => {
   const [selectedVariable, setSelectedVariable] = useState("");
   const [selectedStep, setSelectedStep] = useState("");
   const [selectedHeader, setSelectedHeader] = useState("");
+  const [errorStep, setErrorStep] = useState("");
   const [url, setUrl] = useState("");
   const dispatch = useDispatch();
   const steps = useSelector((state) => state.process);
@@ -127,6 +128,7 @@ export default (props) => {
             steps={steps}
             selectedVariable={selectedVariable}
             selectedHeader={selectedHeader}
+            errorStep={errorStep}
           />
         </Box>
       </Grid>
@@ -138,6 +140,7 @@ export default (props) => {
         selectVariable={setSelectedVariable}
         selectedHeader={selectedHeader}
         selectHeader={setSelectedHeader}
+        selectErrorStep={setErrorStep}
       />
     </Grid>
   );

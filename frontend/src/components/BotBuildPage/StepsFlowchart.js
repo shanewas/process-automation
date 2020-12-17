@@ -11,7 +11,7 @@ import {
   RemoveCircle as RemoveIcon,
   EditRounded as EditIcon,
 } from "@material-ui/icons";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { removeStep } from "../../Store/actions";
 import { ModalContext } from "../../context/ModalContext";
 
@@ -22,6 +22,7 @@ const initStepMenu = {
 export default (props) => {
   const [stepMenu, setStepMenu] = useState(initStepMenu);
   const { setCurrentModal } = useContext(ModalContext);
+  const errors = useSelector((state) => state.errors);
   const dispatch = useDispatch();
 
   const openMenuHandler = (e, idx) => setStepMenu({ anchorEl: e.target, idx });
@@ -46,6 +47,8 @@ export default (props) => {
       {props.steps.length ? (
         props.steps.map((step, idx) => (
           <StepCard
+            selectedErrorStep={props.errorStep === step.id}
+            haveError={errors[step.id]?.message}
             selectedHeader={props.selectedHeader}
             selectedVariable={props.selectedVariable}
             selectedVariable={props.selectedVariable}

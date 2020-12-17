@@ -1,5 +1,11 @@
 import React from "react";
-import { makeStyles, Box, Typography, IconButton } from "@material-ui/core";
+import {
+  makeStyles,
+  Box,
+  Typography,
+  IconButton,
+  Tooltip,
+} from "@material-ui/core";
 import {
   LinkRounded as LinkIcon,
   MouseRounded as MouseIcon,
@@ -7,6 +13,7 @@ import {
   FolderRounded as LoadIcon,
   KeyboardHideRounded as PressedIcon,
   CameraAltRounded as CameraIcon,
+  ErrorOutlineOutlined as ErrorIcon,
 } from "@material-ui/icons";
 
 const type = {
@@ -102,6 +109,26 @@ const useStyles = makeStyles((theme) => ({
     },
   }),
 
+  error: {
+    padding: "4px 8px",
+    fontSize: "15px",
+    position: "absolute",
+    left: "50%",
+    top: "0",
+    transform: "translateX(-50%)",
+    backgroundColor: "rgba(227,82,67,.1)",
+    color: "#FF2424",
+    display: "flex",
+    alignItems: "center",
+
+    "& > svg": {
+      width: "18px",
+      height: "18px",
+      color: "#FF2424",
+      marginRight: "5px",
+    },
+  },
+
   icon: {
     display: "flex",
     alignItems: "center",
@@ -115,7 +142,7 @@ const useStyles = makeStyles((theme) => ({
   },
   associatedWithVariable: {
     position: "absolute",
-    zIndex: -1,
+    // zIndex: -1,
     bottom: "-50px",
     right: "-200px",
     border: "1px solid #60CFBA",
@@ -168,7 +195,9 @@ export default (props) => {
       display="flex"
       alignItems="center"
       justifyContent="space-around"
-      className={`${classes.stepWrapper} ${isUsingHeader ? "active" : ""}`}
+      className={`${classes.stepWrapper} ${
+        isUsingHeader || props.selectedErrorStep ? "active" : ""
+      }`}
     >
       <Box className={`${classes.stepWrapper}-indicator`}> </Box>
       <Box
@@ -180,42 +209,51 @@ export default (props) => {
           <Icon />
         </Box>
         <Box>
-          <Typography variant="h6">{props.title}</Typography>
           <Box display="flex" alignItems="center">
-            <Typography>{props.text}</Typography>
-            <Box
-              className={`${classes.associatedWithVariable} ${
-                isUsingVariable ? "active" : ""
-              } `}
-            >
-              Using variable Value
-            </Box>
-            <Box
-              className={`${classes.associatedWithVariable} ${
-                isSavingToVariable ? "active saving" : ""
-              } `}
-            >
-              Saving to variable
-            </Box>
-            {props.dataEntry && (
-              <Box className={`${classes.stepWrapper}-dataEntry`}>
-                Value:{" "}
-                <Box
-                  display="inline-block"
-                  overflow="hidden"
-                  maxWidth="80px"
-                  textOverflow="ellipsis"
-                  whiteSpace="nowrap"
-                  fontWeight={700}
-                  mx={0.5}
-                >
-                  {props.dataEntry}
-                </Box>{" "}
-                <i>({props.entryType})</i>
-              </Box>
-            )}
+            <Typography variant="h6">{props.title}</Typography>
           </Box>
+          <Typography>{props.text}</Typography>
         </Box>
+        {props.haveError && (
+          <Tooltip title={props.haveError}>
+            <Box className={classes.error}>
+              <ErrorIcon />
+              Error
+            </Box>
+          </Tooltip>
+        )}
+
+        <Box
+          className={`${classes.associatedWithVariable} ${
+            isUsingVariable ? "active" : ""
+          } `}
+        >
+          Using variable Value
+        </Box>
+        <Box
+          className={`${classes.associatedWithVariable} ${
+            isSavingToVariable ? "active saving" : ""
+          } `}
+        >
+          Saving to variable
+        </Box>
+        {props.dataEntry && (
+          <Box className={`${classes.stepWrapper}-dataEntry`}>
+            Value:{" "}
+            <Box
+              display="inline-block"
+              overflow="hidden"
+              maxWidth="80px"
+              textOverflow="ellipsis"
+              whiteSpace="nowrap"
+              fontWeight={700}
+              mx={0.5}
+            >
+              {props.dataEntry}
+            </Box>{" "}
+            <i>({props.entryType})</i>
+          </Box>
+        )}
       </Box>
       <IconButton onClick={props.openMenu}>
         <MenuIcon />

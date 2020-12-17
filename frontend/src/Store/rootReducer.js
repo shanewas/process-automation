@@ -287,6 +287,9 @@ const editProcess = (state, process, index) => {
 
   var newprocess = [...state.process];
 
+  const errors = { ...state.errors };
+  delete errors[id];
+
   newprocess[index] = process;
   return {
     ...state,
@@ -294,6 +297,7 @@ const editProcess = (state, process, index) => {
     process: newprocess,
     variables,
     headers,
+    errors,
   };
 };
 // const clearAll = (state) => {
@@ -361,12 +365,16 @@ const removeStep = (state, stepIdx) => {
 
   let newProcess = state.process.filter((step, idx) => idx !== stepIdx);
 
+  const errors = { ...state.errors };
+  delete errors[process.id];
+
   return {
     ...state,
     saved: false,
     variables,
     headers,
     process: newProcess,
+    errors,
   };
 };
 
