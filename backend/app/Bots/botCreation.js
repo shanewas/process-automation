@@ -10,7 +10,7 @@ function bot_create(mainWindow, LINKALREADYOPENED) {
       label: "",
       link: "",
       variableField: "",
-      variableName: "",
+      saveToVariable: "",
       variableUsed: "",
       entryType: "manual",
       dataEntry: "",

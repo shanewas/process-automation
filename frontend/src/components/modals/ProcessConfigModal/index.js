@@ -19,13 +19,16 @@ import SelectorInput from "../../layout/input/SelectorInput";
 import TypeExtractData from "./TypeExtractData";
 import TypeUpload from "./TypeUpload";
 import TypeDownload from "./TypeDownload";
+import { useDispatch, useSelector } from "react-redux";
+import generateStepObject from "../../BotBuildPage/utils/generateStepObject";
+import { editProcessAction } from "../../../Store/actions";
 
 const initFields = {
   ocr: false,
   label: "",
   link: "",
   variableField: "",
-  variableName: "",
+  saveToVariable: "",
   variableUsed: "",
   entryType: "manual",
   dataEntry: "",
@@ -48,32 +51,45 @@ const resetFields = {
   screenshotPath: "",
   ocrPath: "",
   variableField: "",
-  variableName: "",
+  saveToVariable: "",
   variableUsed: "",
   entryType: "manual",
   dataEntry: "",
   ocr: false,
 };
 
-export default ({
-  open,
-  handleClose,
-  editStep,
-  currentProcess,
-  variables,
-  headers,
-}) => {
-  const [process, setProcess] = useState({});
+export default ({ open, handleClose, stepIdx }) => {
+  const { currentStep, currentVariables, currentHeaders } = useSelector(
+    ({ process, variables, headers }) => ({
+      currentStep: process[stepIdx],
+      currentVariables: variables,
+      currentHeaders: headers,
+    })
+  );
+  const [step, setStep] = useState({ ...initFields, ...currentStep });
+
+  // const tProcess = { ...initFields, ...currentStep };
+  // for (const v in step) {
+  //   if (typeof tProcess[v] === "undefined") tProcess[v] = "";
+
   useEffect(() => {
-    const tProcess = { ...initFields, ...currentProcess };
-    for (const v in tProcess) {
-      if (typeof tProcess[v] === "undefined") tProcess[v] = "";
+    console.log("useeffect");
+    const tStep = { ...initFields, ...currentStep };
+    for (const v in step) {
+      if (typeof tStep[v] === "undefined") tStep[v] = "";
     }
-    setProcess(tProcess);
-  }, [currentProcess]);
+    setStep(tStep);
+  }, [currentStep]);
+
+  const dispatch = useDispatch();
+
+  const editStep = () => {
+    const newProcess = generateStepObject(step);
+    dispatch(editProcessAction(newProcess, stepIdx));
+  };
 
   const handleClearDataHeader = () =>
-    setProcess((p) => ({
+    setStep((p) => ({
       ...p,
       ...resetFields,
     }));
@@ -81,14 +97,14 @@ export default ({
   const handleSwitch = (e) => {
     e.persist();
     const { ocr, ...rf } = resetFields;
-    setProcess((p) => ({
+    setStep((p) => ({
       ...p,
       [e.target.name]: e.target.checked,
       ...rf,
     }));
   };
   const handleTypeChange = (type) => (e) => {
-    setProcess((p) => ({
+    setStep((p) => ({
       ...p,
       [type]: e.target.value,
       ...(type === "_type" ? resetFields : {}),
@@ -97,7 +113,7 @@ export default ({
 
   const handleChange = (e) => {
     e.persist();
-    setProcess((p) => ({
+    setStep((p) => ({
       ...p,
       [e.target.name]: e.target.value,
       ...(e.target.typeChanged
@@ -109,7 +125,7 @@ export default ({
   };
 
   const handleSubmit = () => {
-    editStep(process);
+    editStep(step);
     handleClose();
   };
 
@@ -117,14 +133,14 @@ export default ({
     const folderPath = await electron.ipcRenderer.sendSync(
       electron.getUploadFolderPath
     );
-    folderPath && setProcess((o) => ({ ...o, uploadPath: folderPath }));
+    folderPath && setStep((o) => ({ ...o, uploadPath: folderPath }));
   };
 
   const getDownloadFolderPath = async () => {
     const folderPath = await electron.ipcRenderer.sendSync(
       electron.getDownloadFolderPath
     );
-    folderPath && setProcess((o) => ({ ...o, downloadPath: folderPath }));
+    folderPath && setStep((o) => ({ ...o, downloadPath: folderPath }));
   };
 
   const getScreenshotFolderPath = async () => {
@@ -132,7 +148,7 @@ export default ({
     const folderPath = await electron.ipcRenderer.sendSync(
       electron.getDownloadFolderPath
     );
-    folderPath && setProcess((o) => ({ ...o, screenshotPath: folderPath }));
+    folderPath && setStep((o) => ({ ...o, screenshotPath: folderPath }));
   };
 
   const getOcrFolderPath = async () => {
@@ -140,7 +156,7 @@ export default ({
     const folderPath = await electron.ipcRenderer.sendSync(
       electron.getDownloadFolderPath
     );
-    folderPath && setProcess((o) => ({ ...o, ocrPath: folderPath }));
+    folderPath && setStep((o) => ({ ...o, ocrPath: folderPath }));
   };
 
   return (
@@ -158,18 +174,18 @@ export default ({
       <DialogContent>
         <Box mb={1}>
           <SelectorInput
-            value={useMemo(() => process._type, [process._type])}
+            value={useMemo(() => step._type, [step._type])}
             onChange={useCallback((e) => handleTypeChange("_type")(e), [])}
             options={types}
             placeholder="Process Type"
           />
         </Box>
-        {process._type === "ScreenShot" && (
+        {step._type === "ScreenShot" && (
           <TypeScreenshot
             onSwitch={handleSwitch}
-            value={process.ocr}
-            variables={variables}
-            variableName={process.variableName}
+            value={step.ocr}
+            variables={currentVariables}
+            saveToVariable={step.saveToVariable}
             onChange={handleChange}
             getScreenshotFolderPath={getScreenshotFolderPath}
             screenshotPath={process.screenshotPath}
@@ -177,30 +193,30 @@ export default ({
             ocrPath={process.ocrPath}
           />
         )}
-        {process._type === "link" && (
-          <TypeLink onChange={handleChange} value={process.link} />
+        {step._type === "link" && (
+          <TypeLink onChange={handleChange} value={step.link} />
         )}
-        {process._type === "click" && (
-          <TypeClick onChange={handleChange} value={process} />
+        {step._type === "click" && (
+          <TypeClick onChange={handleChange} value={step} />
         )}
-        {process._type === "LoadData" && (
+        {step._type === "LoadData" && (
           <TypeLoadData
             onSwitch={handleSwitch}
             onClearHeaderData={handleClearDataHeader}
-            headers={headers}
-            variables={variables}
+            headers={currentHeaders}
+            variables={currentVariables}
             onChange={handleChange}
-            value={process}
+            value={step}
             onSelectorChange={handleTypeChange("type")}
             inputTypes={inputTypes}
           />
         )}
-        {process._type === "Extract Data" && (
+        {step._type === "Extract Data" && (
           <TypeExtractData
             extractDataFields={extractDataFields}
-            variables={variables}
-            extractField={process.variableField}
-            variable={process.variableName}
+            variables={currentVariables}
+            extractField={step.variableField}
+            variable={step.saveToVariable}
             onChange={handleChange}
           />
         )}

@@ -6,10 +6,10 @@ import shortId from "shortid";
 import {
   UseHeaderAction,
   UnselectHeaderAction,
-  SendProcessAction,
+  newProcessAction,
   editProcessAction,
   clearFlowchartAction,
-  removeStepAction,
+  removeStep as removeStepAction,
   manualDataEntry,
   iterationChangeAction,
   saveVariables,
@@ -143,7 +143,7 @@ class Flowchart extends Component {
     electron.ipcRenderer.on(electron.ProcessLinkChannel, (e, content) => {
       const process = { ...content, id: shortId() };
       console.log(process);
-      this.props.sendProcess(process);
+      this.props.newProcess(process);
     });
   }
 
@@ -623,8 +623,8 @@ const mapDispathtoProps = (dispatch) => {
     insertMenualData: (dataEntry, processIndex) => {
       dispatch(manualDataEntry(dataEntry, processIndex));
     },
-    sendProcess: (process) => {
-      dispatch(SendProcessAction(process));
+    newProcess: (process) => {
+      dispatch(newProcessAction(process));
     },
     editProcess: (process, index) => {
       dispatch(editProcessAction(process, index));

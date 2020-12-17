@@ -15,6 +15,7 @@ import { ModalContext } from "../../context/ModalContext";
 class DatasetLoader extends Component {
   static contextType = ModalContext;
   changestatus = (index) => {
+    console.log("!!!! change status");
     this.props.changeHeader(index);
   };
 
@@ -24,6 +25,7 @@ class DatasetLoader extends Component {
     Papa.parse(data, {
       complete: (results) => {
         headers = results.data[0];
+        console.log({ results });
         this.props.loadHeaders(headers, data.path);
         let properties = file[0];
         properties["rowNumber"] = results.data.length - 2; //papa parse adds 2 extra row
@@ -65,6 +67,7 @@ class DatasetLoader extends Component {
           >
             {({ getRootProps, getInputProps }) => (
               <section>
+                ˳
                 <div {...getRootProps()}>
                   <input {...getInputProps()} />
                   <Card
@@ -86,6 +89,7 @@ class DatasetLoader extends Component {
               </section>
             )}
           </Dropzone>
+          <input type="file" onChange={(e) => this.fileperse(e.target.files)} />
         </div>
       );
     } else {

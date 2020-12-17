@@ -106,6 +106,7 @@ export default ({
           <SelectorInput
             variant="outlined"
             options={headers}
+            optionsConfigure={{ id: "name", label: "name", value: "name" }}
             onChange={onChange}
             value={value.dataEntry}
             name="dataEntry"
@@ -134,7 +135,7 @@ export default ({
             value={value.dataEntry}
             onChange={onChange}
             options={variables}
-            optionsConfigure={{ id: "id", label: "name", value: "name" }}
+            optionsConfigure={{ id: "name", label: "name", value: "name" }}
           />
         </Grid>
       )}

@@ -6,7 +6,7 @@ export default ({
   value,
   onChange,
   onSwitch,
-  variableName,
+  saveToVariable,
   variables,
   screenshotPath,
   getScreenshotFolderPath,
@@ -28,11 +28,11 @@ export default ({
         <Grid container>
           <SelectorInput
             options={variables}
-            name="variableName"
-            value={variableName}
+            name="saveToVariable"
+            value={saveToVariable}
             onChange={onChange}
             optionsConfigure={{ id: "id", label: "name", value: "name" }}
-            placeholder="Use Variable"
+            placeholder="Save to a variable"
           />
         </Grid>
       )}

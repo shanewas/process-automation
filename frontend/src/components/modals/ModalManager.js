@@ -8,10 +8,10 @@ import ManualEntryModal from "./ManualEntryModal";
 import BotConfigModal from "./BotConfigModal";
 import ProcessConfigModal from "./ProcessConfigModal";
 import VariableAddModal from "./VariableAddModal";
-import DatasetPropModal from "./DatasetPropModal";
-import ProcessGroupModal from "./ProcessGroupModal";
+import KeyboardShortcutsModal from "./KeyboardShortcutsModal";
+import NewBotModal from "./NewBotModal";
 
-const Modals = {
+export const Modals = {
   DataConditionsModal,
   BotDeleteModal,
   BotSaveModal,
@@ -20,8 +20,8 @@ const Modals = {
   BotConfigModal,
   ProcessConfigModal,
   VariableAddModal,
-  DatasetPropModal,
-  ProcessGroupModal,
+  KeyboardShortcutsModal,
+  NewBotModal,
 };
 
 const ModalManager = (props) => {

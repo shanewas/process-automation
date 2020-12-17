@@ -4,13 +4,16 @@ import { Snackbar, makeStyles } from "@material-ui/core";
 
 const useStyles = makeStyles({
   snackbar: {
-    backgroundColor: "#F03434",
+    backgroundColor: (props) => (props.success ? "#4EC3B2" : "#EA8103"),
+    color: "#fff",
+    fontSize: "16px",
+    fontWeight: 700,
   },
 });
 
 const ToastrManager = (props) => {
-  const classes = useStyles();
   const { currentToastr, setCurrentToastr } = useContext(ModalContext);
+  const classes = useStyles({ success: !!currentToastr.success });
   const onClose = () => setCurrentToastr({});
 
   return (
@@ -19,7 +22,7 @@ const ToastrManager = (props) => {
         className: classes.snackbar,
       }}
       open={!!Object.keys(currentToastr).length}
-      autoHideDuration={3000}
+      autoHideDuration={5000}
       message={currentToastr.msg}
       onClose={onClose}
     />

@@ -1,3 +1,28 @@
+export const updateErrors = (errors) => ({
+  type: "UPDATE_ERRORS",
+  errors,
+});
+
+export const loadBot = (bot) => ({ type: "LOAD_BOT", bot });
+
+export const clearAll = () => ({ type: "CLEAR_All" });
+
+export const saveBot = () => ({ type: "SAVE_BOT" });
+
+export const updateBot = (data) => {
+  return { type: "UPDATE_BOT", data };
+};
+
+export const newBot = (botName) => {
+  return { type: "NEW_BOT", botName };
+};
+export const loadCsv = (csv) => {
+  return { type: "LOAD_CSV", csv };
+};
+
+export const unlinkCsv = () => {
+  return { type: "UNLINK_CSV" };
+};
 export const loadHeaderAction = (headers, path) => {
   return { type: "LOAD_HEADERS", headers, path };
 };
@@ -14,8 +39,8 @@ export function UnselectHeaderAction(index) {
   return { type: "UNSELECT_HEADER", index };
 }
 
-export function SendProcessAction(process) {
-  return { type: "SEND_PROCESS", process };
+export function newProcessAction(process) {
+  return { type: "NEW_PROCESS", process };
 }
 export function editProcessAction(process, index) {
   return { type: "EDIT_PROCESS", process, index };
@@ -23,22 +48,16 @@ export function editProcessAction(process, index) {
 export function selectBotAction(bot) {
   return { type: "SELECT_BOT", bot };
 }
-export function clearAllAction() {
-  return { type: "CLEAR_All" };
-}
+// export function clearAllAction() {
+//   return { type: "CLEAR_All" };
+// }
 export function clearFlowchartAction() {
   return { type: "CLEAR_FLOWCHART" };
 }
 export function clearDatasetAction() {
   return { type: "CLEAR_DATASET" };
 }
-export function removeStepAction(index, num_of_step) {
-  return { type: "REMOVE_STEP", index, num_of_step };
-}
-
-export function loadBotAction(bot) {
-  return { type: "LOAD_BOT", bot };
-}
+export const removeStep = (stepIdx) => ({ type: "REMOVE_STEP", stepIdx });
 
 export function manualDataEntry(dataEntry, processIndex) {
   return { type: "MANUAL_DATA_ENTRY", dataEntry, processIndex };
@@ -52,15 +71,14 @@ export function loadDatasetProperties(properties) {
   return { type: "LOADED_DATASET_PROPERTIES", properties };
 }
 
-export function editProcessGroup(group) {
-  return { type: "EDIT_PROCESS_GROUPS", group };
-}
-export function addToProcessGroup(ids) {
-  return { type: "ADD_TO_PROCESS_GROUP", ids };
-}
-export function removeFromProcessGroup(ids) {
-  return { type: "REMOVE_FROM_PROCESS_GROUP", ids };
-}
+export const createVariable = (name) => ({
+  type: "CREATE_VARIABLE",
+  name,
+});
+export const removeVariable = (name) => ({
+  type: "REMOVE_VARIABLE",
+  name,
+});
 
 export const saveVariables = (variables) => ({
   type: "SAVE_VARIABLES",
