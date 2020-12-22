@@ -1,6 +1,7 @@
 import React from "react";
 import { Box, makeStyles, Typography } from "@material-ui/core";
 import { useSelector } from "react-redux";
+import noErrors from "../../../images/no_errors.svg";
 
 const useStyles = makeStyles({
   error: {
@@ -28,7 +29,7 @@ export default (props) => {
     <Box mt={5} textAlign="center">
       {!fErrors.length ? (
         <>
-          <img src="/assets/images/no_errors.svg" alt="Csv" />
+          <img src={noErrors} alt="Csv" />
           <Box my={2}>
             <Typography variant="h6">
               Everything looks good, no errors

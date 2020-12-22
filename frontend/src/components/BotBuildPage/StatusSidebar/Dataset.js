@@ -13,6 +13,9 @@ import { loadCsv, unlinkCsv } from "../../../Store/actions";
 import { LinkOff as UnlinkIcon } from "@material-ui/icons";
 import { ModalContext } from "../../../context/ModalContext";
 
+import csvSelected from "../../../images/csv_colored.png";
+import noCsv from "../../../images/csv.svg";
+
 const useStyles = makeStyles((theme) => ({
   csvText: {
     whiteSpace: "nowrap",
@@ -103,7 +106,7 @@ export default (props) => {
             alignItems="center"
           >
             <Box mr={2}>
-              <img src="/assets/images/csv_colored.png" alt="Csv" />
+              <img src={csvSelected} alt="Csv" />
             </Box>
             <Box
               width="100%"
@@ -152,7 +155,7 @@ export default (props) => {
         </Box>
       ) : (
         <Box mt={5} textAlign="center">
-          <img src="/assets/images/csv.svg" alt="Csv" />
+          <img src={noCsv} alt="Csv" />
           <Box my={2}>
             <Typography variant="h6">Create a Dataset Schema</Typography>
           </Box>

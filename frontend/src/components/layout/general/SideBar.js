@@ -8,7 +8,7 @@ import {
   ListItemText,
   Typography,
 } from "@material-ui/core";
-import { Link, NavLink, useHistory, useLocation } from "react-router-dom";
+import { NavLink, useHistory, useLocation } from "react-router-dom";
 import {
   FormatListNumberedRounded as BotsIcon,
   ImageAspectRatioRounded as TemplateIcon,
@@ -26,6 +26,7 @@ import * as electron from "../../../electronScript";
 import { useDispatch, useSelector } from "react-redux";
 import { clearAll, saveBot, updateErrors } from "../../../Store/actions";
 import checkBot from "../../BotBuildPage/checkBot";
+import logo from "../../../images/logo.png";
 
 const links = [
   {
@@ -34,7 +35,7 @@ const links = [
     Icon: BotsIcon,
   },
   {
-    name: "templates",
+    name: "marketplace",
     Icon: TemplateIcon,
   },
   {
@@ -52,7 +53,7 @@ const General = () => {
     <Drawer variant="permanent">
       <Box>
         <Box my={4} minWidth="220px" textAlign="center">
-          <img src="/assets/images/logo.png" />
+          <img src={logo} />
         </Box>
         {links.map(({ name, Icon, location }) => (
           <ListItem
@@ -152,7 +153,7 @@ const BotSidebar = () => {
     <Drawer variant="permanent">
       <Box>
         <Box my={4} minWidth="220px" textAlign="center">
-          <img src="/assets/images/logo.png" />
+          <img src={logo} />
         </Box>
         <ListItem button onClick={handleRunBot}>
           <ListItemIcon>

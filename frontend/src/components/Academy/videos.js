@@ -1,3 +1,5 @@
+import video1thumb from "../../images/video_1.png";
+import video2thumb from "../../images/video_2.png";
 export default [
   {
     id: 1,
@@ -7,7 +9,7 @@ export default [
     videosCount: 12,
     duration: "3h 22m",
     category: "Beginner",
-    thumbnail: "/assets/images/video_1.png",
+    thumbnail: video1thumb,
   },
   {
     id: 2,
@@ -17,6 +19,6 @@ export default [
     videosCount: 6,
     duration: "1h 14m",
     category: "Advanced",
-    thumbnail: "/assets/images/video_2.png",
+    thumbnail: video2thumb,
   },
 ];

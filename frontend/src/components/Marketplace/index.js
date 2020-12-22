@@ -4,10 +4,11 @@ import { Typography, makeStyles, Box, Grid } from "@material-ui/core";
 import TemplateCard from "./TemplateCard";
 import templates from "./templates";
 
+import templateBanner from "../../images/templates_banner.png";
+
 const useStyles = makeStyles((theme) => ({
   banner: {
-    background:
-      "url('/assets/images/templates_banner.png'), linear-gradient(269.88deg, #3EA8E6 53.78%, #12AE94 95.79%)",
+    background: `url(${templateBanner}), linear-gradient(269.88deg, #3EA8E6 53.78%, #12AE94 95.79%)`,
     backgroundPosition: "right",
     backgroundRepeat: "no-repeat",
     borderRadius: theme.spacing(2),

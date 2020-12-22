@@ -1,5 +1,3 @@
-import shortId from "shortid";
-
 const initState = {
   // change name to headers
   headers: [],
