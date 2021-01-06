@@ -8,6 +8,7 @@ const initState = {
   errors: {},
   botIteration: 1,
   saved: true,
+  screenshotPath: "",
   // selectedHeader: null,
   // status: [],
   // filepath: null,

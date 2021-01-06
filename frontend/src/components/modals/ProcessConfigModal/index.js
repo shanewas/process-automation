@@ -148,16 +148,17 @@ export default ({ open, handleClose, stepIdx }) => {
     const folderPath = await electron.ipcRenderer.sendSync(
       electron.getDownloadFolderPath
     );
+    console.log({ folderPath });
     folderPath && setStep((o) => ({ ...o, screenshotPath: folderPath }));
   };
 
-  const getOcrFolderPath = async () => {
-    // change the electron func to fetch ocr instead
-    const folderPath = await electron.ipcRenderer.sendSync(
-      electron.getDownloadFolderPath
-    );
-    folderPath && setStep((o) => ({ ...o, ocrPath: folderPath }));
-  };
+  // const getOcrFolderPath = async () => {
+  //   // change the electron func to fetch ocr instead
+  //   const folderPath = await electron.ipcRenderer.sendSync(
+  //     electron.getDownloadFolderPath
+  //   );
+  //   folderPath && setStep((o) => ({ ...o, ocrPath: folderPath }));
+  // };
 
   return (
     <Dialog open={open} fullWidth>
@@ -188,9 +189,9 @@ export default ({ open, handleClose, stepIdx }) => {
             saveToVariable={step.saveToVariable}
             onChange={handleChange}
             getScreenshotFolderPath={getScreenshotFolderPath}
-            screenshotPath={process.screenshotPath}
-            getOcrFolderPath={getOcrFolderPath}
-            ocrPath={process.ocrPath}
+            screenshotPath={step.screenshotPath}
+            // getOcrFolderPath={getOcrFolderPath}
+            // ocrPath={step.ocrPath}
           />
         )}
         {step._type === "link" && (

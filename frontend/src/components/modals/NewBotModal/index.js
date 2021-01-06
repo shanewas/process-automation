@@ -41,9 +41,9 @@ export default ({ open, handleClose }) => {
     history.push("/build");
   };
 
-  const gotoTemplates = () => {
+  const gotoMarketpalce = () => {
     handleClose();
-    history.push("/templates");
+    history.push("/marketplace");
   };
   return (
     <Dialog fullWidth open={open}>
@@ -74,7 +74,11 @@ export default ({ open, handleClose }) => {
       </DialogContent>
       <DialogActions>
         <Box mr={2}>
-          <Button disabled={loading} onClick={gotoTemplates} variant="outlined">
+          <Button
+            disabled={loading}
+            onClick={gotoMarketpalce}
+            variant="outlined"
+          >
             Use a template
           </Button>
         </Box>
