@@ -1,20 +1,15 @@
 import React from "react";
 import { Box, makeStyles, Typography } from "@material-ui/core";
-import {
-  LinkRounded as LinkIcon,
-  MouseRounded as MouseIcon,
-  FolderRounded as LoadIcon,
-  KeyboardHideRounded as PressedIcon,
-  CameraAltRounded as CameraIcon,
-} from "@material-ui/icons";
 
-const typeIcons = {
-  link: <LinkIcon />,
-  click: <MouseIcon />,
-  LoadData: <LoadIcon />,
-  KeyBoard: <PressedIcon />,
-  ScreenShot: <CameraIcon />,
-};
+import processTypes from "../utils/processTypes";
+
+// const typeIcons = {
+//   link: <LinkIcon />,
+//   click: <MouseIcon />,
+//   LoadData: <LoadIcon />,
+//   KeyBoard: <PressedIcon />,
+//   ScreenShot: <CameraIcon />,
+// };
 
 const useStyles = makeStyles((theme) => ({
   step: {
@@ -55,7 +50,7 @@ export default (props) => {
         className={`${classes.step} ${props.selectedStep === idx && "active"}`}
         key={step.id}
       >
-        {typeIcons[step._type]}
+        {processTypes[step._type]?.Icon}
         <Box display="flex" ml={2} alignItems="center">
           <Box mr={1}>
             <Typography variant="subtitle2">{idx + 1}.</Typography>

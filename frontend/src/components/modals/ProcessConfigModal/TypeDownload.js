@@ -21,7 +21,7 @@ export default ({ onChange, xpath, downloadPath, getDownloadFolderPath }) => {
           disabled
           variant="outlined"
           value={downloadPath}
-          label="Folder Path"
+          label="Download folder path"
           fullWidth
         />
       </Box>

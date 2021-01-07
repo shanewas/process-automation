@@ -39,7 +39,7 @@ export default ({
             name="saveToVariable"
             value={saveToVariable}
             onChange={onChange}
-            optionsConfigure={{ id: "id", label: "name", value: "name" }}
+            optionsConfigure={{ id: "name", label: "name", value: "name" }}
             placeholder="Save to a variable"
           />
         </Grid>

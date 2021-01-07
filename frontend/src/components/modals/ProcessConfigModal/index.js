@@ -221,20 +221,20 @@ export default ({ open, handleClose, stepIdx }) => {
             onChange={handleChange}
           />
         )}
-        {process._type === "upload" && (
+        {step._type === "upload" && (
           <TypeUpload
             getUploadFolderPath={getUploadFolderPath}
-            uploadPath={process.uploadPath}
+            uploadPath={step.uploadPath}
             onChange={handleChange}
-            xpath={process.xpath}
+            xpath={step.xpath}
           />
         )}
-        {process._type === "download" && (
+        {step._type === "download" && (
           <TypeDownload
             getDownloadFolderPath={getDownloadFolderPath}
-            downloadPath={process.downloadPath}
+            downloadPath={step.downloadPath}
             onChange={handleChange}
-            xpath={process.xpath}
+            xpath={step.xpath}
           />
         )}
       </DialogContent>

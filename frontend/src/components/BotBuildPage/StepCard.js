@@ -7,42 +7,10 @@ import {
   Tooltip,
 } from "@material-ui/core";
 import {
-  LinkRounded as LinkIcon,
-  MouseRounded as MouseIcon,
   MoreHoriz as MenuIcon,
-  FolderRounded as LoadIcon,
-  KeyboardHideRounded as PressedIcon,
-  CameraAltRounded as CameraIcon,
   ErrorOutlineOutlined as ErrorIcon,
 } from "@material-ui/icons";
-
-const type = {
-  link: {
-    Icon: LinkIcon,
-    color: "#6AD9C4",
-    bgcolor: "rgba(106, 217, 196, 0.15)",
-  },
-  click: {
-    Icon: MouseIcon,
-    color: "#F9DB6D",
-    bgcolor: "rgba(249, 219, 109, 0.15)",
-  },
-  LoadData: {
-    Icon: LoadIcon,
-    color: "#FEA042",
-    bgcolor: "rgba(254, 160, 66, 0.15)",
-  },
-  KeyBoard: {
-    Icon: PressedIcon,
-    color: "#FE426F",
-    bgcolor: "rgba(254, 66, 111, 0.15)",
-  },
-  ScreenShot: {
-    Icon: CameraIcon,
-    color: "#FE42C9",
-    bgcolor: "rgba(254, 66, 201, 0.15)",
-  },
-};
+import processTypes from "./utils/processTypes";
 
 const useStyles = makeStyles((theme) => ({
   stepWrapper: (props) => ({
@@ -182,7 +150,7 @@ export default (props) => {
     props.dataEntry === props.selectedHeader;
 
   console.log({ selectedHeader: props.selectedHeader, isUsingHeader });
-  const { color, bgcolor, Icon } = type[props._type];
+  const { color, bgcolor, Icon } = processTypes[props._type];
   const classes = useStyles({
     selected: props.selected,
     color,
@@ -205,9 +173,7 @@ export default (props) => {
         onMouseLeave={(e) => props.selectStep("")}
         className={`${classes.stepWrapper}-step`}
       >
-        <Box className={classes.icon}>
-          <Icon />
-        </Box>
+        <Box className={classes.icon}>{Icon}</Box>
         <Box>
           <Box display="flex" alignItems="center">
             <Typography variant="h6">{props.title}</Typography>
