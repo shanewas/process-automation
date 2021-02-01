@@ -204,7 +204,7 @@ async function run_bot(e, BROWSER, mainWindow, PARAMS) {
             // {
             //     el1: '1',
             //     el1isManual: true,
-            //     el1headerIdx: null,
+            //     el1hea derIdx: null,
             //     el2: '1',
             //     el2isManual: true,
             //     el2headerIdx: null,
@@ -489,11 +489,11 @@ async function run_bot(e, BROWSER, mainWindow, PARAMS) {
                         .write(ocr_pathTo);
                     })
                     .then(async () => {
-                      if (!fs.existsSync(element.ocrPath)) {
-                        fs.mkdirSync(element.ocrPath);
-                      }
+                      // if (!fs.existsSync(element.ocrPath)) {
+                      //   fs.mkdirSync(element.ocrPath);
+                      // }
                       let ocr_filename = `${PARAMS.BOTS.botName}_${PARAMS.IDX}${PARAMS.PROCESSCOUNTER}.txt`;
-                      let saveTo = path.join(element.ocrpath, ocr_filename);
+                      let saveTo = path.join(element.screenshotPath, ocr_filename);
                       await Tesseract.recognize(pathTo, "eng", {
                         logger: async (m) => {
                           console.log(m);
