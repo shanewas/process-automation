@@ -3,6 +3,11 @@ export const updateErrors = (errors) => ({
   errors,
 });
 
+export const changeProcessOrder = (result) => ({
+  type: "CHANGE_PROCESS_ORDER",
+  result,
+});
+
 export const loadBot = (bot) => ({ type: "LOAD_BOT", bot });
 
 export const clearAll = () => ({ type: "CLEAR_All" });
