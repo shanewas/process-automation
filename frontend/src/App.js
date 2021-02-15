@@ -14,6 +14,7 @@ import SideBar from "./components/layout/general/SideBar";
 import Marketplace from "./components/Marketplace";
 import Notifications from "./components/Notifications";
 import Academy from "./components/Academy";
+import Auth from "./components/Auth";
 
 function App() {
   return (
@@ -23,9 +24,10 @@ function App() {
         <Router>
           <ModalManager />
           <ToastrManager />
+          <Route exact path="/" component={Auth} />
           <SideBar />
           <Box py={4} pl={32} pr={4}>
-            <Route exact path="/" component={BotListPage} />
+            <Route exact path="/bot-list" component={BotListPage} />
             <Route exact path="/marketplace" component={Marketplace} />
             <Route exact path="/notifications" component={Notifications} />
             <Route exact path="/academy" component={Academy} />

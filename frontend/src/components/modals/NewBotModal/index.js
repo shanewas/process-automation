@@ -23,17 +23,20 @@ export default ({ open, handleClose }) => {
   const location = useLocation();
   const [botName, setBotName] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState("");
   console.log({ history, location });
 
   const createBot = async () => {
+    if (!botName) return setError("Bot name is required");
     setLoading(true);
     const tBots = await electron.ipcRenderer.invoke("bots");
     if (
       tBots.map((b) => b.botName.toLowerCase()).includes(botName.toLowerCase())
     ) {
       setLoading(false);
-      return setError(true);
+      return setError(
+        "A bot with the same name exists. Choose a different name."
+      );
     }
     await electron.ipcRenderer.invoke("add-bot", botName.trim(), "");
     dispatch(newBot(botName.trim()));
@@ -64,11 +67,9 @@ export default ({ open, handleClose }) => {
           variant="outlined"
           label="Bot name"
         />
-        {error && (
+        {!!error && (
           <Box color="red" mt={2}>
-            <Typography variant="body2">
-              A bot with the same name exists. Choose a different name.
-            </Typography>
+            <Typography variant="body2">{error}</Typography>
           </Box>
         )}
       </DialogContent>
