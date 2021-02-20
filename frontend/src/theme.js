@@ -5,7 +5,7 @@ export default createMuiTheme({
     type: "dark",
     background: {
       default: "#0A0B16",
-      paper: "#1D1E28",
+      paper: "#2D2E3C",
     },
     primary: {
       main: "#5C87DC",
@@ -20,8 +20,32 @@ export default createMuiTheme({
     h6: {
       fontWeight: 700,
     },
+    subtitle2: {
+      "&.card-text": {
+        fontFamily: "Poppins, sans-serif",
+        textTransform: "uppercase",
+        fontSize: "16px",
+      },
+    },
   },
   overrides: {
+    MuiTypography: {
+      root: {
+        "&.poppins": {
+          fontFamily: "Poppins, sans-serif",
+        },
+
+        "&.bold": {
+          fontWeight: 600,
+        },
+        "&.uppercase": {
+          textTransform: "uppercase",
+        },
+        "&.grey": {
+          color: "#eee",
+        },
+      },
+    },
     MuiBadge: {
       dot: {
         height: "10px",

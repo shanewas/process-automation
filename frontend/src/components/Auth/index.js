@@ -37,7 +37,7 @@ const Auth = () => {
   //   const [isLogin, setIsLogin] = useState(true);
 
   const handleLogin = () => {
-    history.push("/bot-list");
+    history.push("/dashboard");
   };
   return (
     <Grid
@@ -52,7 +52,12 @@ const Auth = () => {
           </Box>
           <Box className={classes.inputWrapper}>
             <FilledInput fullWidth disableUnderline placeholder="Username" />
-            <FilledInput fullWidth disableUnderline placeholder="Password" />
+            <FilledInput
+              type="password"
+              fullWidth
+              disableUnderline
+              placeholder="Password"
+            />
             <Button
               onClick={handleLogin}
               fullWidth

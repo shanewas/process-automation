@@ -19,6 +19,7 @@ import {
   SaveRounded as SaveIcon,
   CodeRounded as CodeIcon,
   SettingsRounded as SettingsIcon,
+  Dashboard as DashboardIcon,
 } from "@material-ui/icons";
 import { ModalContext } from "../../../context/ModalContext";
 
@@ -29,6 +30,11 @@ import checkBot from "../../BotBuildPage/checkBot";
 import logo from "../../../images/logo.png";
 
 const links = [
+  {
+    name: "dashboard",
+    location: "/dashboard",
+    Icon: DashboardIcon,
+  },
   {
     name: "bots",
     location: "/bot-list",
