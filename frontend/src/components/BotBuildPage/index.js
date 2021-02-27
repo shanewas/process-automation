@@ -7,14 +7,13 @@ import {
   FilledInput,
   Button,
   makeStyles,
-  responsiveFontSizes,
 } from "@material-ui/core";
 import { KeyboardRounded as KeyboardIcon } from "@material-ui/icons";
 import StatusSidebar from "./StatusSidebar";
 import StepsFlowchart from "./StepsFlowchart";
 import * as electron from "../../electronScript";
 import { useDispatch, useSelector } from "react-redux";
-import { newProcessAction } from "../../Store/actions";
+import { changeProcessOrder, newProcessAction } from "../../Store/actions";
 import shortId from "shortid";
 import generateStepObject from "./utils/generateStepObject";
 import { ModalContext } from "../../context/ModalContext";
@@ -81,6 +80,18 @@ export default (props) => {
       name: "KeyboardShortcutsModal",
     });
   };
+
+  const handleProcessOrderChange = async (result) => {
+    const { destination, source } = result;
+    if (!destination) return;
+    if (
+      destination.droppableId === source.droppableId &&
+      destination.index === source.index
+    )
+      return;
+
+    return dispatch(changeProcessOrder(result));
+  };
   return (
     <Grid container>
       <Grid item xs={8}>
@@ -141,6 +152,7 @@ export default (props) => {
         selectedHeader={selectedHeader}
         selectHeader={setSelectedHeader}
         selectErrorStep={setErrorStep}
+        handleProcessOrderChange={handleProcessOrderChange}
       />
     </Grid>
   );

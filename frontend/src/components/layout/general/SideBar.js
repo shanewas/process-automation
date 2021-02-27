@@ -31,7 +31,7 @@ import logo from "../../../images/logo.png";
 const links = [
   {
     name: "bots",
-    location: "/",
+    location: "/bot-list",
     Icon: BotsIcon,
   },
   {
@@ -49,6 +49,9 @@ const links = [
 ];
 
 const General = () => {
+  const history = useHistory();
+
+  const handleLogout = () => history.push("/");
   return (
     <Drawer variant="permanent">
       <Box>
@@ -92,7 +95,7 @@ const General = () => {
           </Box>
         </Box>
         <Box mb={1.5}>
-          <ListItem button>
+          <ListItem button onClick={handleLogout}>
             <ListItemIcon>
               <LogoutIcon />
             </ListItemIcon>
@@ -146,7 +149,7 @@ const BotSidebar = () => {
 
   const exitToMain = async () => {
     dispatch(clearAll());
-    history.push("/");
+    history.push("/bot-list");
   };
 
   return (
@@ -193,5 +196,9 @@ const BotSidebar = () => {
 export default (props) => {
   const { pathname } = useLocation();
   console.log(pathname);
-  return pathname === "/build" ? <BotSidebar /> : <General />;
+  return pathname === "/" ? null : pathname === "/build" ? (
+    <BotSidebar />
+  ) : (
+    <General />
+  );
 };

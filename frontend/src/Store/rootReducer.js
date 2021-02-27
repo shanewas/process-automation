@@ -8,12 +8,26 @@ const initState = {
   errors: {},
   botIteration: 1,
   saved: true,
+  screenshotPath: "",
   // selectedHeader: null,
   // status: [],
   // filepath: null,
   // prevStatus: null,
   // change name to csvInfo
   // datasetProperties: null,
+};
+
+const changeProcessOrder = (state, { source, destination, draggableId }) => {
+  const newProcess = Array.from(state.process);
+  const draggedProcess = newProcess.find((p) => p.id === draggableId);
+
+  newProcess.splice(source.index, 1);
+  newProcess.splice(destination.index, 0, draggedProcess);
+
+  return {
+    ...state,
+    process: newProcess,
+  };
 };
 
 const updateErrors = (state, errors) => ({ ...state, errors });
@@ -453,8 +467,8 @@ const rootReducer = (state = initState, action) => {
       return saveBot(state);
     case "UPDATE_ERRORS":
       return updateErrors(state, action.errors);
-    // case "LOAD_HEADERS":
-    //   return loadHeaders(state, action.headers, action.path);
+    case "CHANGE_PROCESS_ORDER":
+      return changeProcessOrder(state, action.result);
     // case "CHANGE_HEADER":
     //   return changeHeaders(state, action.index);
     // case "USE_HEADER":

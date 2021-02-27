@@ -1,5 +1,13 @@
 import React from "react";
-import { Switch, Grid, Typography, Box, TextField, Button, Divider } from "@material-ui/core";
+import {
+  Switch,
+  Grid,
+  Typography,
+  Box,
+  TextField,
+  Button,
+  Divider,
+} from "@material-ui/core";
 import SelectorInput from "../../layout/input/SelectorInput";
 
 export default ({
@@ -31,7 +39,7 @@ export default ({
             name="saveToVariable"
             value={saveToVariable}
             onChange={onChange}
-            optionsConfigure={{ id: "id", label: "name", value: "name" }}
+            optionsConfigure={{ id: "name", label: "name", value: "name" }}
             placeholder="Save to a variable"
           />
         </Grid>
@@ -57,7 +65,7 @@ export default ({
       <Box mt={2}>
         <Divider />
       </Box>
-      <Box mt={2}>
+      {/* <Box mt={2}>
         <TextField
           disabled
           variant="outlined"
@@ -70,7 +78,7 @@ export default ({
         <Button onClick={getOcrFolderPath} variant="contained" disableElevation>
           Select Path
         </Button>
-      </Box>
+      </Box> */}
     </Box>
   );
 };

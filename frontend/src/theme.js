@@ -55,7 +55,8 @@ export default createMuiTheme({
       root: {
         textTransform: "capitalize",
         fontWeight: 700,
-        fontSize: "15px",
+        fontSize: "16px",
+        textTransform: "none",
       },
       label: {
         "& > svg": {
@@ -84,11 +85,6 @@ export default createMuiTheme({
     //     },
     //   },
     // },
-    MuiButton: {
-      root: {
-        textTransform: "none",
-      },
-    },
     MuiDialogActions: {
       root: {
         padding: "16px 24px",

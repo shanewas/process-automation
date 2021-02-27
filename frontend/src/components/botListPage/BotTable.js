@@ -9,6 +9,7 @@ import {
   IconButton,
   makeStyles,
   Tooltip,
+  TextField,
 } from "@material-ui/core";
 import {
   PlayCircleFilled as RunIcon,
@@ -32,7 +33,13 @@ const useStyles = makeStyles((theme) => ({
   },
   tr: {
     "& > .MuiTableCell-root": {
-      fontSize: "17px !important",
+      fontSize: "18px !important",
+      fontWeight: 400,
+      color: "rgba(255,255,255,.6)",
+
+      "&:hover": {
+        color: "#fff",
+      },
     },
   },
   actions: {
@@ -68,6 +75,8 @@ export default (props) => {
     botSearch: "",
     sortDesc: false,
   });
+
+  console.log(state);
   const dispatch = useDispatch();
 
   const fetchBots = async () => {
@@ -116,58 +125,84 @@ export default (props) => {
   }, []);
 
   return (
-    <Box bgcolor="background.paper">
-      <Table>
-        <TableHead className={classes.tableHead}>
-          <TableRow>
-            <TableCell className={classes.thCell}>Name</TableCell>
-            <TableCell className={classes.thCell}>Last Active</TableCell>
-            <TableCell align="right" className={classes.thCell}>
-              Functions
-            </TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {state.bots.map((bot) => (
-            <TableRow hover className={classes.tr} key={bot._id}>
-              <TableCell>{bot.botName}</TableCell>
-              <TableCell>{formatDistanceToNow(bot.lastActive)} ago</TableCell>
-              <TableCell align="right" className={classes.actions}>
-                <Tooltip title="Run bot">
-                  <IconButton size="small" onClick={() => runBot(bot.botName)}>
-                    <RunIcon />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title="Edit bot">
-                  <IconButton
-                    size="small"
-                    onClick={() => loadSavedBot(bot.botName)}
-                  >
-                    <EditIcon />
-                  </IconButton>
-                </Tooltip>
-
-                <Tooltip title="Delete bot">
-                  <IconButton
-                    size="small"
-                    onClick={() => deleteBot(bot.botName)}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title="Export bot">
-                  <IconButton
-                    size="small"
-                    onClick={() => exportBot(bot.botName)}
-                  >
-                    <ExportIcon />
-                  </IconButton>
-                </Tooltip>
+    <>
+      <Box mb={2}>
+        <TextField
+          value={state.botSearch}
+          onChange={(e) => {
+            e.persist();
+            setState((o) => ({ ...o, botSearch: e.target.value }));
+          }}
+          placeholder="Seach"
+          variant="outlined"
+        />
+      </Box>
+      <Box bgcolor="background.paper">
+        <Table>
+          <TableHead className={classes.tableHead}>
+            <TableRow>
+              <TableCell className={classes.thCell}>Name</TableCell>
+              <TableCell className={classes.thCell}>Last Active</TableCell>
+              <TableCell align="right" className={classes.thCell}>
+                Functions
               </TableCell>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </Box>
+          </TableHead>
+          <TableBody>
+            {state.bots
+              .filter((b) =>
+                !!state.botSearch
+                  ? b.botName
+                      .toLowerCase()
+                      .includes(state.botSearch.toLowerCase())
+                  : b
+              )
+              .map((bot) => (
+                <TableRow hover className={classes.tr} key={bot._id}>
+                  <TableCell>{bot.botName}</TableCell>
+                  <TableCell>
+                    {formatDistanceToNow(bot.lastActive)} ago
+                  </TableCell>
+                  <TableCell align="right" className={classes.actions}>
+                    <Tooltip title="Run bot">
+                      <IconButton
+                        size="small"
+                        onClick={() => runBot(bot.botName)}
+                      >
+                        <RunIcon />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Edit bot">
+                      <IconButton
+                        size="small"
+                        onClick={() => loadSavedBot(bot.botName)}
+                      >
+                        <EditIcon />
+                      </IconButton>
+                    </Tooltip>
+
+                    <Tooltip title="Delete bot">
+                      <IconButton
+                        size="small"
+                        onClick={() => deleteBot(bot.botName)}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Export bot">
+                      <IconButton
+                        size="small"
+                        onClick={() => exportBot(bot.botName)}
+                      >
+                        <ExportIcon />
+                      </IconButton>
+                    </Tooltip>
+                  </TableCell>
+                </TableRow>
+              ))}
+          </TableBody>
+        </Table>
+      </Box>
+    </>
   );
 };

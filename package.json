@@ -115,6 +115,7 @@
     "progress": "^2.0.3",
     "puppeteer-core": "^5.5.0",
     "puppeteer-in-electron": "^3.0.3",
+    "react-beautiful-dnd": "^13.0.0",
     "react-syntax-highlighter": "^15.3.1",
     "selenium-webdriver": "^4.0.0-alpha.7",
     "show-toast": "^1.1.4",
