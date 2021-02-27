@@ -25,7 +25,7 @@ import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   tableHead: {
-    backgroundColor: "#191A21",
+    backgroundColor: "#1F202E",
   },
   thCell: {
     fontSize: "18px",

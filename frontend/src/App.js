@@ -15,6 +15,7 @@ import Marketplace from "./components/Marketplace";
 import Notifications from "./components/Notifications";
 import Academy from "./components/Academy";
 import Auth from "./components/Auth";
+import Dashboard from "./components/Dashboard";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
           <Route exact path="/" component={Auth} />
           <SideBar />
           <Box py={4} pl={32} pr={4}>
+            <Route exact path="/dashboard" component={Dashboard} />
             <Route exact path="/bot-list" component={BotListPage} />
             <Route exact path="/marketplace" component={Marketplace} />
             <Route exact path="/notifications" component={Notifications} />
