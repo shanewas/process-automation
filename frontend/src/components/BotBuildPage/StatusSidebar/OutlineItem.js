@@ -40,10 +40,11 @@ const OutlineItem = ({ step, index, ...props }) => {
           alignItems="center"
           mb={2}
           {...provided.draggableProps}
-          {...provided.dragHandleProps}
           ref={provided.innerRef}
         >
-          <DragIcon style={{ marginRight: "10px" }} />
+          <span {...provided.dragHandleProps}>
+            <DragIcon style={{ marginRight: "10px" }} />
+          </span>
           <Box
             onClick={() => props.selectStep(index)}
             onMouseLeave={(e) => props.selectStep("")}

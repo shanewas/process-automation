@@ -6,6 +6,7 @@ const initState = {
   botName: null,
   csvInfo: null,
   errors: {},
+  groups: {},
   botIteration: 1,
   saved: true,
   screenshotPath: "",

@@ -12,7 +12,7 @@ import {
 
 const useStyles = makeStyles((theme) => ({
   tableHead: {
-    backgroundColor: "#1F202E",
+    backgroundColor: "#0D0D0D",
   },
   thCell: {
     fontSize: "18px",

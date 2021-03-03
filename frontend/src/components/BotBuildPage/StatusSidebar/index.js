@@ -14,10 +14,13 @@ import {
   InsertDriveFileRounded as DatasetIcon,
   ErrorRounded as ErrorsIcon,
   CodeRounded as VariablesIcon,
+  ViewModule as GroupIcon,
 } from "@material-ui/icons";
 import Outline from "./Outline";
 import Dataset from "./Dataset";
 import Errors from "./Errors";
+import Groups from "./Groups";
+
 import Variables from "./Variables";
 import { useSelector } from "react-redux";
 
@@ -71,6 +74,7 @@ const Screens = {
   Dataset,
   Errors,
   Variables,
+  Groups,
 };
 
 const CustomPulseBadge = withStyles({
@@ -109,6 +113,10 @@ const links = [
   {
     text: "Variables",
     Icon: VariablesIcon,
+  },
+  {
+    text: "Groups",
+    Icon: GroupIcon,
   },
 ];
 
