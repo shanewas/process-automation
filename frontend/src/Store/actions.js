@@ -1,3 +1,8 @@
+export const createGroup = (name, color) => ({
+  type: "CREATE_GROUP",
+  payload: { name, color },
+});
+
 export const updateErrors = (errors) => ({
   type: "UPDATE_ERRORS",
   errors,

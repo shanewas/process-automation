@@ -14,6 +14,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { removeStep } from "../../Store/actions";
 import { ModalContext } from "../../context/ModalContext";
+import { Draggable, Droppable } from "react-beautiful-dnd";
 
 const initStepMenu = {
   anchorEl: null,
@@ -42,24 +43,43 @@ export default (props) => {
     setStepMenu(initStepMenu);
   };
 
+  console.log({ steps: props.steps });
+
   return (
     <>
       {props.steps.length ? (
-        props.steps.map((step, idx) => (
-          <StepCard
-            selectedErrorStep={props.errorStep === step.id}
-            haveError={errors[step.id]?.message}
-            selectedHeader={props.selectedHeader}
-            selectedVariable={props.selectedVariable}
-            selectedVariable={props.selectedVariable}
-            selected={props.selectedStep === idx}
-            selectStep={props.selectStep}
-            openMenu={(e) => openMenuHandler(e, idx)}
-            idx={idx}
-            key={step.id}
-            {...step}
-          />
-        ))
+        <Droppable droppableId="steps-flowchart" type="FLOWCHART">
+          {(provided) => (
+            <Box {...provided.droppableProps} ref={provided.innerRef}>
+              {props.steps.map((step, idx) => (
+                <Draggable
+                  key={step.id}
+                  draggableId={`fc-${step.id}`}
+                  index={idx}
+                >
+                  {(provided) => (
+                    <StepCard
+                      selectedErrorStep={props.errorStep === step.id}
+                      haveError={errors[step.id]?.message}
+                      selectedHeader={props.selectedHeader}
+                      selectedVariable={props.selectedVariable}
+                      selectedVariable={props.selectedVariable}
+                      selected={props.selectedSteps.includes(idx)}
+                      selectSteps={props.selectSteps}
+                      openMenu={(e) => openMenuHandler(e, idx)}
+                      draggableProps={provided.draggableProps}
+                      dragHandleProps={provided.dragHandleProps}
+                      ref={provided.innerRef}
+                      idx={idx}
+                      {...step}
+                    />
+                  )}
+                </Draggable>
+              ))}
+              {provided.placeholder}
+            </Box>
+          )}
+        </Droppable>
       ) : (
         <Box textAlign="center">
           <Typography variant="h6">

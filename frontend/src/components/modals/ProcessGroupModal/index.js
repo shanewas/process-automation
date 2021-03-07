@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -7,12 +7,13 @@ import {
   Box,
   Typography,
   Button,
-  IconButton,
   makeStyles,
-  TextField,
+  FilledInput,
 } from "@material-ui/core";
-import { Close as CloseIcon } from "@material-ui/icons";
 import { Check as CheckIcon } from "@material-ui/icons";
+import { useSelector, useDispatch } from "react-redux";
+import { ModalContext } from "../../../context/ModalContext";
+import { createGroup } from "../../../Store/actions";
 
 const colors = ["#61BD4F", "#F2D600", "#FF9F1A", "#F56E5A", "#E195FE"];
 const clrObj = {};
@@ -48,22 +49,45 @@ const useStyles = makeStyles({
 });
 
 const ProcessGroupModal = (props) => {
-  const [groupColor, setGroupColor] = useState("");
   const classes = useStyles();
+  const { setCurrentToastr } = useContext(ModalContext);
+  const dispatch = useDispatch();
+  const [groupName, setGroupName] = useState("");
+  const [groupColor, setGroupColor] = useState("");
+  const groups = useSelector((state) => state.groups);
+
+  console.log({ groups });
+
+  const handleCreate = () => {
+    if (!groupName.trim() || !groupColor)
+      return setCurrentToastr({
+        msg: "Please enter a name and select a color",
+      });
+    if (Object.keys(groups).includes(groupName))
+      return setCurrentToastr({
+        msg: "2 Groups cannot have the same name. Please enter another one.",
+      });
+    dispatch(createGroup(groupName.trim().toLowerCase(), groupColor));
+    setCurrentToastr({
+      msg: "Group created",
+      success: true,
+    });
+    props.handleClose();
+  };
 
   return (
     <Dialog fullWidth open={true}>
-      <DialogTitle>
-        <Box px={2} pt={2} display="flex" justifyContent="space-between">
-          Create new group
-          <IconButton size="small" onClick={props.handleClose}>
-            <CloseIcon size={16} />
-          </IconButton>
-        </Box>
-      </DialogTitle>
+      <DialogTitle>Create a new group</DialogTitle>
       <DialogContent>
         <Box p={2}>
-          <TextField fullWidth label="Group name" />
+          <FilledInput
+            inputProps={{ maxLength: 12 }}
+            value={groupName}
+            onChange={(e) => setGroupName(e.target.value)}
+            disableUnderline
+            fullWidth
+            placeholder="Group name"
+          />
           <Box display="flex" mt={5}>
             <Typography variant="h5">Color:</Typography>
             <Box ml={2} display="flex">
@@ -83,7 +107,26 @@ const ProcessGroupModal = (props) => {
           </Box>
         </Box>
       </DialogContent>
-      <DialogActions></DialogActions>
+      <DialogActions>
+        <Box pb={2}>
+          <Button
+            disableElevation
+            style={{ marginRight: "12px" }}
+            variant="contained"
+            onClick={props.handleClose}
+          >
+            Close
+          </Button>
+          <Button
+            onClick={handleCreate}
+            disableElevation
+            color="primary"
+            variant="contained"
+          >
+            Create
+          </Button>
+        </Box>
+      </DialogActions>
     </Dialog>
   );
 };

@@ -73,13 +73,12 @@ export default ({ open, handleClose, stepIdx }) => {
   //   if (typeof tProcess[v] === "undefined") tProcess[v] = "";
 
   useEffect(() => {
-    console.log("useeffect");
     const tStep = { ...initFields, ...currentStep };
     for (const v in step) {
       if (typeof tStep[v] === "undefined") tStep[v] = "";
     }
     setStep(tStep);
-  }, [currentStep]);
+  }, [currentStep, step]);
 
   const dispatch = useDispatch();
 

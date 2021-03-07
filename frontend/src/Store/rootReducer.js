@@ -2,11 +2,22 @@ const initState = {
   // change name to headers
   headers: [],
   variables: [],
-  process: [],
+  process: [
+    // {
+    //   _type: "click",
+    //   id: "139fw1n93fn",
+    //   title: "Clicked",
+    // },
+  ],
   botName: null,
   csvInfo: null,
   errors: {},
-  groups: {},
+  groups: {
+    // dummy: {
+    //   color: "red",
+    //   processes: ["139fw1n93fn"],
+    // },
+  },
   botIteration: 1,
   saved: true,
   screenshotPath: "",
@@ -17,6 +28,17 @@ const initState = {
   // change name to csvInfo
   // datasetProperties: null,
 };
+
+const createGroup = (state, { name, color }) => ({
+  ...state,
+  groups: {
+    ...state.groups,
+    [name]: {
+      color,
+      processes: [],
+    },
+  },
+});
 
 const changeProcessOrder = (state, { source, destination, draggableId }) => {
   const newProcess = Array.from(state.process);
@@ -440,6 +462,8 @@ const rootReducer = (state = initState, action) => {
   console.log(action.type);
 
   switch (action.type) {
+    case "CREATE_GROUP":
+      return createGroup(state, action.payload);
     case "UPDATE_BOT":
       return updateBot(state, action.data);
     case "NEW_BOT":

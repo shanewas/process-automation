@@ -46,10 +46,12 @@ const OutlineItem = ({ step, index, ...props }) => {
             <DragIcon style={{ marginRight: "10px" }} />
           </span>
           <Box
-            onClick={() => props.selectStep(index)}
-            onMouseLeave={(e) => props.selectStep("")}
+            onClick={() => props.selectSteps((o) => [...o, index])}
+            onMouseLeave={(e) =>
+              props.selectSteps((o) => o.filter((o) => o !== index))
+            }
             className={`${classes.step} ${
-              props.selectedStep === index && "active"
+              props.selectedSteps.includes(index) && "active"
             }`}
           >
             {processTypes[step._type]?.Icon}

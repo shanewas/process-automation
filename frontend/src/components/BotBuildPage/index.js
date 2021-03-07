@@ -17,6 +17,7 @@ import { changeProcessOrder, newProcessAction } from "../../Store/actions";
 import shortId from "shortid";
 import generateStepObject from "./utils/generateStepObject";
 import { ModalContext } from "../../context/ModalContext";
+import { DragDropContext } from "react-beautiful-dnd";
 
 const useStyles = makeStyles((theme) => ({
   startBtn: {
@@ -51,7 +52,7 @@ export default (props) => {
   const saved = useSelector((state) => state.saved);
   const classes = useStyles({ saved });
   const [selectedVariable, setSelectedVariable] = useState("");
-  const [selectedStep, setSelectedStep] = useState("");
+  const [selectedSteps, setSelectedSteps] = useState([]);
   const [selectedHeader, setSelectedHeader] = useState("");
   const [errorStep, setErrorStep] = useState("");
   const [url, setUrl] = useState("");
@@ -81,7 +82,8 @@ export default (props) => {
     });
   };
 
-  const handleProcessOrderChange = async (result) => {
+  const handleDragEnd = async (result) => {
+    console.log(result);
     const { destination, source } = result;
     if (!destination) return;
     if (
@@ -90,70 +92,77 @@ export default (props) => {
     )
       return;
 
-    return dispatch(changeProcessOrder(result));
+    if (
+      destination.droppableId === "outline" &&
+      source.droppableId === "outline"
+    )
+      return dispatch(changeProcessOrder(result));
   };
+
+  console.log(selectedSteps);
   return (
-    <Grid container>
-      <Grid item xs={8}>
-        <Box
-          mb={4}
-          display="flex"
-          alignItems="center"
-          justifyContent="space-between"
-        >
-          <Box display="flex" alignItems="flex-end">
-            <Box mr={1}>
-              <Typography variant="h6">Bots / </Typography>
-            </Box>
-            <Typography variant="h4">{botName}</Typography>
-            <Box ml={2} className={classes.saveStatus}>
-              <Box className="circle" />
-              {saved ? "Updated" : "Not Updated"}
-            </Box>
-          </Box>
-          <IconButton onClick={openShortcutModal}>
-            <KeyboardIcon />
-          </IconButton>
-        </Box>
-        <Box mb={8} display="flex" alignItems="center">
-          <FilledInput
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
-            disableUnderline
-            fullWidth
-            placeholder="Enter URL"
-          />
-          <Button
-            className={classes.startBtn}
-            variant="contained"
-            color="primary"
-            onClick={startRecording}
+    <DragDropContext onDragEnd={handleDragEnd}>
+      <Grid container>
+        <Grid item xs={8}>
+          <Box
+            mb={4}
+            display="flex"
+            alignItems="center"
+            justifyContent="space-between"
           >
-            Start
-          </Button>
-        </Box>
-        <Box position="relative">
-          <StepsFlowchart
-            selectStep={setSelectedStep}
-            selectedStep={selectedStep}
-            steps={steps}
-            selectedVariable={selectedVariable}
-            selectedHeader={selectedHeader}
-            errorStep={errorStep}
-          />
-        </Box>
+            <Box display="flex" alignItems="flex-end">
+              <Box mr={1}>
+                <Typography variant="h6">Bots / </Typography>
+              </Box>
+              <Typography variant="h4">{botName}</Typography>
+              <Box ml={2} className={classes.saveStatus}>
+                <Box className="circle" />
+                {saved ? "Updated" : "Not Updated"}
+              </Box>
+            </Box>
+            <IconButton onClick={openShortcutModal}>
+              <KeyboardIcon />
+            </IconButton>
+          </Box>
+          <Box mb={8} display="flex" alignItems="center">
+            <FilledInput
+              value={url}
+              onChange={(e) => setUrl(e.target.value)}
+              disableUnderline
+              fullWidth
+              placeholder="Enter URL"
+            />
+            <Button
+              className={classes.startBtn}
+              variant="contained"
+              color="primary"
+              onClick={startRecording}
+            >
+              Start
+            </Button>
+          </Box>
+          <Box position="relative">
+            <StepsFlowchart
+              selectSteps={setSelectedSteps}
+              selectedSteps={selectedSteps}
+              steps={steps}
+              selectedVariable={selectedVariable}
+              selectedHeader={selectedHeader}
+              errorStep={errorStep}
+            />
+          </Box>
+        </Grid>
+        <StatusSidebar
+          selectSteps={setSelectedSteps}
+          selectedSteps={selectedSteps}
+          steps={steps}
+          selectedVariable={selectedVariable}
+          selectVariable={setSelectedVariable}
+          selectedHeader={selectedHeader}
+          selectHeader={setSelectedHeader}
+          selectErrorStep={setErrorStep}
+        />
       </Grid>
-      <StatusSidebar
-        selectStep={setSelectedStep}
-        selectedStep={selectedStep}
-        steps={steps}
-        selectedVariable={selectedVariable}
-        selectVariable={setSelectedVariable}
-        selectedHeader={selectedHeader}
-        selectHeader={setSelectedHeader}
-        selectErrorStep={setErrorStep}
-        handleProcessOrderChange={handleProcessOrderChange}
-      />
-    </Grid>
+    </DragDropContext>
   );
 };

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { forwardRef } from "react";
 import {
   makeStyles,
   Box,
@@ -139,7 +139,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default (props) => {
+export default forwardRef((props, ref) => {
   const isUsingVariable =
     props.entryType === "variable" &&
     props.dataEntry === props.selectedVariable;
@@ -149,7 +149,6 @@ export default (props) => {
     props.entryType === "dataHeader" &&
     props.dataEntry === props.selectedHeader;
 
-  console.log({ selectedHeader: props.selectedHeader, isUsingHeader });
   const { color, bgcolor, Icon } = processTypes[props._type];
   const classes = useStyles({
     selected: props.selected,
@@ -159,18 +158,24 @@ export default (props) => {
 
   return (
     <Box
+      ref={ref}
       mb={3}
       display="flex"
       alignItems="center"
       justifyContent="space-around"
+      {...props.draggableProps}
+      {...props.dragHandleProps}
       className={`${classes.stepWrapper} ${
         isUsingHeader || props.selectedErrorStep ? "active" : ""
-      }`}
+      }
+      `}
     >
       <Box className={`${classes.stepWrapper}-indicator`}> </Box>
       <Box
-        onClick={() => props.selectStep(props.idx)}
-        onMouseLeave={(e) => props.selectStep("")}
+        onClick={() => props.selectSteps((o) => [...o, props.idx])}
+        onMouseLeave={(e) =>
+          props.selectSteps((o) => o.filter((o) => o !== props.idx))
+        }
         className={`${classes.stepWrapper}-step`}
       >
         <Box className={classes.icon}>{Icon}</Box>
@@ -226,4 +231,4 @@ export default (props) => {
       </IconButton>
     </Box>
   );
-};
+});
