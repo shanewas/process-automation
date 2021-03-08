@@ -44,15 +44,18 @@ export default (props) => {
   const tGroups = {};
 
   const mapProcess = (id) => {
-    for (const [p, idx] in process.entries())
+    for (const [idx, p] of process.entries()) {
       if (p.id === id) return { ...p, idx };
+    }
   };
 
   Object.keys(groups).forEach(
     (name) =>
       (tGroups[name] = {
         ...groups[name],
-        processes: groups[name].processes.map(mapProcess),
+        processes: groups[name].processes
+          .map(mapProcess)
+          .sort((a, b) => (a.idx < b.idx ? -1 : 1)),
       })
   );
 
