@@ -9,7 +9,7 @@ export default ({
   variable,
   variables,
 }) => {
-  console.log("%c TYPE EXTRACT DATA ", "background: #222; color: #bada55");
+  // console.log("%c TYPE EXTRACT DATA ", "background: #222; color: #bada55");
   return (
     <Grid container direction="column" spacing={3}>
       <Grid item>

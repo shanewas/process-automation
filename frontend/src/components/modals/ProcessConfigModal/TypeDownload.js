@@ -2,7 +2,7 @@ import React from "react";
 import { TextField, Box, Button } from "@material-ui/core";
 
 export default ({ onChange, xpath, downloadPath, getDownloadFolderPath }) => {
-  console.log("%c TYPE DOWNLOAD DATA ", "background: #222; color: #bada55");
+  // console.log("%c TYPE DOWNLOAD DATA ", "background: #222; color: #bada55");
 
   return (
     <>

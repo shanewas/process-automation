@@ -2,21 +2,15 @@ const initState = {
   // change name to headers
   headers: [],
   variables: [],
-  process: [
-    // {
-    //   _type: "click",
-    //   id: "139fw1n93fn",
-    //   title: "Clicked",
-    // },
-  ],
+  process: [],
   botName: null,
   csvInfo: null,
   errors: {},
   groups: {
-    // dummy: {
-    //   color: "red",
-    //   processes: ["139fw1n93fn"],
-    // },
+    dummy: {
+      color: "red",
+      processes: [],
+    },
   },
   botIteration: 1,
   saved: true,
@@ -36,6 +30,16 @@ const createGroup = (state, { name, color }) => ({
     [name]: {
       color,
       processes: [],
+    },
+  },
+});
+const addtoGroup = (state, { groupName, processId }) => ({
+  ...state,
+  groups: {
+    ...state.groups,
+    [groupName]: {
+      ...state.groups[groupName],
+      processes: [...state.groups[groupName].processes, processId],
     },
   },
 });
@@ -193,7 +197,6 @@ const clearAll = (_) => ({ ...initState });
 // };
 const newProcess = (state, process) => {
   const newprocess = [...state.process, process];
-  console.log(newprocess);
   return {
     ...state,
     saved: false,
@@ -462,6 +465,8 @@ const rootReducer = (state = initState, action) => {
   console.log(action.type);
 
   switch (action.type) {
+    case "ADD_TO_GROUP":
+      return addtoGroup(state, action.payload);
     case "CREATE_GROUP":
       return createGroup(state, action.payload);
     case "UPDATE_BOT":

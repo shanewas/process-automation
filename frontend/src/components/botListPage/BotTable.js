@@ -76,12 +76,11 @@ export default (props) => {
     sortDesc: false,
   });
 
-  console.log(state);
   const dispatch = useDispatch();
 
   const fetchBots = async () => {
     const bots = await electron.ipcRenderer.invoke("bots");
-    console.log(bots);
+
     setState((o) => ({ ...o, bots }));
   };
 

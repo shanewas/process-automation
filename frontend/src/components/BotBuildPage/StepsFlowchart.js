@@ -43,12 +43,10 @@ export default (props) => {
     setStepMenu(initStepMenu);
   };
 
-  console.log({ steps: props.steps });
-
   return (
     <>
       {props.steps.length ? (
-        <Droppable droppableId="steps-flowchart" type="FLOWCHART">
+        <Droppable droppableId="steps-flowchart" type="PROCESSES">
           {(provided) => (
             <Box {...provided.droppableProps} ref={provided.innerRef}>
               {props.steps.map((step, idx) => (
@@ -57,23 +55,25 @@ export default (props) => {
                   draggableId={`fc-${step.id}`}
                   index={idx}
                 >
-                  {(provided) => (
-                    <StepCard
-                      selectedErrorStep={props.errorStep === step.id}
-                      haveError={errors[step.id]?.message}
-                      selectedHeader={props.selectedHeader}
-                      selectedVariable={props.selectedVariable}
-                      selectedVariable={props.selectedVariable}
-                      selected={props.selectedSteps.includes(idx)}
-                      selectSteps={props.selectSteps}
-                      openMenu={(e) => openMenuHandler(e, idx)}
-                      draggableProps={provided.draggableProps}
-                      dragHandleProps={provided.dragHandleProps}
-                      ref={provided.innerRef}
-                      idx={idx}
-                      {...step}
-                    />
-                  )}
+                  {(provided, snapshot) =>
+                    console.log(props.selectedSteps.includes(step.id)) || (
+                      <StepCard
+                        selectedErrorStep={props.errorStep === step.id}
+                        haveError={errors[step.id]?.message}
+                        selectedHeader={props.selectedHeader}
+                        selectedVariable={props.selectedVariable}
+                        selected={props.selectedSteps.includes(step.id)}
+                        selectSteps={props.selectSteps}
+                        openMenu={(e) => openMenuHandler(e, idx)}
+                        draggableProps={provided.draggableProps}
+                        dragHandleProps={provided.dragHandleProps}
+                        ref={provided.innerRef}
+                        beingDragged={snapshot.isDragging}
+                        idx={idx}
+                        {...step}
+                      />
+                    )
+                  }
                 </Draggable>
               ))}
               {provided.placeholder}

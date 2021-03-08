@@ -75,7 +75,7 @@ export default (props) => {
           path: file.path,
           rowNumber: result.data.length,
         };
-        console.log({ csvInfo });
+        // console.log({ csvInfo });
         dispatch(
           loadCsv({
             headers,

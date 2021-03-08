@@ -77,7 +77,6 @@ export default createMuiTheme({
     },
     MuiButton: {
       root: {
-        textTransform: "capitalize",
         fontWeight: 700,
         fontSize: "16px",
         textTransform: "none",

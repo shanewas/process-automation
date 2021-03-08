@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import {
   Accordion,
   AccordionDetails,
@@ -15,6 +15,7 @@ import {
   ExpandMore as ExpandMoreIcon,
   Delete as DeleteIcon,
 } from "@material-ui/icons";
+import { Droppable } from "react-beautiful-dnd";
 
 const useStyles = makeStyles({
   color: {
@@ -34,6 +35,7 @@ const useStyles = makeStyles({
 
 export default (props) => {
   const { setCurrentModal } = useContext(ModalContext);
+  const [expanded, setExpanded] = useState(false);
   const classes = useStyles();
   const { groups, process } = useSelector(({ groups, process }) => ({
     groups,
@@ -41,7 +43,10 @@ export default (props) => {
   }));
   const tGroups = {};
 
-  const mapProcess = (id) => process.find((p) => p.id === id);
+  const mapProcess = (id) => {
+    for (const [p, idx] in process.entries())
+      if (p.id === id) return { ...p, idx };
+  };
 
   Object.keys(groups).forEach(
     (name) =>
@@ -51,15 +56,17 @@ export default (props) => {
       })
   );
 
-  console.log("groups ", { tGroups });
+  console.log("groups ", { tGroups, process });
 
   const openCreateGroupModal = () =>
     setCurrentModal({ name: "ProcessGroupModal" });
 
-  // dummy: {
-  //   color: "red",
-  //   processes: [{...},{...}],
-  // },
+  const handleAccordionChange = (panel) => (event, isExpanded) => {
+    isExpanded
+      ? props.selectSteps(groups[panel].processes)
+      : props.selectSteps([]);
+    setExpanded(isExpanded ? panel : false);
+  };
 
   return (
     <>
@@ -73,44 +80,78 @@ export default (props) => {
       </Button>
       <Box mt={4}>
         {Object.entries(tGroups).map(([name, { color, processes }]) => (
-          <Accordion key={name}>
-            <AccordionSummary
-              classes={{
-                root: classes.heading,
-                content: classes.vCenter,
-              }}
-              expandIcon={<ExpandMoreIcon />}
-            >
-              <Box
-                className={classes.color}
-                style={{ backgroundColor: color }}
-              />
-              <Typography>{name}</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              {processes.map((p, idx) => (
-                <Box
-                  py={1}
-                  px={1.5}
-                  mb={1}
-                  borderRadius="4px"
-                  bgcolor="#121212"
-                  width="100%"
-                  display="flex"
-                  alignItems="center"
-                  justifyContent="space-between"
-                  key={p.id}
+          <Droppable type="PROCESSES" key={name} droppableId={`group-${name}`}>
+            {(provided, snapshot) => (
+              <Accordion
+                expanded={snapshot.isDraggingOver || expanded === name}
+                onChange={handleAccordionChange(name)}
+                style={
+                  snapshot.isDraggingOver
+                    ? {
+                        boxShadow: `0px 0px 5px ${color}`,
+                        transition: ".3s",
+                      }
+                    : {}
+                }
+                ref={provided.innerRef}
+              >
+                <AccordionSummary
+                  classes={{
+                    root: classes.heading,
+                    content: classes.vCenter,
+                  }}
+                  expandIcon={<ExpandMoreIcon />}
                 >
-                  <Typography>
-                    {idx + 1}. {p.title}
-                  </Typography>
-                  <IconButton size="small">
-                    <DeleteIcon />
-                  </IconButton>
-                </Box>
-              ))}
-            </AccordionDetails>
-          </Accordion>
+                  <Box
+                    className={classes.color}
+                    style={{ backgroundColor: color }}
+                  />
+                  <Typography>{name}</Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <Box width="100%" display="flex" flexDirection="column">
+                    {processes.length ? (
+                      processes.map((p, idx) => (
+                        <Box
+                          py={1}
+                          px={1.5}
+                          mb={1}
+                          borderRadius="4px"
+                          bgcolor="#121212"
+                          display="flex"
+                          alignItems="center"
+                          justifyContent="space-between"
+                          key={p.id}
+                        >
+                          <Typography>
+                            {idx + 1}. {p.title}
+                          </Typography>
+                          <IconButton size="small">
+                            <DeleteIcon />
+                          </IconButton>
+                        </Box>
+                      ))
+                    ) : (
+                      <Box
+                        p={1.5}
+                        width="100%"
+                        border="1px solid rgba(247, 245, 245,.2)"
+                        borderRadius="4px"
+                        color="#eee"
+                        textAlign="center"
+                      >
+                        <Typography>Empty Group</Typography>
+                        <Typography variant="body2">
+                          Drag and Drop steps in here.
+                        </Typography>
+                      </Box>
+                    )}
+                  </Box>
+                </AccordionDetails>
+                <span style={{ display: "none" }}>{provided.placeholder}</span>
+              </Accordion>
+            )}
+          </Droppable>
         ))}
       </Box>
     </>

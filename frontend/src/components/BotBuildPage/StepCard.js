@@ -169,12 +169,17 @@ export default forwardRef((props, ref) => {
         isUsingHeader || props.selectedErrorStep ? "active" : ""
       }
       `}
+      style={{
+        ...props.draggableProps.style,
+        opacity: props.beingDragged ? 0.6 : 1,
+      }}
     >
       <Box className={`${classes.stepWrapper}-indicator`}> </Box>
       <Box
-        onClick={() => props.selectSteps((o) => [...o, props.idx])}
+        style={props.beingDragged ? { border: "1px solid #eee" } : {}}
+        onClick={() => props.selectSteps((o) => [...o, props.id])}
         onMouseLeave={(e) =>
-          props.selectSteps((o) => o.filter((o) => o !== props.idx))
+          props.selectSteps((o) => o.filter((o) => o !== props.id))
         }
         className={`${classes.stepWrapper}-step`}
       >

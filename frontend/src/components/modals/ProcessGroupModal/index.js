@@ -56,8 +56,6 @@ const ProcessGroupModal = (props) => {
   const [groupColor, setGroupColor] = useState("");
   const groups = useSelector((state) => state.groups);
 
-  console.log({ groups });
-
   const handleCreate = () => {
     if (!groupName.trim() || !groupColor)
       return setCurrentToastr({
@@ -71,6 +69,10 @@ const ProcessGroupModal = (props) => {
     setCurrentToastr({
       msg: "Group created",
       success: true,
+      anchorOrigin: {
+        vertical: "top",
+        horizontal: "center",
+      },
     });
     props.handleClose();
   };

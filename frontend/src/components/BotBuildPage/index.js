@@ -13,7 +13,11 @@ import StatusSidebar from "./StatusSidebar";
 import StepsFlowchart from "./StepsFlowchart";
 import * as electron from "../../electronScript";
 import { useDispatch, useSelector } from "react-redux";
-import { changeProcessOrder, newProcessAction } from "../../Store/actions";
+import {
+  addToGroup,
+  changeProcessOrder,
+  newProcessAction,
+} from "../../Store/actions";
 import shortId from "shortid";
 import generateStepObject from "./utils/generateStepObject";
 import { ModalContext } from "../../context/ModalContext";
@@ -59,7 +63,10 @@ export default (props) => {
   const dispatch = useDispatch();
   const steps = useSelector((state) => state.process);
   const botName = useSelector((state) => state.botName);
+  const groups = useSelector((state) => state.groups);
   const { setCurrentModal } = useContext(ModalContext);
+
+  console.log("selectedSteps ", selectedSteps);
 
   const handleProcessLink = (e, content) => {
     const process = { ...content, id: shortId() };
@@ -83,7 +90,6 @@ export default (props) => {
   };
 
   const handleDragEnd = async (result) => {
-    console.log(result);
     const { destination, source } = result;
     if (!destination) return;
     if (
@@ -91,15 +97,23 @@ export default (props) => {
       destination.index === source.index
     )
       return;
+    const parted = destination.droppableId.split("-");
 
     if (
       destination.droppableId === "outline" &&
       source.droppableId === "outline"
     )
       return dispatch(changeProcessOrder(result));
+
+    if (source.droppableId === "steps-flowchart" && parted[0] === "group") {
+      const groupName = parted[1];
+      const processId = result.draggableId.split("fc-")[1];
+      return groups[groupName].processes.includes(processId)
+        ? null
+        : dispatch(addToGroup(groupName, processId));
+    }
   };
 
-  console.log(selectedSteps);
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
       <Grid container>
