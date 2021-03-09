@@ -15,7 +15,16 @@ import { useSelector, useDispatch } from "react-redux";
 import { ModalContext } from "../../../context/ModalContext";
 import { createGroup } from "../../../Store/actions";
 
-const colors = ["#61BD4F", "#F2D600", "#FF9F1A", "#F56E5A", "#E195FE"];
+const colors = [
+  "#61BD4F",
+  "#F2D600",
+  "#FF9F1A",
+  "#F56E5A",
+  "#E195FE",
+  "#58FCEC",
+  "#F9E7E7",
+  "#EF626C",
+];
 const clrObj = {};
 for (const c in colors)
   clrObj[`&.active&-${c}::before`] = { borderColor: colors[c] };

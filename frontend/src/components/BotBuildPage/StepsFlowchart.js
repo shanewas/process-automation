@@ -22,8 +22,12 @@ const initStepMenu = {
 };
 export default (props) => {
   const [stepMenu, setStepMenu] = useState(initStepMenu);
-  const { setCurrentModal } = useContext(ModalContext);
+  const { setCurrentModal, setCurrentToastr } = useContext(ModalContext);
   const errors = useSelector((state) => state.errors);
+  const { groups, process } = useSelector(({ groups, process }) => ({
+    groups,
+    process,
+  }));
   const dispatch = useDispatch();
 
   const openMenuHandler = (e, idx) => setStepMenu({ anchorEl: e.target, idx });
@@ -39,6 +43,13 @@ export default (props) => {
   };
 
   const handleRemoveStep = () => {
+    for (const groupName in groups) {
+      if (groups[groupName].processes.includes(process[stepMenu.idx].id))
+        return setCurrentToastr({
+          msg: `Cannot delete the process. As it is a part of '${groupName}' group`,
+          anchorOrigin: { horizontal: "center", vertical: "top" },
+        });
+    }
     dispatch(removeStep(stepMenu.idx));
     setStepMenu(initStepMenu);
   };

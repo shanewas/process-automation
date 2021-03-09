@@ -10,12 +10,13 @@ import {
   IconButton,
 } from "@material-ui/core";
 import { ModalContext } from "../../../context/ModalContext";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   ExpandMore as ExpandMoreIcon,
   Delete as DeleteIcon,
 } from "@material-ui/icons";
 import { Droppable } from "react-beautiful-dnd";
+import { removeFromGroup } from "../../../Store/actions";
 
 const useStyles = makeStyles({
   color: {
@@ -34,9 +35,10 @@ const useStyles = makeStyles({
 });
 
 export default (props) => {
-  const { setCurrentModal } = useContext(ModalContext);
+  const { setCurrentModal, setCurrentToastr } = useContext(ModalContext);
   const [expanded, setExpanded] = useState(false);
   const classes = useStyles();
+  const dispatch = useDispatch();
   const { groups, process } = useSelector(({ groups, process }) => ({
     groups,
     process,
@@ -50,16 +52,14 @@ export default (props) => {
   };
 
   Object.keys(groups).forEach(
-    (name) =>
-      (tGroups[name] = {
-        ...groups[name],
-        processes: groups[name].processes
+    (groupName) =>
+      (tGroups[groupName] = {
+        ...groups[groupName],
+        processes: groups[groupName].processes
           .map(mapProcess)
           .sort((a, b) => (a.idx < b.idx ? -1 : 1)),
       })
   );
-
-  console.log("groups ", { tGroups, process });
 
   const openCreateGroupModal = () =>
     setCurrentModal({ name: "ProcessGroupModal" });
@@ -69,6 +69,16 @@ export default (props) => {
       ? props.selectSteps(groups[panel].processes)
       : props.selectSteps([]);
     setExpanded(isExpanded ? panel : false);
+  };
+
+  const removeProcess = (groupName, processId) => {
+    props.selectSteps([]);
+    dispatch(removeFromGroup(groupName, processId));
+    setCurrentToastr({
+      msg: `Process removed from the group ${groupName}`,
+      success: true,
+      anchorOrigin: { horizontal: "center", vertical: "top" },
+    });
   };
 
   return (
@@ -82,16 +92,20 @@ export default (props) => {
         Create new
       </Button>
       <Box mt={4}>
-        {Object.entries(tGroups).map(([name, { color, processes }]) => (
-          <Droppable type="PROCESSES" key={name} droppableId={`group-${name}`}>
+        {Object.entries(tGroups).map(([groupName, { color, processes }]) => (
+          <Droppable
+            type="PROCESSES"
+            key={groupName}
+            droppableId={`group-${groupName}`}
+          >
             {(provided, snapshot) => (
               <Accordion
-                expanded={snapshot.isDraggingOver || expanded === name}
-                onChange={handleAccordionChange(name)}
+                expanded={snapshot.isDraggingOver || expanded === groupName}
+                onChange={handleAccordionChange(groupName)}
                 style={
                   snapshot.isDraggingOver
                     ? {
-                        boxShadow: `0px 0px 5px ${color}`,
+                        boxShadow: `0px 0px 10px ${color}`,
                         transition: ".3s",
                       }
                     : {}
@@ -109,7 +123,7 @@ export default (props) => {
                     className={classes.color}
                     style={{ backgroundColor: color }}
                   />
-                  <Typography>{name}</Typography>
+                  <Typography>{groupName}</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
                   <Box width="100%" display="flex" flexDirection="column">
@@ -129,7 +143,10 @@ export default (props) => {
                           <Typography>
                             {idx + 1}. {p.title}
                           </Typography>
-                          <IconButton size="small">
+                          <IconButton
+                            onClick={() => removeProcess(groupName, p.id)}
+                            size="small"
+                          >
                             <DeleteIcon />
                           </IconButton>
                         </Box>

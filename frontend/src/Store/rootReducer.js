@@ -6,12 +6,7 @@ const initState = {
   botName: null,
   csvInfo: null,
   errors: {},
-  groups: {
-    dummy: {
-      color: "red",
-      processes: [],
-    },
-  },
+  groups: {},
   botIteration: 1,
   saved: true,
   screenshotPath: "",
@@ -33,13 +28,26 @@ const createGroup = (state, { name, color }) => ({
     },
   },
 });
-const addtoGroup = (state, { groupName, processId }) => ({
+const addToGroup = (state, { groupName, processId }) => ({
   ...state,
   groups: {
     ...state.groups,
     [groupName]: {
       ...state.groups[groupName],
       processes: [...state.groups[groupName].processes, processId],
+    },
+  },
+});
+
+const removeFromGroup = (state, { groupName, processId }) => ({
+  ...state,
+  groups: {
+    ...state.groups,
+    [groupName]: {
+      ...state.groups[groupName],
+      processes: state.groups[groupName].processes.filter(
+        (p) => p !== processId
+      ),
     },
   },
 });
@@ -465,8 +473,10 @@ const rootReducer = (state = initState, action) => {
   console.log(action.type);
 
   switch (action.type) {
+    case "REMOVE_FROM_GROUP":
+      return removeFromGroup(state, action.payload);
     case "ADD_TO_GROUP":
-      return addtoGroup(state, action.payload);
+      return addToGroup(state, action.payload);
     case "CREATE_GROUP":
       return createGroup(state, action.payload);
     case "UPDATE_BOT":

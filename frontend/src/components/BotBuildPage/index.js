@@ -64,7 +64,7 @@ export default (props) => {
   const steps = useSelector((state) => state.process);
   const botName = useSelector((state) => state.botName);
   const groups = useSelector((state) => state.groups);
-  const { setCurrentModal } = useContext(ModalContext);
+  const { setCurrentModal, setCurrentToastr } = useContext(ModalContext);
 
   console.log("selectedSteps ", selectedSteps);
 
@@ -99,17 +99,27 @@ export default (props) => {
       return;
     const parted = destination.droppableId.split("-");
 
+    // re-arranging process/steps in outline
     if (
       destination.droppableId === "outline" &&
       source.droppableId === "outline"
     )
       return dispatch(changeProcessOrder(result));
 
+    // adding to a group
     if (source.droppableId === "steps-flowchart" && parted[0] === "group") {
       const groupName = parted[1];
       const processId = result.draggableId.split("fc-")[1];
+      setCurrentToastr({
+        msg: `Process added to the group '${groupName}'`,
+        success: true,
+        anchorOrigin: { vertical: "top", horizontal: "center" },
+      });
       return groups[groupName].processes.includes(processId)
-        ? null
+        ? setCurrentToastr({
+            msg: `Cannot add the same process more than once`,
+            anchorOrigin: { vertical: "top", horizontal: "center" },
+          })
         : dispatch(addToGroup(groupName, processId));
     }
   };
