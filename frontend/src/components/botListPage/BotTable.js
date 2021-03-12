@@ -105,6 +105,7 @@ export default (props) => {
       variables = [],
       csvInfo = null,
       botIteration = 1,
+      groups = {},
     } = await electron.ipcRenderer.invoke("bot-name", botName);
     dispatch(
       loadBot({
@@ -114,6 +115,7 @@ export default (props) => {
         botName,
         csvInfo,
         botIteration,
+        groups,
       })
     );
     history.push("/build");
