@@ -2,7 +2,7 @@ import React from "react";
 import { TextField, Grid } from "@material-ui/core";
 
 export default ({ onChange, value }) => {
-  console.log("%c TYPE CLICK ", "background: #222; color: #bada55");
+  // console.log("%c TYPE CLICK ", "background: #222; color: #bada55");
   return (
     <Grid container direction="column" spacing={3}>
       <Grid item>

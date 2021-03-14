@@ -17,17 +17,15 @@ export default (props) => {
       <Typography>No Steps to display</Typography>
     </Box>
   ) : (
-    <DragDropContext onDragEnd={props.handleProcessOrderChange}>
-      <Droppable droppableId="droppable">
-        {(provided) => (
-          <Box {...provided.droppableProps} ref={provided.innerRef}>
-            {props.steps.map((step, index) => (
-              <OutlineItem key={step.id} step={step} {...props} index={index} />
-            ))}
-            {provided.placeholder}
-          </Box>
-        )}
-      </Droppable>
-    </DragDropContext>
+    <Droppable droppableId="outline">
+      {(provided) => (
+        <Box {...provided.droppableProps} ref={provided.innerRef}>
+          {props.steps.map((step, index) => (
+            <OutlineItem key={step.id} step={step} {...props} index={index} />
+          ))}
+          {provided.placeholder}
+        </Box>
+      )}
+    </Droppable>
   );
 };

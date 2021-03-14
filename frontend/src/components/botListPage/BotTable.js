@@ -25,7 +25,7 @@ import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   tableHead: {
-    backgroundColor: "#1F202E",
+    backgroundColor: "#0D0D0D",
   },
   thCell: {
     fontSize: "18px",
@@ -76,12 +76,11 @@ export default (props) => {
     sortDesc: false,
   });
 
-  console.log(state);
   const dispatch = useDispatch();
 
   const fetchBots = async () => {
     const bots = await electron.ipcRenderer.invoke("bots");
-    console.log(bots);
+
     setState((o) => ({ ...o, bots }));
   };
 
@@ -106,6 +105,7 @@ export default (props) => {
       variables = [],
       csvInfo = null,
       botIteration = 1,
+      groups = {},
     } = await electron.ipcRenderer.invoke("bot-name", botName);
     dispatch(
       loadBot({
@@ -115,6 +115,7 @@ export default (props) => {
         botName,
         csvInfo,
         botIteration,
+        groups,
       })
     );
     history.push("/build");

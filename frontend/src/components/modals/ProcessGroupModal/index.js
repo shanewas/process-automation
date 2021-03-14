@@ -1,120 +1,145 @@
-import React from "react";
+import React, { useState, useContext } from "react";
 import {
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
-  Button,
-  Grid,
-  makeStyles,
-  IconButton,
   Box,
+  Typography,
+  Button,
+  makeStyles,
+  FilledInput,
 } from "@material-ui/core";
+import { Check as CheckIcon } from "@material-ui/icons";
+import { useSelector, useDispatch } from "react-redux";
+import { ModalContext } from "../../../context/ModalContext";
+import { createGroup } from "../../../Store/actions";
 
-import { Close as CloseIcon, Timer as TimerIcon } from "@material-ui/icons";
+const colors = [
+  "#61BD4F",
+  "#F2D600",
+  "#FF9F1A",
+  "#F56E5A",
+  "#E195FE",
+  "#58FCEC",
+  "#F9E7E7",
+  "#EF626C",
+];
+const clrObj = {};
+for (const c in colors)
+  clrObj[`&.active&-${c}::before`] = { borderColor: colors[c] };
 
-const useStyles = makeStyles((theme) => ({
-  processGroup: {
-    border: "1px solid #c4c6c8",
-    borderRadius: "5px",
-    color: "#c4c6c8",
-    textAlign: "center",
-    padding: "6px",
-    margin: theme.spacing(0.5),
-    fontSize: "14.5px",
+const useStyles = makeStyles({
+  color: {
+    height: "30px",
+    width: "30px",
+    borderRadius: "50px",
+    marginRight: "16px",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
+    position: "relative",
+    cursor: "pointer",
 
-    "&:hover": {
-      color: "#363636",
-      borderColor: "#363636",
+    "&.active::before": {
+      background: "none",
+      borderRadius: "50px",
+      border: "2px solid #fff",
+      content: "''",
+      display: "block",
+      position: "absolute",
+      top: "-4px",
+      left: "-4px",
+      right: "-4px",
+      bottom: "-4px",
     },
+    ...clrObj,
   },
-  pgWrapper: {
-    display: "flex",
-    flexDirection: "column",
-  },
-  color: {
-    height: "20px",
-    width: "20px",
-    borderRadius: "100px",
-    backgroundColor: "red",
-  },
-}));
+});
 
-export default ({ open, handleClose }) => {
+const ProcessGroupModal = (props) => {
   const classes = useStyles();
-  const colors = ["#61BD4F", "#F2D600", "#FF9F1A", "#F56E5A", "#E195FE"];
+  const { setCurrentToastr } = useContext(ModalContext);
+  const dispatch = useDispatch();
+  const [groupName, setGroupName] = useState("");
+  const [groupColor, setGroupColor] = useState("");
+  const groups = useSelector((state) => state.groups);
 
-  const processGroups = [
-    {
-      id: 1,
-      name: "Using Screenshot",
-      processes: [1, 2, 3, 4],
-      iteration: 2,
-      color: 1,
-    },
-    {
-      id: 2,
-      name: "Logging in",
-      processes: [1],
-      iteration: 3,
-      color: 2,
-    },
-    {
-      id: 3,
-      name: "Saving Doc",
-      processes: [1, 2, 3],
-      iteration: 2,
-      color: 3,
-    },
-    {
-      id: 4,
-      name: "Saving Files",
-      processes: [1, 2, 3, 4],
-      iteration: 2,
-      color: 4,
-    },
-  ];
+  const handleCreate = () => {
+    if (!groupName.trim() || !groupColor)
+      return setCurrentToastr({
+        msg: "Please enter a name and select a color",
+      });
+    if (Object.keys(groups).includes(groupName))
+      return setCurrentToastr({
+        msg: "2 Groups cannot have the same name. Please enter another one.",
+      });
+    dispatch(createGroup(groupName.trim().toLowerCase(), groupColor));
+    setCurrentToastr({
+      msg: "Group created",
+      success: true,
+      anchorOrigin: {
+        vertical: "top",
+        horizontal: "center",
+      },
+    });
+    props.handleClose();
+  };
+
   return (
-    <Dialog open={open}>
-      <DialogTitle>
-        <Grid container justify="space-between" alignItems="center">
-          <Grid item>Process groups</Grid>
-          <Grid item>
-            <IconButton onClick={handleClose}>
-              <CloseIcon style={{ fontSize: "16px" }} />
-            </IconButton>
-          </Grid>
-        </Grid>
-      </DialogTitle>
+    <Dialog fullWidth open={true}>
+      <DialogTitle>Create a new group</DialogTitle>
       <DialogContent>
-        <Box className={classes.pgWrapper}>
-          {processGroups.map((pg) => (
-            <Box key={pg.id} className={classes.processGroup}>
-              <Box
-                mr={2}
-                className={classes.color}
-                style={{ backgroundColor: colors[pg.color] }}
-              ></Box>
-              <Box mr={2}>{pg.id}</Box>
-              {pg.name}
-              <Box ml={2}>
-                <TimerIcon size={20} /> {pg.iteration}
-              </Box>
+        <Box p={2}>
+          <FilledInput
+            inputProps={{ maxLength: 12 }}
+            value={groupName}
+            onChange={(e) => setGroupName(e.target.value)}
+            disableUnderline
+            fullWidth
+            placeholder="Group name"
+          />
+          <Box display="flex" mt={5}>
+            <Typography variant="h5">Color:</Typography>
+            <Box ml={2} display="flex">
+              {colors.map((clr, idx) => (
+                <Box
+                  key={clr}
+                  onClick={() => setGroupColor(clr)}
+                  className={`${classes.color} ${
+                    groupColor === clr ? `active ${classes.color}-${idx}` : ""
+                  }`}
+                  style={{ backgroundColor: clr }}
+                >
+                  {groupColor === clr && <CheckIcon />}
+                </Box>
+              ))}
             </Box>
-          ))}
+          </Box>
         </Box>
       </DialogContent>
       <DialogActions>
-        <Button variant="outlined" onClick={handleClose}>
-          Cancel
-        </Button>
-        <Button disableElevation variant="contained" color="primary">
-          Create
-        </Button>
+        <Box pb={2}>
+          <Button
+            disableElevation
+            style={{ marginRight: "12px" }}
+            variant="contained"
+            onClick={props.handleClose}
+          >
+            Close
+          </Button>
+          <Button
+            onClick={handleCreate}
+            disableElevation
+            color="primary"
+            variant="contained"
+          >
+            Create
+          </Button>
+        </Box>
       </DialogActions>
     </Dialog>
   );
 };
+
+export default ProcessGroupModal;

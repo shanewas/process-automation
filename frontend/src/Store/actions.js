@@ -1,3 +1,16 @@
+export const removeFromGroup = (groupName, processId) => ({
+  type: "REMOVE_FROM_GROUP",
+  payload: { groupName, processId },
+});
+export const addToGroup = (groupName, processId) => ({
+  type: "ADD_TO_GROUP",
+  payload: { groupName, processId },
+});
+export const createGroup = (name, color) => ({
+  type: "CREATE_GROUP",
+  payload: { name, color },
+});
+
 export const updateErrors = (errors) => ({
   type: "UPDATE_ERRORS",
   errors,

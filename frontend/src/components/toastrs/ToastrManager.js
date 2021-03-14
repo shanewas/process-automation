@@ -4,7 +4,7 @@ import { Snackbar, makeStyles } from "@material-ui/core";
 
 const useStyles = makeStyles({
   snackbar: {
-    backgroundColor: (props) => (props.success ? "#4EC3B2" : "#EA8103"),
+    backgroundColor: (props) => (props.success ? "#3AAF9E" : "#EA8103"),
     color: "#fff",
     fontSize: "16px",
     fontWeight: 700,
@@ -21,6 +21,7 @@ const ToastrManager = (props) => {
       ContentProps={{
         className: classes.snackbar,
       }}
+      anchorOrigin={currentToastr.anchorOrigin}
       open={!!Object.keys(currentToastr).length}
       autoHideDuration={5000}
       message={currentToastr.msg}

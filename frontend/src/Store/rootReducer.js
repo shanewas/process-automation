@@ -6,6 +6,7 @@ const initState = {
   botName: null,
   csvInfo: null,
   errors: {},
+  groups: {},
   botIteration: 1,
   saved: true,
   screenshotPath: "",
@@ -16,6 +17,40 @@ const initState = {
   // change name to csvInfo
   // datasetProperties: null,
 };
+
+const createGroup = (state, { name, color }) => ({
+  ...state,
+  groups: {
+    ...state.groups,
+    [name]: {
+      color,
+      processes: [],
+    },
+  },
+});
+const addToGroup = (state, { groupName, processId }) => ({
+  ...state,
+  groups: {
+    ...state.groups,
+    [groupName]: {
+      ...state.groups[groupName],
+      processes: [...state.groups[groupName].processes, processId],
+    },
+  },
+});
+
+const removeFromGroup = (state, { groupName, processId }) => ({
+  ...state,
+  groups: {
+    ...state.groups,
+    [groupName]: {
+      ...state.groups[groupName],
+      processes: state.groups[groupName].processes.filter(
+        (p) => p !== processId
+      ),
+    },
+  },
+});
 
 const changeProcessOrder = (state, { source, destination, draggableId }) => {
   const newProcess = Array.from(state.process);
@@ -170,7 +205,6 @@ const clearAll = (_) => ({ ...initState });
 // };
 const newProcess = (state, process) => {
   const newprocess = [...state.process, process];
-  console.log(newprocess);
   return {
     ...state,
     saved: false,
@@ -439,6 +473,12 @@ const rootReducer = (state = initState, action) => {
   console.log(action.type);
 
   switch (action.type) {
+    case "REMOVE_FROM_GROUP":
+      return removeFromGroup(state, action.payload);
+    case "ADD_TO_GROUP":
+      return addToGroup(state, action.payload);
+    case "CREATE_GROUP":
+      return createGroup(state, action.payload);
     case "UPDATE_BOT":
       return updateBot(state, action.data);
     case "NEW_BOT":

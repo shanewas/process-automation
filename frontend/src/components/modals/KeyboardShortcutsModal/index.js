@@ -45,7 +45,7 @@ export default ({ open, handleClose, code, saveCode }) => {
       <Box
         px={2}
         py={1.5}
-        bgcolor="#2E2F35"
+        bgcolor="#363636"
         display="flex"
         alignItems="center"
         justifyContent="space-between"

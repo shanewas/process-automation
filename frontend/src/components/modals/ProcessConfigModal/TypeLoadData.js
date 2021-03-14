@@ -20,7 +20,7 @@ export default ({
   headers,
   onClearHeaderData,
 }) => {
-  console.log("%c TYPE LOAD DATA ", "background: #222; color: #bada55");
+  // console.log("%c TYPE LOAD DATA ", "background: #222; color: #bada55");
   return (
     <Grid container direction="column" spacing={3}>
       <Grid item container spacing={2} alignItems="center">

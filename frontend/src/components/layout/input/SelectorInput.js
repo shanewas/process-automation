@@ -11,7 +11,6 @@ const SelectorInput = ({
   optionsConfigure,
 }) => (
   <Grid container nopad="true" alignItems="center" spacing={2}>
-    {console.log("selector input")}
     <Grid item>
       <Typography>{placeholder}:</Typography>
     </Grid>

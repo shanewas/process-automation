@@ -4,8 +4,8 @@ export default createMuiTheme({
   palette: {
     type: "dark",
     background: {
-      default: "#0A0B16",
-      paper: "#2D2E3C",
+      default: "#191D1E",
+      paper: "#26292B",
     },
     primary: {
       main: "#5C87DC",
@@ -77,7 +77,6 @@ export default createMuiTheme({
     },
     MuiButton: {
       root: {
-        textTransform: "capitalize",
         fontWeight: 700,
         fontSize: "16px",
         textTransform: "none",

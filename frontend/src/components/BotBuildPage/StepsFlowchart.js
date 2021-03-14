@@ -14,6 +14,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { removeStep } from "../../Store/actions";
 import { ModalContext } from "../../context/ModalContext";
+import { Draggable, Droppable } from "react-beautiful-dnd";
 
 const initStepMenu = {
   anchorEl: null,
@@ -21,8 +22,12 @@ const initStepMenu = {
 };
 export default (props) => {
   const [stepMenu, setStepMenu] = useState(initStepMenu);
-  const { setCurrentModal } = useContext(ModalContext);
+  const { setCurrentModal, setCurrentToastr } = useContext(ModalContext);
   const errors = useSelector((state) => state.errors);
+  const { groups, process } = useSelector(({ groups, process }) => ({
+    groups,
+    process,
+  }));
   const dispatch = useDispatch();
 
   const openMenuHandler = (e, idx) => setStepMenu({ anchorEl: e.target, idx });
@@ -38,6 +43,13 @@ export default (props) => {
   };
 
   const handleRemoveStep = () => {
+    for (const groupName in groups) {
+      if (groups[groupName].processes.includes(process[stepMenu.idx].id))
+        return setCurrentToastr({
+          msg: `Cannot delete the process. As it is a part of '${groupName}' group`,
+          anchorOrigin: { horizontal: "center", vertical: "top" },
+        });
+    }
     dispatch(removeStep(stepMenu.idx));
     setStepMenu(initStepMenu);
   };
@@ -45,21 +57,40 @@ export default (props) => {
   return (
     <>
       {props.steps.length ? (
-        props.steps.map((step, idx) => (
-          <StepCard
-            selectedErrorStep={props.errorStep === step.id}
-            haveError={errors[step.id]?.message}
-            selectedHeader={props.selectedHeader}
-            selectedVariable={props.selectedVariable}
-            selectedVariable={props.selectedVariable}
-            selected={props.selectedStep === idx}
-            selectStep={props.selectStep}
-            openMenu={(e) => openMenuHandler(e, idx)}
-            idx={idx}
-            key={step.id}
-            {...step}
-          />
-        ))
+        <Droppable droppableId="steps-flowchart" type="PROCESSES">
+          {(provided) => (
+            <Box {...provided.droppableProps} ref={provided.innerRef}>
+              {props.steps.map((step, idx) => (
+                <Draggable
+                  key={step.id}
+                  draggableId={`fc-${step.id}`}
+                  index={idx}
+                >
+                  {(provided, snapshot) =>
+                    console.log(props.selectedSteps.includes(step.id)) || (
+                      <StepCard
+                        selectedErrorStep={props.errorStep === step.id}
+                        haveError={errors[step.id]?.message}
+                        selectedHeader={props.selectedHeader}
+                        selectedVariable={props.selectedVariable}
+                        selected={props.selectedSteps.includes(step.id)}
+                        selectSteps={props.selectSteps}
+                        openMenu={(e) => openMenuHandler(e, idx)}
+                        draggableProps={provided.draggableProps}
+                        dragHandleProps={provided.dragHandleProps}
+                        ref={provided.innerRef}
+                        beingDragged={snapshot.isDragging}
+                        idx={idx}
+                        {...step}
+                      />
+                    )
+                  }
+                </Draggable>
+              ))}
+              {provided.placeholder}
+            </Box>
+          )}
+        </Droppable>
       ) : (
         <Box textAlign="center">
           <Typography variant="h6">

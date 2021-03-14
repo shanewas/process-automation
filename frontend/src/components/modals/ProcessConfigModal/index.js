@@ -73,7 +73,6 @@ export default ({ open, handleClose, stepIdx }) => {
   //   if (typeof tProcess[v] === "undefined") tProcess[v] = "";
 
   useEffect(() => {
-    console.log("useeffect");
     const tStep = { ...initFields, ...currentStep };
     for (const v in step) {
       if (typeof tStep[v] === "undefined") tStep[v] = "";
@@ -148,7 +147,7 @@ export default ({ open, handleClose, stepIdx }) => {
     const folderPath = await electron.ipcRenderer.sendSync(
       electron.getDownloadFolderPath
     );
-    console.log({ folderPath });
+    // console.log({ folderPath });
     folderPath && setStep((o) => ({ ...o, screenshotPath: folderPath }));
   };
 

@@ -201,7 +201,6 @@ const BotSidebar = () => {
 
 export default (props) => {
   const { pathname } = useLocation();
-  console.log(pathname);
   return pathname === "/" ? null : pathname === "/build" ? (
     <BotSidebar />
   ) : (

@@ -40,15 +40,18 @@ const OutlineItem = ({ step, index, ...props }) => {
           alignItems="center"
           mb={2}
           {...provided.draggableProps}
-          {...provided.dragHandleProps}
           ref={provided.innerRef}
         >
-          <DragIcon style={{ marginRight: "10px" }} />
+          <span {...provided.dragHandleProps}>
+            <DragIcon style={{ marginRight: "10px" }} />
+          </span>
           <Box
-            onClick={() => props.selectStep(index)}
-            onMouseLeave={(e) => props.selectStep("")}
+            onClick={() => props.selectSteps((o) => [...o, step.id])}
+            onMouseLeave={(e) =>
+              props.selectSteps((o) => o.filter((o) => o !== step.id))
+            }
             className={`${classes.step} ${
-              props.selectedStep === index && "active"
+              props.selectedSteps.includes(step.id) && "active"
             }`}
           >
             {processTypes[step._type]?.Icon}
