@@ -10,6 +10,7 @@ const initState = {
   botIteration: 1,
   saved: true,
   screenshotPath: "",
+
   // selectedHeader: null,
   // status: [],
   // filepath: null,
@@ -27,6 +28,7 @@ const createGroup = (state, { name, color }) => ({
       processes: [],
     },
   },
+  saved: false,
 });
 const addToGroup = (state, { groupName, processId }) => ({
   ...state,
@@ -37,6 +39,7 @@ const addToGroup = (state, { groupName, processId }) => ({
       processes: [...state.groups[groupName].processes, processId],
     },
   },
+  saved: false,
 });
 
 const removeFromGroup = (state, { groupName, processId }) => ({
@@ -50,6 +53,7 @@ const removeFromGroup = (state, { groupName, processId }) => ({
       ),
     },
   },
+  saved: false,
 });
 
 const changeProcessOrder = (state, { source, destination, draggableId }) => {
@@ -62,6 +66,7 @@ const changeProcessOrder = (state, { source, destination, draggableId }) => {
   return {
     ...state,
     process: newProcess,
+    saved: false,
   };
 };
 

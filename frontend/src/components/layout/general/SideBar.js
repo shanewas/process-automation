@@ -28,6 +28,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { clearAll, saveBot, updateErrors } from "../../../Store/actions";
 import checkBot from "../../BotBuildPage/checkBot";
 import logo from "../../../images/logo.png";
+import { mapProcessesAndIdx } from "../../BotBuildPage/utils/grouping";
 
 const links = [
   {
@@ -116,7 +117,9 @@ const General = () => {
 const BotSidebar = () => {
   const history = useHistory();
   const { setCurrentModal, setCurrentToastr } = useContext(ModalContext);
-  const { saved, errors, process, ...bot } = useSelector((state) => state);
+  const { saved, errors, process, groups: tGroups, ...bot } = useSelector(
+    (state) => state
+  );
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
 
@@ -139,8 +142,13 @@ const BotSidebar = () => {
       });
     }
     setLoading(true);
+    const groups = mapProcessesAndIdx(process, tGroups);
+    console.log({ groups });
     await electron.ipcRenderer.send("update-bot-process", bot.botName, process);
-    await electron.ipcRenderer.send("update-bot", bot.botName, bot);
+    await electron.ipcRenderer.send("update-bot", bot.botName, {
+      ...bot,
+      groups,
+    });
     setLoading(false);
     dispatch(saveBot());
     setCurrentToastr({
