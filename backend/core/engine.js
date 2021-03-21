@@ -62,6 +62,10 @@ async function start_bot(e, botName, mainWindow, PARAMS) {
   await GetBot(botName)
     .then((docs) => {
       PARAMS.BOTS = docs;
+      for (var property in PARAMS.BOTS.groups) {
+        console.log(property);
+        PARAMS.BOT_PROCESS_GROUPS.push(property); // Outputs: foo, fiz or fiz, foo
+      }
     })
     .then(async () => {
       botsReady = true;
@@ -182,6 +186,7 @@ async function run_bot(e, BROWSER, mainWindow, PARAMS) {
         dat,
         conditionStatus = true;
       try {
+        console.log(PARAMS.BOT_PROCESS_GROUPS);
         switch (element._type) {
           case "LoadData":
             switch (element.entryType) {
@@ -493,7 +498,10 @@ async function run_bot(e, BROWSER, mainWindow, PARAMS) {
                       //   fs.mkdirSync(element.ocrPath);
                       // }
                       let ocr_filename = `${PARAMS.BOTS.botName}_${PARAMS.IDX}${PARAMS.PROCESSCOUNTER}.txt`;
-                      let saveTo = path.join(element.screenshotPath, ocr_filename);
+                      let saveTo = path.join(
+                        element.screenshotPath,
+                        ocr_filename
+                      );
                       await Tesseract.recognize(pathTo, "eng", {
                         logger: async (m) => {
                           console.log(m);
