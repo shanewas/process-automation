@@ -17,6 +17,7 @@ import {
 } from "@material-ui/icons";
 import { Droppable } from "react-beautiful-dnd";
 import { removeFromGroup } from "../../../Store/actions";
+import { mapProcessesOfGroups } from "../utils/grouping";
 
 const useStyles = makeStyles({
   color: {
@@ -43,24 +44,8 @@ export default (props) => {
     groups,
     process,
   }));
-  const tGroups = {};
 
-  const mapProcess = (id) => {
-    for (const [idx, p] of process.entries()) {
-      if (p.id === id) return { ...p, idx };
-    }
-  };
-
-  Object.keys(groups).forEach(
-    (groupName) =>
-      (tGroups[groupName] = {
-        ...groups[groupName],
-        processes: groups[groupName].processes
-          .map(mapProcess)
-          .sort((a, b) => (a.idx < b.idx ? -1 : 1)),
-      })
-  );
-
+  const tGroups = mapProcessesOfGroups(process, groups);
   const openCreateGroupModal = () =>
     setCurrentModal({ name: "ProcessGroupModal" });
 
