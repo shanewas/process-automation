@@ -27,6 +27,7 @@ class BOT_PARAMS {
     this.BOT_PROCESS_GROUPS = [];
     this.BOT_PROCESS_GROUPS_IDX = [];
     this.ITERATION = 1;
+    this.GROUP_ITERATION = 1;
     this.BOT_VARIABLES = [];
     this.PROCESSLENGTH = 0;
     this.PROCESSCOUNTER = 0;

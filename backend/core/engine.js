@@ -157,6 +157,11 @@ async function start_bot(e, botName, mainWindow, PARAMS) {
 }
 
 async function run_bot(e, BROWSER, mainWindow, PARAMS) {
+  for (i = 0; i < PARAMS.BOT_PROCESS_GROUPS.length; i++) {
+    PARAMS.GROUP_ITERATION =
+      PARAMS.BOTS.groups[PARAMS.BOT_PROCESS_GROUPS[i]].Idx;
+    console.log(PARAMS.GROUP_ITERATION);
+  }
   let isLoading = false;
   let autoLoad = false;
   let page = await PIE.getPage(BROWSER, loadingWindow, false).catch((err) => {
@@ -186,7 +191,10 @@ async function run_bot(e, BROWSER, mainWindow, PARAMS) {
         dat,
         conditionStatus = true;
       try {
-        console.log(PARAMS.BOT_PROCESS_GROUPS);
+        // console.log(PARAMS.BOTS);
+        // console.log(PARAMS.BOTS["groups"]);
+        // console.log(PARAMS.BOTS["groups"]["a"]);
+        console.log(PARAMS.BOTS.groups["a"]);
         switch (element._type) {
           case "LoadData":
             switch (element.entryType) {
