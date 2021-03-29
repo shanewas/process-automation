@@ -61,27 +61,46 @@ const ProcessGroupModal = (props) => {
   const classes = useStyles();
   const { setCurrentToastr } = useContext(ModalContext);
   const dispatch = useDispatch();
-  const [groupName, setGroupName] = useState("");
-  const [iteration, setIteration] = useState("");
-  const [groupColor, setGroupColor] = useState("");
+  // const [groupName, setGroupName] = useState("");
+  // const [iteration, setIteration] = useState("");
+  // const [group.color, setGroupColor] = useState("");
+  const [group, setGroup] = useState({
+    name: "",
+    iteration: "",
+    color: "",
+  });
+
+  const handleChange = (e) => {
+    e.persist();
+    const target = e.target;
+    setGroup((o) => ({
+      ...o,
+      [target.name]:
+        target.type === "number" ? target.valueAsNumber : target.value,
+    }));
+  };
   const groups = useSelector((state) => state.groups);
 
   const handleCreate = () => {
-    const grpName = groupName.trim();
-    if (!grpName || !groupColor)
+    const grpName = group.name.trim();
+    if (!grpName || !group.color)
       return setCurrentToastr({
         msg: "Please enter a name and select a color",
       });
-    if (Object.keys(groups).includes(groupName))
+    if (Object.keys(groups).includes(group.name))
       return setCurrentToastr({
         msg: "2 Groups cannot have the same name. Please enter another one.",
       });
-    if (iteration < 1)
+    if (group.iteration < 1)
       return setCurrentToastr({
         msg: "Iteration count has to be more than 1",
       });
     dispatch(
-      createGroup({ name: grpName.toLowerCase(), color: groupColor, iteration })
+      createGroup({
+        name: grpName.toLowerCase(),
+        color: group.color,
+        iteration: group.iteration,
+      })
     );
     setCurrentToastr({
       msg: "Group created",
@@ -101,16 +120,18 @@ const ProcessGroupModal = (props) => {
         <Box>
           <FilledInput
             inputProps={{ maxLength: 12 }}
-            value={groupName}
-            onChange={(e) => setGroupName(e.target.value)}
+            value={group.name}
+            name="name"
+            onChange={handleChange}
             disableUnderline
             fullWidth
             placeholder="Group name"
           />
           <Box my={4}>
             <FilledInput
-              value={iteration}
-              onChange={(e) => setIteration(e.target.valueAsNumber)}
+              name="iteration"
+              value={group.iteration}
+              onChange={handleChange}
               disableUnderline
               fullWidth
               placeholder="Iteration count"
@@ -122,13 +143,13 @@ const ProcessGroupModal = (props) => {
             {colors.map((clr, idx) => (
               <Box
                 key={clr}
-                onClick={() => setGroupColor(clr)}
+                onClick={() => setGroup((o) => ({ ...o, color: clr }))}
                 className={`${classes.color} ${
-                  groupColor === clr ? `active ${classes.color}-${idx}` : ""
+                  group.color === clr ? `active ${classes.color}-${idx}` : ""
                 }`}
                 style={{ backgroundColor: clr }}
               >
-                {groupColor === clr && <CheckIcon />}
+                {group.color === clr && <CheckIcon />}
               </Box>
             ))}
           </Box>
