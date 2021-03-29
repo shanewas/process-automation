@@ -13,7 +13,7 @@ import {
 import { Check as CheckIcon } from "@material-ui/icons";
 import { useSelector, useDispatch } from "react-redux";
 import { ModalContext } from "../../../context/ModalContext";
-import { createGroup } from "../../../Store/actions";
+import { createGroup, editGroup } from "../../../Store/actions";
 
 const colors = [
   "#61BD4F",
@@ -61,14 +61,18 @@ const ProcessGroupModal = (props) => {
   const classes = useStyles();
   const { setCurrentToastr } = useContext(ModalContext);
   const dispatch = useDispatch();
-  // const [groupName, setGroupName] = useState("");
-  // const [iteration, setIteration] = useState("");
-  // const [group.color, setGroupColor] = useState("");
-  const [group, setGroup] = useState({
-    name: "",
-    iteration: "",
-    color: "",
-  });
+  const groupToEdit = useSelector((state) => state.groups[props.groupName]);
+  console.log({ groupToEdit });
+
+  const [group, setGroup] = useState(
+    groupToEdit
+      ? { ...groupToEdit, name: props.groupName }
+      : {
+          name: "",
+          iteration: "",
+          color: "",
+        }
+  );
 
   const handleChange = (e) => {
     e.persist();
@@ -76,7 +80,9 @@ const ProcessGroupModal = (props) => {
     setGroup((o) => ({
       ...o,
       [target.name]:
-        target.type === "number" ? target.valueAsNumber : target.value,
+        target.type === "number" && target.value !== ""
+          ? target.valueAsNumber
+          : target.value,
     }));
   };
   const groups = useSelector((state) => state.groups);
@@ -87,23 +93,22 @@ const ProcessGroupModal = (props) => {
       return setCurrentToastr({
         msg: "Please enter a name and select a color",
       });
-    if (Object.keys(groups).includes(group.name))
+    if (Object.keys(groups).includes(group.name) && !groupToEdit)
       return setCurrentToastr({
         msg: "2 Groups cannot have the same name. Please enter another one.",
       });
-    if (group.iteration < 1)
+    if (group.iteration < 1 || group.iteration > 99)
       return setCurrentToastr({
-        msg: "Iteration count has to be more than 1",
+        msg: "Iteration count has to be more than 1 and less than 99",
       });
-    dispatch(
-      createGroup({
-        name: grpName.toLowerCase(),
-        color: group.color,
-        iteration: group.iteration,
-      })
-    );
+    const toSave = {
+      name: grpName.toLowerCase(),
+      color: group.color,
+      iteration: group.iteration,
+    };
+    dispatch(groupToEdit ? editGroup(toSave) : createGroup(toSave));
     setCurrentToastr({
-      msg: "Group created",
+      msg: `Group ${groupToEdit ? "Updated" : "Created"}`,
       success: true,
       anchorOrigin: {
         vertical: "top",
@@ -115,7 +120,9 @@ const ProcessGroupModal = (props) => {
 
   return (
     <Dialog fullWidth open={true}>
-      <DialogTitle>Create a new group</DialogTitle>
+      <DialogTitle>
+        {groupToEdit ? "Update Group" : "Create a new group"}
+      </DialogTitle>
       <DialogContent>
         <Box>
           <FilledInput
@@ -126,6 +133,7 @@ const ProcessGroupModal = (props) => {
             disableUnderline
             fullWidth
             placeholder="Group name"
+            disabled={groupToEdit}
           />
           <Box my={4}>
             <FilledInput

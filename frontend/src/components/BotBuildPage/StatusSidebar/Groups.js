@@ -13,6 +13,7 @@ import { ModalContext } from "../../../context/ModalContext";
 import { useDispatch, useSelector } from "react-redux";
 import {
   ExpandMore as ExpandMoreIcon,
+  Edit as EditIcon,
   Delete as DeleteIcon,
 } from "@material-ui/icons";
 import { Droppable } from "react-beautiful-dnd";
@@ -35,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
   },
   iteration: {
     borderRadius: "3px",
-    width: "20px",
+    width: "25px",
     height: "20px",
     display: "flex",
     alignItems: "center",
@@ -55,8 +56,8 @@ export default (props) => {
   }));
 
   const tGroups = mapProcessesOfGroups(process, groups);
-  const openCreateGroupModal = () =>
-    setCurrentModal({ name: "ProcessGroupModal" });
+  const openCreateGroupModal = (groupName = null) =>
+    setCurrentModal({ name: "ProcessGroupModal", props: { groupName } });
 
   const handleAccordionChange = (panel) => (event, isExpanded) => {
     isExpanded
@@ -120,12 +121,17 @@ export default (props) => {
                     />
                     <Typography>{groupName}</Typography>
                     <Box
+                      mr="auto"
                       className={classes.iteration}
                       border={`1px solid ${color}`}
                       color={color}
                     >
                       {iteration}
                     </Box>
+                    <EditIcon
+                      onClick={() => openCreateGroupModal(groupName)}
+                      fontSize="small"
+                    />
                   </AccordionSummary>
                   <AccordionDetails>
                     <Box width="100%" display="flex" flexDirection="column">

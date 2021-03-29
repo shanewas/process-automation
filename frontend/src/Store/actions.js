@@ -11,6 +11,11 @@ export const createGroup = (group) => ({
   payload: group,
 });
 
+export const editGroup = (group) => ({
+  type: "EDIT_GROUP",
+  payload: group,
+});
+
 export const updateErrors = (errors) => ({
   type: "UPDATE_ERRORS",
   errors,
