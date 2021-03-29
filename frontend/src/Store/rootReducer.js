@@ -19,12 +19,13 @@ const initState = {
   // datasetProperties: null,
 };
 
-const createGroup = (state, { name, color }) => ({
+const createGroup = (state, { name, color, ...other }) => ({
   ...state,
   groups: {
     ...state.groups,
     [name]: {
       color,
+      ...other,
       processes: [],
     },
   },
