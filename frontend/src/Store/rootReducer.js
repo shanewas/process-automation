@@ -10,7 +10,6 @@ const initState = {
   botIteration: 1,
   saved: true,
   screenshotPath: "",
-
   // selectedHeader: null,
   // status: [],
   // filepath: null,
@@ -19,12 +18,24 @@ const initState = {
   // datasetProperties: null,
 };
 
-const createGroup = (state, { name, color }) => ({
+const editGroup = (state, { name, ...other }) => ({
   ...state,
   groups: {
     ...state.groups,
     [name]: {
-      color,
+      ...other,
+      processes: state.groups[name].processes,
+    },
+  },
+  saved: false,
+});
+
+const createGroup = (state, { name, ...other }) => ({
+  ...state,
+  groups: {
+    ...state.groups,
+    [name]: {
+      ...other,
       processes: [],
     },
   },
@@ -482,6 +493,8 @@ const rootReducer = (state = initState, action) => {
       return removeFromGroup(state, action.payload);
     case "ADD_TO_GROUP":
       return addToGroup(state, action.payload);
+    case "EDIT_GROUP":
+      return editGroup(state, action.payload);
     case "CREATE_GROUP":
       return createGroup(state, action.payload);
     case "UPDATE_BOT":

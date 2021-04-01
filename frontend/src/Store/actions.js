@@ -6,9 +6,14 @@ export const addToGroup = (groupName, processId) => ({
   type: "ADD_TO_GROUP",
   payload: { groupName, processId },
 });
-export const createGroup = (name, color) => ({
+export const createGroup = (group) => ({
   type: "CREATE_GROUP",
-  payload: { name, color },
+  payload: group,
+});
+
+export const editGroup = (group) => ({
+  type: "EDIT_GROUP",
+  payload: group,
 });
 
 export const updateErrors = (errors) => ({

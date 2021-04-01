@@ -13,7 +13,7 @@ import {
 import { Check as CheckIcon } from "@material-ui/icons";
 import { useSelector, useDispatch } from "react-redux";
 import { ModalContext } from "../../../context/ModalContext";
-import { createGroup } from "../../../Store/actions";
+import { createGroup, editGroup } from "../../../Store/actions";
 
 const colors = [
   "#61BD4F",
@@ -61,22 +61,54 @@ const ProcessGroupModal = (props) => {
   const classes = useStyles();
   const { setCurrentToastr } = useContext(ModalContext);
   const dispatch = useDispatch();
-  const [groupName, setGroupName] = useState("");
-  const [groupColor, setGroupColor] = useState("");
+  const groupToEdit = useSelector((state) => state.groups[props.groupName]);
+  console.log({ groupToEdit });
+
+  const [group, setGroup] = useState(
+    groupToEdit
+      ? { ...groupToEdit, name: props.groupName }
+      : {
+          name: "",
+          iteration: "",
+          color: "",
+        }
+  );
+
+  const handleChange = (e) => {
+    e.persist();
+    const target = e.target;
+    setGroup((o) => ({
+      ...o,
+      [target.name]:
+        target.type === "number" && target.value !== ""
+          ? target.valueAsNumber
+          : target.value,
+    }));
+  };
   const groups = useSelector((state) => state.groups);
 
   const handleCreate = () => {
-    if (!groupName.trim() || !groupColor)
+    const grpName = group.name.trim();
+    if (!grpName || !group.color)
       return setCurrentToastr({
         msg: "Please enter a name and select a color",
       });
-    if (Object.keys(groups).includes(groupName))
+    if (Object.keys(groups).includes(group.name) && !groupToEdit)
       return setCurrentToastr({
         msg: "2 Groups cannot have the same name. Please enter another one.",
       });
-    dispatch(createGroup(groupName.trim().toLowerCase(), groupColor));
+    if (group.iteration < 1 || group.iteration > 99)
+      return setCurrentToastr({
+        msg: "Iteration count has to be more than 1 and less than 99",
+      });
+    const toSave = {
+      name: grpName.toLowerCase(),
+      color: group.color,
+      iteration: group.iteration,
+    };
+    dispatch(groupToEdit ? editGroup(toSave) : createGroup(toSave));
     setCurrentToastr({
-      msg: "Group created",
+      msg: `Group ${groupToEdit ? "Updated" : "Created"}`,
       success: true,
       anchorOrigin: {
         vertical: "top",
@@ -88,33 +120,46 @@ const ProcessGroupModal = (props) => {
 
   return (
     <Dialog fullWidth open={true}>
-      <DialogTitle>Create a new group</DialogTitle>
+      <DialogTitle>
+        {groupToEdit ? "Update Group" : "Create a new group"}
+      </DialogTitle>
       <DialogContent>
-        <Box p={2}>
+        <Box>
           <FilledInput
             inputProps={{ maxLength: 12 }}
-            value={groupName}
-            onChange={(e) => setGroupName(e.target.value)}
+            value={group.name}
+            name="name"
+            onChange={handleChange}
             disableUnderline
             fullWidth
             placeholder="Group name"
+            disabled={groupToEdit}
           />
-          <Box display="flex" mt={5}>
-            <Typography variant="h5">Color:</Typography>
-            <Box ml={2} display="flex">
-              {colors.map((clr, idx) => (
-                <Box
-                  key={clr}
-                  onClick={() => setGroupColor(clr)}
-                  className={`${classes.color} ${
-                    groupColor === clr ? `active ${classes.color}-${idx}` : ""
-                  }`}
-                  style={{ backgroundColor: clr }}
-                >
-                  {groupColor === clr && <CheckIcon />}
-                </Box>
-              ))}
-            </Box>
+          <Box my={4}>
+            <FilledInput
+              name="iteration"
+              value={group.iteration}
+              onChange={handleChange}
+              disableUnderline
+              fullWidth
+              placeholder="Iteration count"
+              type="number"
+            />
+          </Box>
+          <Typography variant="h5">Color:</Typography>
+          <Box mt={2} display="flex">
+            {colors.map((clr, idx) => (
+              <Box
+                key={clr}
+                onClick={() => setGroup((o) => ({ ...o, color: clr }))}
+                className={`${classes.color} ${
+                  group.color === clr ? `active ${classes.color}-${idx}` : ""
+                }`}
+                style={{ backgroundColor: clr }}
+              >
+                {group.color === clr && <CheckIcon />}
+              </Box>
+            ))}
           </Box>
         </Box>
       </DialogContent>
