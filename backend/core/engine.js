@@ -63,7 +63,6 @@ async function start_bot(e, botName, mainWindow, PARAMS) {
     .then((docs) => {
       PARAMS.BOTS = docs;
       for (var property in PARAMS.BOTS.groups) {
-        console.log(property);
         PARAMS.BOT_PROCESS_GROUPS.push(property); // Outputs: foo, fiz or fiz, foo
       }
     })
@@ -297,7 +296,7 @@ async function run_bot(e, BROWSER, mainWindow, PARAMS) {
                     await page
                       .waitForXPath(element.xpath, { visible: true })
                       .then(async () => {
-                        elements = await page.$x(element.xpath);
+                        elements = await page.$(element.xpath);
                         if (element.clearField)
                           await elements[0].click({ clickCount: 3 });
                         await elements[0].type(dat, { delay: 200 });

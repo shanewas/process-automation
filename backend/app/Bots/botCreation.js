@@ -3,7 +3,7 @@ const { createWindow } = require("../WindowManagement/window");
 
 let contectWindow = null;
 
-function bot_create(mainWindow, LINKALREADYOPENED) {
+function bot_create(mainWindow, LINKALREADYOPENED, proxyData) {
   ipcMain.on("search-link", function (event, args) {
     let procSeq = {
       ocr: false,
@@ -35,11 +35,10 @@ function bot_create(mainWindow, LINKALREADYOPENED) {
     };
     if (!LINKALREADYOPENED) {
       LINKALREADYOPENED = true;
-      contectWindow = createWindow(procSeq.link, mainWindow, false, true, true);
     } else {
       contectWindow.destroy();
-      contectWindow = createWindow(procSeq.link, mainWindow, false, true, true);
     }
+    contectWindow = createWindow(procSeq.link, mainWindow, false, true, true);
     contectWindow.setResizable(false);
     contectWindow.openDevTools();
     contectWindow.on("close", (e) => {
