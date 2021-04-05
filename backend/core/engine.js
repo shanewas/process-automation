@@ -64,9 +64,11 @@ async function start_bot(e, botName, mainWindow, PARAMS) {
       PARAMS.BOTS = docs;
       for (var property in PARAMS.BOTS.groups) {
         PARAMS.BOT_PROCESS_GROUPS.push(property);
-        PARAMS.GROUP_PROCESS_INDEX = PARAMS.GROUP_PROCESS_INDEX.concat(
-          PARAMS.BOTS.groups[property]["processesIdx"]
-        );
+        for (i = 0; i < PARAMS.BOTS.groups[property]["iteration"]; i++) {
+          PARAMS.GROUP_PROCESS_INDEX = PARAMS.GROUP_PROCESS_INDEX.concat(
+            PARAMS.BOTS.groups[property]["processesIdx"]
+          );
+        }
       }
     })
     .then(async () => {
@@ -104,7 +106,8 @@ async function start_bot(e, botName, mainWindow, PARAMS) {
   await GetProcess(botName)
     .then((docs) => {
       PARAMS.BOTPROCESS = docs;
-      PARAMS.PROCESSLENGTH = PARAMS.BOTPROCESS.processSequence.length;
+      // PARAMS.PROCESSLENGTH = PARAMS.BOTPROCESS.processSequence.length;
+      PARAMS.PROCESSLENGTH = PARAMS.GROUP_PROCESS_INDEX.length - 1;
     })
     .then(async () => {
       procSeqReady = true;
@@ -182,6 +185,9 @@ async function run_bot(e, BROWSER, mainWindow, PARAMS) {
       console.log(
         `*** Currently on No. #${PARAMS.PROCESSCOUNTER} flowchart item ***`
       );
+      console.log(PARAMS.GROUP_PROCESS_INDEX);
+      console.log(PARAMS.GROUP_PROCESS_INDEX.length);
+      console.log(PARAMS.ITERATION);
       element =
         PARAMS.BOTPROCESS.processSequence[PARAMS.GROUP_PROCESS_INDEX.shift()];
       let elements,
