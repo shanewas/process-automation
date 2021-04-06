@@ -19,10 +19,16 @@ export default ({ open, handleClose }) => {
   const {
     botName: botname,
     botIteration: botiteration,
-  } = useSelector(({ botName, botIteration }) => ({ botName, botIteration }));
+    proxy: tProxy = "",
+  } = useSelector(({ botName, botIteration, proxy }) => ({
+    botName,
+    botIteration,
+    proxy,
+  }));
 
   const [botName, setBotName] = useState(botname);
   const [botIteration, setBotIteration] = useState(botiteration);
+  const [proxy, setProxy] = useState(tProxy);
   const [errors, setErrors] = useState({});
 
   const handleUpdateBot = () => {
@@ -32,7 +38,7 @@ export default ({ open, handleClose }) => {
     if (isNaN(botIteration) || botIteration <= 0)
       return setErrors({ botIteration: "Must be a number and greater than 0" });
 
-    dispatch(updateBot({ botName, botIteration }));
+    dispatch(updateBot({ botName, botIteration, proxy }));
     handleClose();
   };
 
@@ -49,24 +55,34 @@ export default ({ open, handleClose }) => {
         </Grid>
       </DialogTitle>
       <DialogContent>
-        <Box mb={4}>
+        <TextField
+          disabled
+          error={!!errors.botName}
+          helperText={errors.botName}
+          label="Bot name"
+          onChange={(e) => setBotName(e.target.value)}
+          value={botName}
+          variant="outlined"
+          fullWidth
+        />
+
+        <Box my={4}>
           <TextField
-            disabled
-            error={!!errors.botName}
-            helperText={errors.botName}
-            label="Bot name"
-            onChange={(e) => setBotName(e.target.value)}
-            value={botName}
+            error={!!errors.botIteration}
+            helperText={errors.botIteration}
+            label="Bot Iteration"
+            onChange={(e) => setBotIteration(e.target.value)}
+            value={botIteration}
             variant="outlined"
             fullWidth
           />
         </Box>
         <TextField
-          error={!!errors.botIteration}
-          helperText={errors.botIteration}
-          label="Bot Iteration"
-          onChange={(e) => setBotIteration(e.target.value)}
-          value={botIteration}
+          error={!!errors.proxy}
+          helperText={errors.proxy}
+          label="Proxy"
+          onChange={(e) => setProxy(e.target.value)}
+          value={proxy}
           variant="outlined"
           fullWidth
         />

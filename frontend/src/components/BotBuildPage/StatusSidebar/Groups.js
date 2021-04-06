@@ -15,6 +15,7 @@ import {
   ExpandMore as ExpandMoreIcon,
   Edit as EditIcon,
   Delete as DeleteIcon,
+  Autorenew as IterationIcon,
 } from "@material-ui/icons";
 import { Droppable } from "react-beautiful-dnd";
 import { removeFromGroup } from "../../../Store/actions";
@@ -36,8 +37,7 @@ const useStyles = makeStyles((theme) => ({
   },
   iteration: {
     borderRadius: "3px",
-    width: "25px",
-    height: "20px",
+    padding: "2px 7px",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -126,6 +126,9 @@ export default (props) => {
                       border={`1px solid ${color}`}
                       color={color}
                     >
+                      <IterationIcon
+                        style={{ marginRight: "4px", fontSize: "16px" }}
+                      />
                       {iteration}
                     </Box>
                     <EditIcon

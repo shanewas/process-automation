@@ -22,22 +22,26 @@ export const mapProcessesOfGroups = (processes, groups) => {
 
 export const mapProcessesAndIdx = (processes, groups) => {
   const tGroups = {};
+  const groupedProcesses = {};
 
   const mapProcess = (id) => {
     for (const [idx, p] of processes.entries()) {
       if (p.id === id) return { id, idx };
     }
   };
+
   const groupProcesses = (tProcesses) => {
     const processes = [];
     const processesIdx = [];
 
+    // tProcesses are (groups internal processes)
     tProcesses
       .map(mapProcess)
       .sort((a, b) => (a.idx < b.idx ? -1 : 1))
       .forEach(({ id, idx }) => {
         processes.push(id);
         processesIdx.push(idx);
+        groupedProcesses[idx] = true;
       });
 
     return {
@@ -46,6 +50,8 @@ export const mapProcessesAndIdx = (processes, groups) => {
     };
   };
 
+  // First
+  // looping over the groups to return the exact stuff but with processes and their index
   Object.keys(groups).forEach(
     (groupName) =>
       (tGroups[groupName] = {
@@ -54,5 +60,5 @@ export const mapProcessesAndIdx = (processes, groups) => {
       })
   );
 
-  return tGroups;
+  return { tGroups, groupedProcesses };
 };

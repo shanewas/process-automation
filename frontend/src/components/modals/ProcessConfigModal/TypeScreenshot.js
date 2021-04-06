@@ -21,7 +21,6 @@ export default ({
   getOcrFolderPath,
   ocrPath,
 }) => {
-  // console.log("%c TYPE SCREENSHOT ", "background: #222; color: #bada55");
   return (
     <Box>
       <Grid container nopad="true" spacing={2} alignItems="center">

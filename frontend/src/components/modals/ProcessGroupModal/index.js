@@ -9,21 +9,22 @@ import {
   Button,
   makeStyles,
   FilledInput,
+  IconButton,
 } from "@material-ui/core";
-import { Check as CheckIcon } from "@material-ui/icons";
+import { Check as CheckIcon, Close as CloseIcon } from "@material-ui/icons";
 import { useSelector, useDispatch } from "react-redux";
 import { ModalContext } from "../../../context/ModalContext";
-import { createGroup, editGroup } from "../../../Store/actions";
+import { createGroup, editGroup, deleteGroup } from "../../../Store/actions";
 
 const colors = [
   "#61BD4F",
+  "#EF626C",
   "#F2D600",
   "#FF9F1A",
   "#F56E5A",
   "#E195FE",
   "#58FCEC",
   "#F9E7E7",
-  "#EF626C",
 ];
 const clrObj = {};
 for (const c in colors)
@@ -62,7 +63,6 @@ const ProcessGroupModal = (props) => {
   const { setCurrentToastr } = useContext(ModalContext);
   const dispatch = useDispatch();
   const groupToEdit = useSelector((state) => state.groups[props.groupName]);
-  console.log({ groupToEdit });
 
   const [group, setGroup] = useState(
     groupToEdit
@@ -118,10 +118,30 @@ const ProcessGroupModal = (props) => {
     props.handleClose();
   };
 
+  const handleDelete = () => {
+    if (window.confirm(`Do you really want to delete '${group.name}' Group`)) {
+      dispatch(deleteGroup(group.name));
+      setCurrentToastr({
+        msg: `'${group.name}' has been deleted`,
+        success: true,
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "center",
+        },
+      });
+      props.handleClose();
+    }
+  };
+
   return (
     <Dialog fullWidth open={true}>
       <DialogTitle>
-        {groupToEdit ? "Update Group" : "Create a new group"}
+        <Box display="flex" alignItems="center" justifyContent="space-between">
+          {groupToEdit ? "Update Group" : "Create a new group"}{" "}
+          <IconButton size="small" onClick={props.handleClose}>
+            <CloseIcon />
+          </IconButton>
+        </Box>
       </DialogTitle>
       <DialogContent>
         <Box>
@@ -133,7 +153,7 @@ const ProcessGroupModal = (props) => {
             disableUnderline
             fullWidth
             placeholder="Group name"
-            disabled={groupToEdit}
+            disabled={!!groupToEdit}
           />
           <Box my={4}>
             <FilledInput
@@ -165,21 +185,27 @@ const ProcessGroupModal = (props) => {
       </DialogContent>
       <DialogActions>
         <Box pb={2}>
-          <Button
-            disableElevation
-            style={{ marginRight: "12px" }}
-            variant="contained"
-            onClick={props.handleClose}
-          >
-            Close
-          </Button>
+          {groupToEdit && (
+            <Button
+              disableElevation
+              onClick={handleDelete}
+              style={{
+                marginRight: "12px",
+                background: "#000",
+                color: "#fff",
+              }}
+              variant="contained"
+            >
+              Delete
+            </Button>
+          )}
           <Button
             onClick={handleCreate}
             disableElevation
             color="primary"
             variant="contained"
           >
-            Create
+            {groupToEdit ? "Update" : "Create"}
           </Button>
         </Box>
       </DialogActions>

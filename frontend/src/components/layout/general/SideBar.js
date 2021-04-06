@@ -142,8 +142,19 @@ const BotSidebar = () => {
       });
     }
     setLoading(true);
-    const groups = mapProcessesAndIdx(process, tGroups);
-    console.log({ groups });
+    const { tGroups: groups, groupedProcesses } = mapProcessesAndIdx(
+      process,
+      tGroups
+    );
+
+    // const gp = {
+    //   processId1: true,
+    //   processId3: true,
+    //   processId6: true,
+    // }
+
+    console.log({ groupedProcesses });
+
     await electron.ipcRenderer.send("update-bot-process", bot.botName, process);
     await electron.ipcRenderer.send("update-bot", bot.botName, {
       ...bot,

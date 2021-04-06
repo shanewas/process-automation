@@ -10,12 +10,20 @@ const initState = {
   botIteration: 1,
   saved: true,
   screenshotPath: "",
+  proxy: "",
   // selectedHeader: null,
   // status: [],
   // filepath: null,
   // prevStatus: null,
   // change name to csvInfo
   // datasetProperties: null,
+};
+
+const deleteGroup = (state, { name }) => {
+  console.log({ name });
+  const tState = { ...state };
+  delete tState.groups[name];
+  return { ...tState, saved: false };
 };
 
 const editGroup = (state, { name, ...other }) => ({
@@ -115,12 +123,14 @@ const newBot = (state, botName) => ({
   botName,
 });
 
-const updateBot = (state, { botName, botIteration }) => ({
-  ...state,
-  saved: false,
-  botName: botName || state.botName,
-  botIteration: botIteration || state.botIteration,
-});
+const updateBot = (state, { botName, botIteration, proxy }) =>
+  console.log({ proxy }) || {
+    ...state,
+    saved: false,
+    botName: botName || state.botName,
+    botIteration: botIteration || state.botIteration,
+    proxy: proxy || "",
+  };
 
 const loadCsv = (state, { headers: tHeaders, csvInfo }) => {
   const headers = tHeaders.map((h) => ({ name: h, usedBy: [] }));
@@ -489,6 +499,8 @@ const rootReducer = (state = initState, action) => {
   console.log(action.type);
 
   switch (action.type) {
+    case "DELETE_GROUP":
+      return deleteGroup(state, action.payload);
     case "REMOVE_FROM_GROUP":
       return removeFromGroup(state, action.payload);
     case "ADD_TO_GROUP":
