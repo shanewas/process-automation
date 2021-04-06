@@ -1,3 +1,7 @@
+export const deleteGroup = (name) => ({
+  type: "DELETE_GROUP",
+  payload: { name },
+});
 export const removeFromGroup = (groupName, processId) => ({
   type: "REMOVE_FROM_GROUP",
   payload: { groupName, processId },
