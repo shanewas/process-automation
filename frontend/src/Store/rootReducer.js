@@ -10,7 +10,11 @@ const initState = {
   botIteration: 1,
   saved: true,
   screenshotPath: "",
-  proxy: "",
+  socket: "",
+  ip: "",
+  port: "",
+  browserAgent: "",
+  // proxy: "",
   // selectedHeader: null,
   // status: [],
   // filepath: null,
@@ -123,14 +127,11 @@ const newBot = (state, botName) => ({
   botName,
 });
 
-const updateBot = (state, { botName, botIteration, proxy }) =>
-  console.log({ proxy }) || {
-    ...state,
-    saved: false,
-    botName: botName || state.botName,
-    botIteration: botIteration || state.botIteration,
-    proxy: proxy || "",
-  };
+const updateBot = (state, data) => ({
+  ...state,
+  saved: false,
+  ...data,
+});
 
 const loadCsv = (state, { headers: tHeaders, csvInfo }) => {
   const headers = tHeaders.map((h) => ({ name: h, usedBy: [] }));

@@ -8,37 +8,71 @@ import {
   Grid,
   IconButton,
   Button,
-  Box,
+  makeStyles,
+  Select,
+  MenuItem,
 } from "@material-ui/core";
 import { Close as CloseIcon } from "@material-ui/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { updateBot } from "../../../Store/actions";
 
+const useStyles = makeStyles((theme) => ({
+  wrapper: {
+    "& > *": {
+      marginBottom: theme.spacing(4),
+    },
+  },
+}));
+
 export default ({ open, handleClose }) => {
+  const classes = useStyles();
   const dispatch = useDispatch();
   const {
-    botName: botname,
-    botIteration: botiteration,
-    proxy: tProxy = "",
-  } = useSelector(({ botName, botIteration, proxy }) => ({
     botName,
     botIteration,
-    proxy,
-  }));
+    socket,
+    ip,
+    port,
+    browserAgent = "",
+  } = useSelector(
+    ({ botName, botIteration, proxy, socket, ip, port, browserAgent }) => ({
+      botName,
+      botIteration,
+      proxy,
+      socket,
+      ip,
+      port,
+      browserAgent,
+    })
+  );
 
-  const [botName, setBotName] = useState(botname);
-  const [botIteration, setBotIteration] = useState(botiteration);
-  const [proxy, setProxy] = useState(tProxy);
+  const [botConfig, setBotconfig] = useState({
+    botName,
+    botIteration,
+    socket,
+    ip,
+    port,
+    browserAgent,
+  });
+
+  const handleChange = (e) => {
+    e.persist();
+    setBotconfig((o) => ({
+      ...o,
+      [e.target.name]: e.target.value,
+    }));
+  };
+
   const [errors, setErrors] = useState({});
 
   const handleUpdateBot = () => {
-    if (!botName || !botName.trim)
+    if (!botConfig.botName || !botConfig.botName.trim)
       return setErrors({ botName: "Field required." });
 
-    if (isNaN(botIteration) || botIteration <= 0)
+    if (isNaN(botConfig.botIteration) || botConfig.botIteration <= 0)
       return setErrors({ botIteration: "Must be a number and greater than 0" });
 
-    dispatch(updateBot({ botName, botIteration, proxy }));
+    dispatch(updateBot(botConfig));
     handleClose();
   };
 
@@ -54,38 +88,68 @@ export default ({ open, handleClose }) => {
           </Grid>
         </Grid>
       </DialogTitle>
-      <DialogContent>
+      <DialogContent className={classes.wrapper}>
         <TextField
           disabled
           error={!!errors.botName}
           helperText={errors.botName}
           label="Bot name"
-          onChange={(e) => setBotName(e.target.value)}
-          value={botName}
+          onChange={handleChange}
+          value={botConfig.botName}
+          name="botName"
           variant="outlined"
           fullWidth
         />
 
-        <Box my={4}>
-          <TextField
-            error={!!errors.botIteration}
-            helperText={errors.botIteration}
-            label="Bot Iteration"
-            onChange={(e) => setBotIteration(e.target.value)}
-            value={botIteration}
-            variant="outlined"
-            fullWidth
-          />
-        </Box>
         <TextField
-          error={!!errors.proxy}
-          helperText={errors.proxy}
-          label="Proxy"
-          onChange={(e) => setProxy(e.target.value)}
-          value={proxy}
+          error={!!errors.botIteration}
+          helperText={errors.botIteration}
+          label="Bot Iteration"
+          onChange={handleChange}
+          value={botConfig.botIteration}
+          name="botIteration"
           variant="outlined"
           fullWidth
         />
+        <TextField
+          label="Socket"
+          onChange={handleChange}
+          value={botConfig.socket}
+          name="socket"
+          variant="outlined"
+          fullWidth
+        />
+        <TextField
+          label="Ip"
+          onChange={handleChange}
+          value={botConfig.ip}
+          name="ip"
+          variant="outlined"
+          fullWidth
+        />
+        <TextField
+          label="Port"
+          onChange={handleChange}
+          value={botConfig.port}
+          name="port"
+          variant="outlined"
+          fullWidth
+        />
+        <Select
+          variant="outlined"
+          fullWidth
+          onChange={handleChange}
+          value={botConfig.browserAgent}
+          name="browserAgent"
+          displayEmpty
+        >
+          <MenuItem value="" disabled>
+            Browser Agent
+          </MenuItem>
+          <MenuItem value="Chrome">Chrome</MenuItem>
+          <MenuItem value="Mozilla">Mozilla</MenuItem>
+          <MenuItem value="Safari">Safari</MenuItem>
+        </Select>
       </DialogContent>
       <DialogActions>
         <Button variant="contained" color="primary" onClick={handleUpdateBot}>

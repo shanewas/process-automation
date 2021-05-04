@@ -56,6 +56,9 @@ const resetFields = {
   entryType: "manual",
   dataEntry: "",
   ocr: false,
+  socket: "",
+  ip: "",
+  port: "",
 };
 
 export default ({ open, handleClose, stepIdx }) => {
@@ -194,7 +197,13 @@ export default ({ open, handleClose, stepIdx }) => {
           />
         )}
         {step._type === "link" && (
-          <TypeLink onChange={handleChange} value={step.link} />
+          <TypeLink
+            onChange={handleChange}
+            link={step.link}
+            socket={step.socket}
+            ip={step.ip}
+            port={step.port}
+          />
         )}
         {step._type === "click" && (
           <TypeClick onChange={handleChange} value={step} />

@@ -120,6 +120,7 @@ const BotSidebar = () => {
   const { saved, errors, process, groups: tGroups, ...bot } = useSelector(
     (state) => state
   );
+
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
 
@@ -134,6 +135,7 @@ const BotSidebar = () => {
     });
 
   const handleSaveBot = async () => {
+    console.log("bot being saved  ---", bot);
     const errors = checkBot(process);
     if (Object.keys(errors).length) {
       dispatch(updateErrors(errors));
@@ -152,8 +154,6 @@ const BotSidebar = () => {
     //   processId3: true,
     //   processId6: true,
     // }
-
-    console.log({ groupedProcesses });
 
     await electron.ipcRenderer.send("update-bot-process", bot.botName, process);
     await electron.ipcRenderer.send("update-bot", bot.botName, {

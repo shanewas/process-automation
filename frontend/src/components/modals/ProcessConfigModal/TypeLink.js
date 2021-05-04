@@ -1,17 +1,50 @@
 import React from "react";
-import { TextField, Box } from "@material-ui/core";
+import { TextField, Box, makeStyles } from "@material-ui/core";
 
-export default ({ onChange, value }) => {
+const useStyles = makeStyles((theme) => ({
+  wrapper: {
+    "& > *": {
+      marginTop: theme.spacing(3.5),
+    },
+  },
+}));
+
+export default ({ onChange, link, socket, ip, port }) => {
+  const classes = useStyles();
   // console.log("%c TYPE LINK ", "background: #222; color: #bada55");
 
   return (
-    <Box mt={2}>
+    <Box className={classes.wrapper}>
       <TextField
         variant="outlined"
         onChange={onChange}
-        value={value}
+        value={link}
         name="link"
         label="Link"
+        fullWidth
+      />
+      <TextField
+        variant="outlined"
+        onChange={onChange}
+        value={socket}
+        name="socket"
+        label="Socket"
+        fullWidth
+      />
+      <TextField
+        variant="outlined"
+        onChange={onChange}
+        value={ip}
+        name="ip"
+        label="Ip"
+        fullWidth
+      />
+      <TextField
+        variant="outlined"
+        onChange={onChange}
+        value={port}
+        name="port"
+        label="Port"
         fullWidth
       />
     </Box>
