@@ -45,9 +45,18 @@ async function start_bot(e, botName, mainWindow, PARAMS) {
       mainWindow,
       false,
       true,
-      true
+      true,
+      "/script/RunningBot.js"
     );
   }
+  // loadingWindow.webContents.session.setProxy({
+  //   proxyRules: PARAMS.BOTS.proxy,
+  // });
+  // loadingWindow.loadURL(
+  //   isDev
+  //     ? `http://localhost:${process.env.PORT}/loading.html`
+  //     : `file://${path.join(__dirname, "../../frontend/build/loading.html")}`
+  // );
   loadingWindow.setResizable(false);
   loadingWindow.on("close", (e) => {
     PARAMS.BOTALREADYOPENED = false;
@@ -193,6 +202,13 @@ async function run_bot(e, BROWSER, mainWindow, PARAMS) {
       let elements,
         dat,
         conditionStatus = true;
+
+      console.log("look for me " + PARAMS.BOT_VARIABLES);
+      let variable_obj = PARAMS.BOT_VARIABLES.find(
+        (o) => o.name === PARAMS.BOT_VARIABLES.name
+      );
+      console.log(variable_obj);
+
       try {
         // console.log(PARAMS.BOTS);
         // console.log(PARAMS.BOTS["groups"]);
@@ -206,9 +222,10 @@ async function run_bot(e, BROWSER, mainWindow, PARAMS) {
                 break;
               case "variable":
                 let variable_obj = PARAMS.BOT_VARIABLES.find(
-                  (o) => o.name === element.dataEntry
+                  (o) => o.name === PARAMS.BOT_VARIABLES.name
                 );
                 dat = variable_obj.value;
+                console.log(variable_obj);
                 break;
               case "dataHeader":
                 dat = PARAMS.LOCALDATA[element.dataEntry];
@@ -457,12 +474,17 @@ async function run_bot(e, BROWSER, mainWindow, PARAMS) {
             await elements[0].press(`${element.value}`);
             break;
           case "Extract Data":
-            extracted_data = element[element.variableField];
-            let variable_obj = PARAMS.BOT_VARIABLES.find(
-              (o) => o.name === element.variableName
-            );
-            variable_obj.value = extracted_data;
-            console.log("Extracted Data " + extracted_data);
+            console.log(element);
+            console.log("1" + PARAMS.BOT_VARIABLES);
+            console.log("2" + element.variableName);
+            console.log("3" + element.variableField);
+
+            // extracted_data = element[element.variableField]; //value
+            // let variable_obj = PARAMS.BOT_VARIABLES.find(
+            //   (o) => o.name === element.variableName
+            // );
+            // variable_obj.value = extracted_data;
+            // console.log("Extracted Data " + extracted_data);
             break;
           case "ScreenShot":
             console.log(`Taking screenshot ...`);
