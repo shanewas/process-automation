@@ -65,7 +65,7 @@ app
      */
     require("./Bots/botCreation").bot_create(
       mainWindow,
-      PARAMS.LINKALREADYOPENED, 
+      PARAMS.LINKALREADYOPENED
     );
     /**
      * BOT ITEM TYPE TAGGING
@@ -87,6 +87,11 @@ app
     ipcMain.on("need-process", (e) => {
       run_bot(e, BROWSER, mainWindow, PARAMS);
     });
+
+    /**
+     *csv handling
+     */
+    require("./ExternalConnectivity/csvHandling");
 
     /**
      * code generation
