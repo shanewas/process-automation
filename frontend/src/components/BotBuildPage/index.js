@@ -54,6 +54,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default (props) => {
   const saved = useSelector((state) => state.saved);
+
   const classes = useStyles({ saved });
   const [selectedVariable, setSelectedVariable] = useState("");
   const [selectedSteps, setSelectedSteps] = useState([]);
@@ -64,9 +65,10 @@ export default (props) => {
   const steps = useSelector((state) => state.process);
   const botName = useSelector((state) => state.botName);
   const groups = useSelector((state) => state.groups);
+  const csvInfo = useSelector((state) => state.csvInfo);
   const { setCurrentModal, setCurrentToastr } = useContext(ModalContext);
 
-  console.log("selectedSteps ", selectedSteps);
+  console.log({ csvInfo });
 
   const handleProcessLink = (e, content) => {
     const process = { ...content, id: shortId() };
