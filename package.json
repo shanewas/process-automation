@@ -103,11 +103,13 @@
   "peerDependencies": {},
   "dependencies": {
     "chart.js": "^2.9.4",
+    "css-selector-generator": "^3.0.1",
     "csv-parser": "^2.3.4",
     "d3": "^6.2.0",
     "dotenv": "^8.2.0",
     "electron-is-dev": "^1.2.0",
     "electron-reload": "^1.5.0",
+    "fast-csv": "^4.3.6",
     "jimp": "^0.16.1",
     "jquery": "^3.5.1",
     "moment": "^2.29.1",
