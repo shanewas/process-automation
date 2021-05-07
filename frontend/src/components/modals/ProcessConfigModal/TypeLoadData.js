@@ -9,15 +9,14 @@ import {
   ListSubheader,
   MenuItem,
   Select,
-  Divider,
 } from "@material-ui/core";
 import SelectorInput from "../../layout/input/SelectorInput";
 import EntryTypeHeader from "./EntryTypeHeader";
-import { Fragment } from "react";
 
 export default ({
   onChange,
   onSwitch,
+  onHeaderChange,
   value,
   onSelectorChange,
   inputTypes,
@@ -25,7 +24,15 @@ export default ({
   csvs,
   onClearHeaderData,
 }) => {
-  // console.log("%c TYPE LOAD DATA ", "background: #222; color: #bada55");
+  const formattedCsvs = {};
+  Object.keys(csvs).forEach((csvId) => {
+    formattedCsvs[csvId] = [csvs[csvId].fileName, ...csvs[csvId].headers];
+  });
+
+  // {
+  //   'asdnias': ['fileName.csv', 'header1', 'header2'];
+  // }
+
   return (
     <Grid container direction="column" spacing={3}>
       <Grid item container spacing={2} alignItems="center">
@@ -110,23 +117,29 @@ export default ({
         <Grid item>
           <Select
             variant="outlined"
-            onChange={onChange}
+            onChange={onHeaderChange}
             value={value.dataEntry}
             name="dataEntry"
             placeholder="Data Header"
             fullWidth
           >
-            {Object.keys(csvs).map((csvId) => (
-              <Box key={csvId}>
-                <Divider />
-                <ListSubheader>{csvs[csvId].filename}</ListSubheader>
-                {csvs[csvId].headers.map((header) => (
-                  <MenuItem key={header} value={header}>
+            {Object.keys(formattedCsvs).map((csvId) =>
+              formattedCsvs[csvId].map((header, idx) =>
+                idx === 0 ? (
+                  <ListSubheader key={csvId}>{header}</ListSubheader>
+                ) : (
+                  <MenuItem key={header} value={`${csvId}-header-${header}`}>
                     {header}
                   </MenuItem>
-                ))}
-              </Box>
-            ))}
+                )
+              )
+            )}
+            {/* 
+              csvs[csvId].headers.map((header) => (
+                <MenuItem key={header} onChange={header}>
+                  {header}
+                </MenuItem>
+              ))} */}
           </Select>
         </Grid>
       )}

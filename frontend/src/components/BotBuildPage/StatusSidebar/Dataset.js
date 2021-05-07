@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React from "react";
 import {
   Accordion,
   AccordionDetails,
@@ -21,6 +21,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 
 import * as electron from "../../../electronScript";
+import { loadCsv } from "../../../Store/actions";
 
 const useStyles = makeStyles((theme) => ({
   csvImg: {
@@ -39,16 +40,21 @@ export default (props) => {
   const { csvs } = useSelector(({ csvs }) => ({
     csvs,
   }));
+
   // const { setCurrentToastr } = useContext(ModalContext);
 
-  const handleLoadCsv = async (file) => {
+  const handleLoadCsv = async ({ path, name }) => {
     const headers = await electron.ipcRenderer.sendSync(
       "csv-get-header",
-      file.path,
+      path,
       5
     );
-
-    console.log(headers);
+    const csv = {
+      headers: headers,
+      filePath: path,
+      fileName: name,
+    };
+    dispatch(loadCsv(csv));
   };
 
   // const handleLoadCsv = async (file) => {
@@ -110,16 +116,16 @@ export default (props) => {
             classes={{ content: classes.csvHeader }}
             expandIcon={<ExpandMoreIcon />}
           >
-            <Tooltip title={csvs[csvId].filepath}>
+            <Tooltip title={csvs[csvId].filePath}>
               <Box display="flex" alignItems="center">
                 <img
                   src={csvSelected}
-                  alt={csvs[csvId].filename}
+                  alt={csvs[csvId].fileName}
                   className={classes.csvImg}
                 />
                 <Box maxWidth="100px">
                   <Typography noWrap variant="subtitle1">
-                    {csvs[csvId].filename}
+                    {csvs[csvId].fileName}
                   </Typography>
                 </Box>
               </Box>

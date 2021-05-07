@@ -113,7 +113,6 @@
     "jimp": "^0.16.1",
     "jquery": "^3.5.1",
     "moment": "^2.29.1",
-    "nanoid": "^3.1.22",
     "nedb-promises": "^4.1.0",
     "opencollective": "^1.0.3",
     "progress": "^2.0.3",

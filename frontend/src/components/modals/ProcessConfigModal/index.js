@@ -126,6 +126,11 @@ export default ({ open, handleClose, stepIdx }) => {
     }));
   };
 
+  const handleHeaderSelect = (e) => {
+    e.persist();
+    console.log("header selected", e.target.value);
+  };
+
   const handleSubmit = () => {
     editStep(step);
     handleClose();
@@ -215,6 +220,7 @@ export default ({ open, handleClose, stepIdx }) => {
             csvs={csvs}
             variables={currentVariables}
             onChange={handleChange}
+            onHeaderChange={handleHeaderSelect}
             value={step}
             onSelectorChange={handleTypeChange("type")}
             inputTypes={inputTypes}

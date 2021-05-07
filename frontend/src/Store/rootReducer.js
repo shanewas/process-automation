@@ -1,18 +1,36 @@
+import { nanoid } from "nanoid";
+
+// const process = {
+//   ...,
+//   dataEntry: 'cool1',
+//   csvId: '1mw1w01'
+// }
+
 const initState = {
-  // change name to headers
-  headers: [],
+  // headers: [],
   variables: [],
   process: [],
   botName: null,
+  // headerLookup: {
+  //   '1mw1w01': []
+  // },
   csvs: {
     "1mw1w01": {
-      filename: "Cool.csv",
-      filepath: "/users/doc/cool.csv",
+      fileName: "Cool.csv",
+      filePath: "/users/doc/cool.csv",
       headers: ["cool1", "cool2", "cool3"],
+      range: {
+        start: 0,
+        end: 2,
+      },
+      // range: {
+      //   start: 0,
+      //   end: 1
+      // }
     },
     "14910s": {
-      filename: "dope.csv",
-      filepath: "/users/doc/dope.csv",
+      fileName: "dope.csv",
+      filePath: "/users/doc/dope.csv",
       headers: ["dope1", "dope2", "dope3"],
     },
   },
@@ -144,9 +162,10 @@ const updateBot = (state, data) => ({
   ...data,
 });
 
-const loadCsv = (state, headers) => {
-  // const headers = tHeaders.map((h) => ({ name: h, usedBy: [] }));
-  // return { ...state, saved: false, headers, csvInfo };
+const loadCsv = (state, data) => {
+  const tState = { ...state };
+  tState.csvs[nanoid()] = { ...data };
+  return tState;
 };
 
 const clearAll = (_) => ({ ...initState });
@@ -297,7 +316,6 @@ const editProcess = (state, process, index) => {
   if (entryType === "dataHeader") {
     console.log("data header to hai bhai");
 
-    // Using variable for first time
     if (oldProcess.entryType !== "dataHeader") {
       console.log("data header - pehli dafa");
       headers = headers.map((h) =>
@@ -525,8 +543,10 @@ const rootReducer = (state = initState, action) => {
       return updateBot(state, action.data);
     case "NEW_BOT":
       return newBot(state, action.botName);
+
     case "LOAD_CSV":
-      return loadCsv(state, action.headers);
+      return loadCsv(state, action.payload);
+
     case "UNLINK_CSV":
       return unlinkCsv(state, action.csv);
     case "CREATE_VARIABLE":

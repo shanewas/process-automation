@@ -66,24 +66,22 @@ export default (props) => {
                   draggableId={`fc-${step.id}`}
                   index={idx}
                 >
-                  {(provided, snapshot) =>
-                    console.log(props.selectedSteps.includes(step.id)) || (
-                      <StepCard
-                        selectedErrorStep={props.errorStep === step.id}
-                        haveError={errors[step.id]?.message}
-                        selectedVariable={props.selectedVariable}
-                        selected={props.selectedSteps.includes(step.id)}
-                        selectSteps={props.selectSteps}
-                        openMenu={(e) => openMenuHandler(e, idx)}
-                        draggableProps={provided.draggableProps}
-                        dragHandleProps={provided.dragHandleProps}
-                        ref={provided.innerRef}
-                        beingDragged={snapshot.isDragging}
-                        idx={idx}
-                        {...step}
-                      />
-                    )
-                  }
+                  {(provided, snapshot) => (
+                    <StepCard
+                      selectedErrorStep={props.errorStep === step.id}
+                      haveError={errors[step.id]?.message}
+                      selectedVariable={props.selectedVariable}
+                      selected={props.selectedSteps.includes(step.id)}
+                      selectSteps={props.selectSteps}
+                      openMenu={(e) => openMenuHandler(e, idx)}
+                      draggableProps={provided.draggableProps}
+                      dragHandleProps={provided.dragHandleProps}
+                      ref={provided.innerRef}
+                      beingDragged={snapshot.isDragging}
+                      idx={idx}
+                      {...step}
+                    />
+                  )}
                 </Draggable>
               ))}
               {provided.placeholder}
