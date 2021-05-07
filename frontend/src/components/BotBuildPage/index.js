@@ -54,21 +54,18 @@ const useStyles = makeStyles((theme) => ({
 
 export default (props) => {
   const saved = useSelector((state) => state.saved);
-
   const classes = useStyles({ saved });
   const [selectedVariable, setSelectedVariable] = useState("");
   const [selectedSteps, setSelectedSteps] = useState([]);
-  const [selectedHeader, setSelectedHeader] = useState("");
+  // const [selectedHeader, setSelectedHeader] = useState("");
   const [errorStep, setErrorStep] = useState("");
   const [url, setUrl] = useState("");
   const dispatch = useDispatch();
   const steps = useSelector((state) => state.process);
   const botName = useSelector((state) => state.botName);
   const groups = useSelector((state) => state.groups);
-  const csvInfo = useSelector((state) => state.csvInfo);
-  const { setCurrentModal, setCurrentToastr } = useContext(ModalContext);
 
-  console.log({ csvInfo });
+  const { setCurrentModal, setCurrentToastr } = useContext(ModalContext);
 
   const handleProcessLink = (e, content) => {
     const process = { ...content, id: shortId() };
@@ -77,6 +74,7 @@ export default (props) => {
 
   useEffect(() => {
     electron.ipcRenderer.on(electron.ProcessLinkChannel, handleProcessLink);
+
     return () =>
       electron.ipcRenderer.removeAllListeners(electron.ProcessLinkChannel);
   }, []);
@@ -173,7 +171,6 @@ export default (props) => {
               selectedSteps={selectedSteps}
               steps={steps}
               selectedVariable={selectedVariable}
-              selectedHeader={selectedHeader}
               errorStep={errorStep}
             />
           </Box>
@@ -184,8 +181,6 @@ export default (props) => {
           steps={steps}
           selectedVariable={selectedVariable}
           selectVariable={setSelectedVariable}
-          selectedHeader={selectedHeader}
-          selectHeader={setSelectedHeader}
           selectErrorStep={setErrorStep}
         />
       </Grid>

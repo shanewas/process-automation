@@ -71,7 +71,6 @@ export default (props) => {
                       <StepCard
                         selectedErrorStep={props.errorStep === step.id}
                         haveError={errors[step.id]?.message}
-                        selectedHeader={props.selectedHeader}
                         selectedVariable={props.selectedVariable}
                         selected={props.selectedSteps.includes(step.id)}
                         selectSteps={props.selectSteps}

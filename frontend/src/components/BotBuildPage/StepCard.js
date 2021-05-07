@@ -145,9 +145,9 @@ export default forwardRef((props, ref) => {
     props.dataEntry === props.selectedVariable;
   const isSavingToVariable =
     props.saveToVariable && props.saveToVariable === props.selectedVariable;
-  const isUsingHeader =
-    props.entryType === "dataHeader" &&
-    props.dataEntry === props.selectedHeader;
+  // const isUsingHeader =
+  //   props.entryType === "dataHeader" &&
+  //   props.dataEntry === props.selectedHeader;
 
   const { color, bgcolor, Icon } = processTypes[props._type];
   const classes = useStyles({
@@ -166,7 +166,7 @@ export default forwardRef((props, ref) => {
       {...props.draggableProps}
       {...props.dragHandleProps}
       className={`${classes.stepWrapper} ${
-        isUsingHeader || props.selectedErrorStep ? "active" : ""
+        props.selectedErrorStep ? "active" : ""
       }
       `}
       style={{

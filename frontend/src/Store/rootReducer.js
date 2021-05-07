@@ -4,7 +4,18 @@ const initState = {
   variables: [],
   process: [],
   botName: null,
-  csvInfo: null,
+  csvs: {
+    "1mw1w01": {
+      filename: "Cool.csv",
+      filepath: "/users/doc/cool.csv",
+      headers: ["cool1", "cool2", "cool3"],
+    },
+    "14910s": {
+      filename: "dope.csv",
+      filepath: "/users/doc/dope.csv",
+      headers: ["dope1", "dope2", "dope3"],
+    },
+  },
   errors: {},
   groups: {},
   botIteration: 1,
@@ -133,9 +144,9 @@ const updateBot = (state, data) => ({
   ...data,
 });
 
-const loadCsv = (state, { headers: tHeaders, csvInfo }) => {
-  const headers = tHeaders.map((h) => ({ name: h, usedBy: [] }));
-  return { ...state, saved: false, headers, csvInfo };
+const loadCsv = (state, headers) => {
+  // const headers = tHeaders.map((h) => ({ name: h, usedBy: [] }));
+  // return { ...state, saved: false, headers, csvInfo };
 };
 
 const clearAll = (_) => ({ ...initState });
@@ -515,7 +526,7 @@ const rootReducer = (state = initState, action) => {
     case "NEW_BOT":
       return newBot(state, action.botName);
     case "LOAD_CSV":
-      return loadCsv(state, action.csv);
+      return loadCsv(state, action.headers);
     case "UNLINK_CSV":
       return unlinkCsv(state, action.csv);
     case "CREATE_VARIABLE":
