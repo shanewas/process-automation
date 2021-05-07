@@ -7,7 +7,7 @@ const maxLineLength = 100;
 ipcMain.on(
   "csv-get-header",
   async (event, file, readPartOfFileMultiplier = 2) => {
-    header = "";
+    header = [];
     var readPartOfFile = maxLineLength * readPartOfFileMultiplier;
     var stream = fs.createReadStream(path.resolve(__dirname, file), {
       start: 0,
@@ -17,8 +17,7 @@ ipcMain.on(
     var line = 0;
     csvStream.on("data", function (data) {
       if (line === 0) {
-        header = JSON.stringify(data);
-        console.log(`ROW=${JSON.stringify(data)}`);
+        header = data;
       }
       line++;
     });
@@ -28,3 +27,23 @@ ipcMain.on(
     });
   }
 );
+
+// const handleLoadCsv = (file) => {
+//   Papa.parse(file, {
+//     complete: (result) => {
+//       const headers = result.data[0];
+//       const csvInfo = {
+//         name: file.name,
+//         path: file.path,
+//         rowNumber: result.data.length,
+//       };
+//       // console.log({ csvInfo });
+//       dispatch(
+//         loadCsv({
+//           headers,
+//           csvInfo,
+//         })
+//       );
+//     },
+//   });
+// };
