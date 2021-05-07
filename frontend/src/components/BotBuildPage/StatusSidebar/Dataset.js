@@ -7,21 +7,29 @@ import {
   Button,
   IconButton,
   makeStyles,
-  Tooltip,
   Typography,
+  Tooltip,
+  ListItem,
+  ListItemText,
+  List,
 } from "@material-ui/core";
-import { ExpandMore as ExpandMoreIcon } from "@material-ui/icons";
-import { useDispatch, useSelector } from "react-redux";
-
 import csvSelected from "../../../images/csv_colored.png";
+import {
+  ExpandMore as ExpandMoreIcon,
+  LinkOff as UnlinkIcon,
+} from "@material-ui/icons";
+import { useDispatch, useSelector } from "react-redux";
 
 import * as electron from "../../../electronScript";
 
 const useStyles = makeStyles((theme) => ({
   csvImg: {
     width: "auto",
-    height: "35px",
+    height: "25px",
     marginRight: theme.spacing(1.5),
+  },
+  csvHeader: {
+    justifyContent: "space-between",
   },
 }));
 
@@ -97,8 +105,11 @@ export default (props) => {
         </Button>
       </Box>
       {Object.keys(csvs).map((csvId) => (
-        <Accordion>
-          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+        <Accordion key={csvId}>
+          <AccordionSummary
+            classes={{ content: classes.csvHeader }}
+            expandIcon={<ExpandMoreIcon />}
+          >
             <Tooltip title={csvs[csvId].filepath}>
               <Box display="flex" alignItems="center">
                 <img
@@ -106,13 +117,26 @@ export default (props) => {
                   alt={csvs[csvId].filename}
                   className={classes.csvImg}
                 />
-                <Typography variant="subtitle1">
-                  {csvs[csvId].filename}
-                </Typography>
+                <Box maxWidth="100px">
+                  <Typography noWrap variant="subtitle1">
+                    {csvs[csvId].filename}
+                  </Typography>
+                </Box>
               </Box>
             </Tooltip>
+            <IconButton size="small">
+              <UnlinkIcon />
+            </IconButton>
           </AccordionSummary>
-          <AccordionDetails></AccordionDetails>
+          <AccordionDetails>
+            <List disablePadding style={{ width: "100%" }}>
+              {csvs[csvId].headers.map((header) => (
+                <ListItem key={header}>
+                  <ListItemText primary={header} />
+                </ListItem>
+              ))}
+            </List>
+          </AccordionDetails>
         </Accordion>
       ))}
     </>
