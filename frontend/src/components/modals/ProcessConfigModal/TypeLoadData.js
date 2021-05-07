@@ -6,9 +6,14 @@ import {
   Typography,
   Button,
   Switch,
+  ListSubheader,
+  MenuItem,
+  Select,
+  Divider,
 } from "@material-ui/core";
 import SelectorInput from "../../layout/input/SelectorInput";
 import EntryTypeHeader from "./EntryTypeHeader";
+import { Fragment } from "react";
 
 export default ({
   onChange,
@@ -17,7 +22,7 @@ export default ({
   onSelectorChange,
   inputTypes,
   variables,
-  headers,
+  csvs,
   onClearHeaderData,
 }) => {
   // console.log("%c TYPE LOAD DATA ", "background: #222; color: #bada55");
@@ -103,16 +108,26 @@ export default ({
       </Box>
       {value.entryType === "dataHeader" && (
         <Grid item>
-          <SelectorInput
+          <Select
             variant="outlined"
-            options={headers}
-            optionsConfigure={{ id: "name", label: "name", value: "name" }}
             onChange={onChange}
             value={value.dataEntry}
             name="dataEntry"
             placeholder="Data Header"
             fullWidth
-          />
+          >
+            {Object.keys(csvs).map((csvId) => (
+              <Box key={csvId}>
+                <Divider />
+                <ListSubheader>{csvs[csvId].filename}</ListSubheader>
+                {csvs[csvId].headers.map((header) => (
+                  <MenuItem key={header} value={header}>
+                    {header}
+                  </MenuItem>
+                ))}
+              </Box>
+            ))}
+          </Select>
         </Grid>
       )}
       {value.entryType === "manual" && (

@@ -62,11 +62,11 @@ const resetFields = {
 };
 
 export default ({ open, handleClose, stepIdx }) => {
-  const { currentStep, currentVariables, currentHeaders } = useSelector(
-    ({ process, variables, headers }) => ({
+  const { currentStep, currentVariables, csvs } = useSelector(
+    ({ process, variables, csvs }) => ({
       currentStep: process[stepIdx],
       currentVariables: variables,
-      currentHeaders: headers,
+      csvs: csvs,
     })
   );
   const [step, setStep] = useState({ ...initFields, ...currentStep });
@@ -212,7 +212,7 @@ export default ({ open, handleClose, stepIdx }) => {
           <TypeLoadData
             onSwitch={handleSwitch}
             onClearHeaderData={handleClearDataHeader}
-            headers={currentHeaders}
+            csvs={csvs}
             variables={currentVariables}
             onChange={handleChange}
             value={step}
