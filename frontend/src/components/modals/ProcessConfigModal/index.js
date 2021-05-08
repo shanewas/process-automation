@@ -59,6 +59,7 @@ const resetFields = {
   socket: "",
   ip: "",
   port: "",
+  csvId: "",
 };
 
 export default ({ open, handleClose, stepIdx }) => {
@@ -121,6 +122,7 @@ export default ({ open, handleClose, stepIdx }) => {
       ...(e.target.typeChanged
         ? {
             dataEntry: "",
+            csvId: "",
           }
         : {}),
     }));
@@ -128,7 +130,9 @@ export default ({ open, handleClose, stepIdx }) => {
 
   const handleHeaderSelect = (e) => {
     e.persist();
-    console.log("header selected", e.target.value);
+    if (!e.target.value) return;
+    const [csvId, header] = e.target.value.split("-header-");
+    setStep((old) => ({ ...old, dataEntry: header, csvId }));
   };
 
   const handleSubmit = () => {
@@ -158,6 +162,8 @@ export default ({ open, handleClose, stepIdx }) => {
     // console.log({ folderPath });
     folderPath && setStep((o) => ({ ...o, screenshotPath: folderPath }));
   };
+
+  console.log({ step });
 
   // const getOcrFolderPath = async () => {
   //   // change the electron func to fetch ocr instead
@@ -221,7 +227,7 @@ export default ({ open, handleClose, stepIdx }) => {
             variables={currentVariables}
             onChange={handleChange}
             onHeaderChange={handleHeaderSelect}
-            value={step}
+            step={step}
             onSelectorChange={handleTypeChange("type")}
             inputTypes={inputTypes}
           />

@@ -7,7 +7,7 @@ import { nanoid } from "nanoid";
 // }
 
 const initState = {
-  // headers: [],
+  headers: [],
   variables: [],
   process: [],
   botName: null,
@@ -15,24 +15,12 @@ const initState = {
   //   '1mw1w01': []
   // },
   csvs: {
-    "1mw1w01": {
-      fileName: "Cool.csv",
-      filePath: "/users/doc/cool.csv",
-      headers: ["cool1", "cool2", "cool3"],
-      range: {
-        start: 0,
-        end: 2,
-      },
-      // range: {
-      //   start: 0,
-      //   end: 1
-      // }
-    },
-    "14910s": {
-      fileName: "dope.csv",
-      filePath: "/users/doc/dope.csv",
-      headers: ["dope1", "dope2", "dope3"],
-    },
+    // "1mw1w01": {
+    //   name: "cool.csv",
+    //   filePath: "/users/doc/cool.csv",
+    //   headers: ["cool1", "cool2", "cool3"],
+    //   range: [1, 4],
+    // },
   },
   errors: {},
   groups: {},
@@ -313,44 +301,44 @@ const editProcess = (state, process, index) => {
     );
   }
   // checking for headers(csv)
-  if (entryType === "dataHeader") {
-    console.log("data header to hai bhai");
+  // if (entryType === "dataHeader") {
+  //   console.log("data header to hai bhai");
 
-    if (oldProcess.entryType !== "dataHeader") {
-      console.log("data header - pehli dafa");
-      headers = headers.map((h) =>
-        h.name === dataEntry ? { ...h, usedBy: [...h.usedBy, id] } : h
-      );
-    }
-    // Changed the header to some other value
-    else if (oldProcess.dataEntry !== dataEntry) {
-      console.log("removing and add");
-      // REMOVE AND ADD (header changed)
-      headers = headers.map((h) => {
-        if (h.name === oldProcess.dataEntry)
-          return {
-            ...h,
-            usedBy: h.usedBy.filter((th) => th !== id),
-          };
-        else if (h.name === dataEntry)
-          return { ...h, usedBy: [...h.usedBy, id] };
-        else return h;
-      });
-    }
-  }
-  // Changed the type to something else, so gotta remove the previously used dataheader
-  else if (
-    oldProcess.entryType === "dataHeader" &&
-    entryType !== "dataHeader"
-  ) {
-    console.log("data-header - hata diya");
-    // remove entryType changed from variable
-    headers = headers.map((h) =>
-      h.name === oldProcess.dataEntry
-        ? { ...h, usedBy: h.usedBy.filter((th) => th !== id) }
-        : h
-    );
-  }
+  //   if (oldProcess.entryType !== "dataHeader") {
+  //     console.log("data header - pehli dafa");
+  //     headers = headers.map((h) =>
+  //       h.name === dataEntry ? { ...h, usedBy: [...h.usedBy, id] } : h
+  //     );
+  //   }
+  //   // Changed the header to some other value
+  //   else if (oldProcess.dataEntry !== dataEntry) {
+  //     console.log("removing and add");
+  //     // REMOVE AND ADD (header changed)
+  //     headers = headers.map((h) => {
+  //       if (h.name === oldProcess.dataEntry)
+  //         return {
+  //           ...h,
+  //           usedBy: h.usedBy.filter((th) => th !== id),
+  //         };
+  //       else if (h.name === dataEntry)
+  //         return { ...h, usedBy: [...h.usedBy, id] };
+  //       else return h;
+  //     });
+  //   }
+  // }
+  // // Changed the type to something else, so gotta remove the previously used dataheader
+  // else if (
+  //   oldProcess.entryType === "dataHeader" &&
+  //   entryType !== "dataHeader"
+  // ) {
+  //   console.log("data-header - hata diya");
+  //   // remove entryType changed from variable
+  //   headers = headers.map((h) =>
+  //     h.name === oldProcess.dataEntry
+  //       ? { ...h, usedBy: h.usedBy.filter((th) => th !== id) }
+  //       : h
+  //   );
+  // }
 
   // Assigning/Saving to variable (Extract Data, OCR?)
   if (saveToVariable) {
@@ -456,16 +444,17 @@ const removeStep = (state, stepIdx) => {
           }
         : tv
     );
-  } else if (process.entryType === "dataHeader") {
-    headers = headers.map((th) =>
-      th.name === process.dataEntry
-        ? {
-            ...th,
-            usedBy: th.usedBy.filter((stepId) => stepId !== process.id),
-          }
-        : th
-    );
   }
+  // else if (process.entryType === "dataHeader") {
+  //   headers = headers.map((th) =>
+  //     th.name === process.dataEntry
+  //       ? {
+  //           ...th,
+  //           usedBy: th.usedBy.filter((stepId) => stepId !== process.id),
+  //         }
+  //       : th
+  //   );
+  // }
 
   let newProcess = state.process.filter((step, idx) => idx !== stepIdx);
 

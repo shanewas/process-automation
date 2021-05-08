@@ -11,6 +11,7 @@ import VariableAddModal from "./VariableAddModal";
 import KeyboardShortcutsModal from "./KeyboardShortcutsModal";
 import NewBotModal from "./NewBotModal";
 import ProcessGroupModal from "./ProcessGroupModal";
+import AddCsvModal from "./AddCsvModal";
 
 export const Modals = {
   DataConditionsModal,
@@ -24,6 +25,7 @@ export const Modals = {
   KeyboardShortcutsModal,
   NewBotModal,
   ProcessGroupModal,
+  AddCsvModal,
 };
 
 const ModalManager = (props) => {

@@ -17,7 +17,7 @@ export default ({
   onChange,
   onSwitch,
   onHeaderChange,
-  value,
+  step,
   onSelectorChange,
   inputTypes,
   variables,
@@ -26,7 +26,7 @@ export default ({
 }) => {
   const formattedCsvs = {};
   Object.keys(csvs).forEach((csvId) => {
-    formattedCsvs[csvId] = [csvs[csvId].fileName, ...csvs[csvId].headers];
+    formattedCsvs[csvId] = [csvs[csvId].name, ...csvs[csvId].headers];
   });
 
   // {
@@ -43,7 +43,7 @@ export default ({
           <Switch
             name="clearField"
             onChange={onSwitch}
-            checked={value.clearField}
+            checked={step.clearField}
           />
         </Grid>
       </Grid>
@@ -51,7 +51,7 @@ export default ({
         <TextField
           variant="outlined"
           onChange={onChange}
-          value={value.xpath}
+          value={step.xpath}
           name="xpath"
           label="XPath"
           fullWidth
@@ -61,7 +61,7 @@ export default ({
         <TextField
           variant="outlined"
           onChange={onChange}
-          value={value.value}
+          value={step.value}
           name="value"
           label="Value"
           fullWidth
@@ -71,7 +71,7 @@ export default ({
         <TextField
           variant="outlined"
           onChange={onChange}
-          value={value.placeholder}
+          value={step.placeholder}
           name="placeholder"
           label="Placeholder"
           fullWidth
@@ -81,7 +81,7 @@ export default ({
         <TextField
           variant="outlined"
           onChange={onChange}
-          value={value.label}
+          value={step.label}
           name="label"
           label="Label"
           fullWidth
@@ -89,7 +89,7 @@ export default ({
       </Grid>
       <Grid item>
         <SelectorInput
-          value={useMemo(() => value.type, [value.type])}
+          value={useMemo(() => step.type, [step.type])}
           onChange={(e) => onSelectorChange(e)}
           options={inputTypes}
           placeholder="Input Type"
@@ -100,7 +100,7 @@ export default ({
           <Grid item>
             <Typography variant="subtitle2">Data Entry</Typography>
             <Box>
-              <EntryTypeHeader type={value.entryType} onChange={onChange} />
+              <EntryTypeHeader type={step.entryType} onChange={onChange} />
             </Box>
           </Grid>
           <Grid item>
@@ -113,12 +113,12 @@ export default ({
           </Grid>
         </Grid>
       </Box>
-      {value.entryType === "dataHeader" && (
+      {step.entryType === "dataHeader" && (
         <Grid item>
           <Select
             variant="outlined"
             onChange={onHeaderChange}
-            value={value.dataEntry}
+            value={step.csvId ? `${step.csvId}-header-${step.dataEntry}` : ""}
             name="dataEntry"
             placeholder="Data Header"
             fullWidth
@@ -143,24 +143,24 @@ export default ({
           </Select>
         </Grid>
       )}
-      {value.entryType === "manual" && (
+      {step.entryType === "manual" && (
         <Grid item>
           <TextField
             variant="outlined"
             onChange={onChange}
-            value={value.dataEntry}
+            value={step.dataEntry}
             name="dataEntry"
             label="Manual Data Entry"
             fullWidth
           />
         </Grid>
       )}
-      {value.entryType === "variable" && (
+      {step.entryType === "variable" && (
         <Grid item>
           <SelectorInput
             placeholder="Use Variable"
             name="dataEntry"
-            value={value.dataEntry}
+            value={step.dataEntry}
             onChange={onChange}
             options={variables}
             optionsConfigure={{ id: "name", label: "name", value: "name" }}

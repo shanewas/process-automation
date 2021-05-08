@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useContext } from "react";
+// { name: "LoadCsvModal" }
 import {
   Accordion,
   AccordionDetails,
@@ -18,10 +19,11 @@ import {
   ExpandMore as ExpandMoreIcon,
   LinkOff as UnlinkIcon,
 } from "@material-ui/icons";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 
 import * as electron from "../../../electronScript";
 import { loadCsv } from "../../../Store/actions";
+import { ModalContext } from "../../../context/ModalContext";
 
 const useStyles = makeStyles((theme) => ({
   csvImg: {
@@ -36,25 +38,38 @@ const useStyles = makeStyles((theme) => ({
 
 export default (props) => {
   const classes = useStyles();
-  const dispatch = useDispatch();
+
+  const { setCurrentModal } = useContext(ModalContext);
   const { csvs } = useSelector(({ csvs }) => ({
     csvs,
   }));
 
   // const { setCurrentToastr } = useContext(ModalContext);
 
-  const handleLoadCsv = async ({ path, name }) => {
+  const handleLoadCsv = async (file) => {
     const headers = await electron.ipcRenderer.sendSync(
       "csv-get-header",
-      path,
+      file.path,
+      5
+    );
+    const totalRows = await electron.ipcRenderer.sendSync(
+      "csv-get-row",
+      file.path,
       5
     );
     const csv = {
       headers: headers,
-      filePath: path,
-      fileName: name,
+      filePath: file.path,
+      fileName: file.name.replace(".csv", ""),
     };
-    dispatch(loadCsv(csv));
+
+    setCurrentModal({
+      name: "AddCsvModal",
+      props: {
+        csv,
+        totalRows,
+      },
+    });
   };
 
   // const handleLoadCsv = async (file) => {
@@ -83,14 +98,6 @@ export default (props) => {
   // });
   // };
 
-  // const handleUnlinkCsv = () => {
-  //   const isAnyStepConnected = headers.find((h) => !!h.usedBy.length);
-  //   if (isAnyStepConnected)
-  //     return setCurrentToastr({
-  //       msg: "Cannot unlink as this CSV is under use.",
-  //     });
-  //   dispatch(unlinkCsv());
-  // };
   return (
     <>
       <Box mb={4}>
@@ -120,12 +127,12 @@ export default (props) => {
               <Box display="flex" alignItems="center">
                 <img
                   src={csvSelected}
-                  alt={csvs[csvId].fileName}
+                  alt={csvs[csvId].name}
                   className={classes.csvImg}
                 />
-                <Box maxWidth="100px">
+                <Box maxWidth="72%">
                   <Typography noWrap variant="subtitle1">
-                    {csvs[csvId].fileName}
+                    {csvs[csvId].name}
                   </Typography>
                 </Box>
               </Box>

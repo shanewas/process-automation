@@ -29,6 +29,12 @@ export default createMuiTheme({
     },
   },
   overrides: {
+    MuiChip: {
+      label: {
+        fontSize: "16px",
+        textTransform: "capitalize",
+      },
+    },
     MuiTypography: {
       root: {
         "&.poppins": {

@@ -28,6 +28,19 @@ ipcMain.on(
   }
 );
 
+ipcMain.on("csv-get-row", async (event, file) => {
+  var stream = fs.createReadStream(path.resolve(__dirname, file));
+  var csvStream = csv.parseStream(stream);
+  var line = 0;
+  csvStream.on("data", function (data) {
+    line++;
+  });
+  csvStream.on("end", function () {
+    console.log("Reading for first line: " + line + " lines.");
+    event.returnValue = line;
+  });
+});
+
 // const handleLoadCsv = (file) => {
 //   Papa.parse(file, {
 //     complete: (result) => {
