@@ -4,10 +4,7 @@ const fs = require("fs");
 const PIE = require("puppeteer-in-electron");
 const Tesseract = require("tesseract.js");
 const Jimp = require("jimp");
-const csv = require("csv-parser");
-const ProgressBar = require("progress");
-const https = require("https");
-const http = require("http");
+const csv = require("fast-csv");
 
 const { createWindow } = require("../app/WindowManagement/window");
 const {
@@ -90,17 +87,35 @@ async function start_bot(e, botName, mainWindow, PARAMS) {
       );
       mainWindow.webContents.send("notification-single", notification);
     });
-  if (PARAMS.BOTS.filepath) {
-    fs.createReadStream(PARAMS.BOTS.filepath, { bufferSize: 64 * 1024 })
-      .pipe(csv())
-      .on("data", (row) => {
-        PARAMS.DATA.push(row);
-      })
-      .on("end", async () => {
-        console.log("CSV file successfully processed");
-        //inital pop from datacsv to LOCALDATA
-        PARAMS.LOCALDATA = PARAMS.DATA.pop();
+
+  if (PARAMS.BOTS.csvs) {
+    tempDataHolder = [];
+    Object.entries(PARAMS.BOTS.csvs).map((csvs) => {
+      console.log(csvs[1]);
+
+      header = [];
+      var stream = fs.createReadStream(path.resolve(csvs[1]["filePath"]));
+      var csvStream = csv.parseStream(stream);
+      var line = 0;
+      console.log(csvs[1]["range"][0]);
+      console.log(csvs[1]["range"][1]);
+      csvStream.on("data", function (row) {
+        if (line === 0) {
+          header = row;
+        }
+        if (line > csvs[1]["range"][0] && line < csvs[1]["range"][1]) {
+          var result = row.reduce(function (result, field, index) {
+            result[header[index]] = field;
+            return result;
+          }, {});
+          tempDataHolder.push(result);
+        }
+        line++;
+      });
+      csvStream.on("end", function () {
         fileReady = true;
+        console.log("Parsed: " + line + " lines.");
+        PARAMS.DATA[csvs[0]] = tempDataHolder;
         let notification = await setNotification(
           botName,
           "log",
@@ -109,6 +124,7 @@ async function start_bot(e, botName, mainWindow, PARAMS) {
         );
         mainWindow.webContents.send("notification-single", notification);
       });
+    });
   } else {
     fileReady = true;
   }
@@ -203,11 +219,10 @@ async function run_bot(e, BROWSER, mainWindow, PARAMS) {
         dat,
         conditionStatus = true;
 
-      console.log("look for me " + PARAMS.BOT_VARIABLES);
-      let variable_obj = PARAMS.BOT_VARIABLES.find(
-        (o) => o.name === PARAMS.BOT_VARIABLES.name
-      );
-      console.log(variable_obj);
+      // console.log("look for me " + PARAMS.BOT_VARIABLES);
+      // let variable_obj = PARAMS.BOT_VARIABLES.find(
+      //   (o) => o.name === PARAMS.BOT_VARIABLES.name
+      // );
 
       try {
         // console.log(PARAMS.BOTS);
@@ -228,6 +243,7 @@ async function run_bot(e, BROWSER, mainWindow, PARAMS) {
                 console.log(variable_obj);
                 break;
               case "dataHeader":
+                PARAMS.LOCALDATA = PARAMS.DATA[element.csvId].shift();
                 dat = PARAMS.LOCALDATA[element.dataEntry];
                 break;
               default:
@@ -568,7 +584,7 @@ async function run_bot(e, BROWSER, mainWindow, PARAMS) {
               });
             break;
           case "link":
-            console.log("loading url ... " + page.url());
+            console.log("loading url ... " + element.link);
             await page.goto(element.link);
             break;
           default:
@@ -598,7 +614,6 @@ async function run_bot(e, BROWSER, mainWindow, PARAMS) {
 
       if (PARAMS.PROCESSCOUNTER + 1 >= PARAMS.PROCESSLENGTH) {
         PARAMS.PROCESSCOUNTER = 0;
-        if (PARAMS.BOTS.filepath) PARAMS.LOCALDATA = PARAMS.DATA.pop();
         PARAMS.IDX++;
       } else {
         PARAMS.PROCESSCOUNTER++;
