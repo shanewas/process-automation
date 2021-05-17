@@ -26,7 +26,7 @@ export default ({
 }) => {
   const formattedCsvs = {};
   Object.keys(csvs).forEach((csvId) => {
-    formattedCsvs[csvId] = [csvs[csvId].name, ...csvs[csvId].headers];
+    formattedCsvs[csvId] = [csvs[csvId].name, ...csvs[csvId].selectedHeaders];
   });
 
   // {

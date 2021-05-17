@@ -14,14 +14,7 @@ const initState = {
   // headerLookup: {
   //   '1mw1w01': []
   // },
-  csvs: {
-    // "1mw1w01": {
-    //   name: "cool.csv",
-    //   filePath: "/users/doc/cool.csv",
-    //   headers: ["cool1", "cool2", "cool3"],
-    //   range: [1, 4],
-    // },
-  },
+  csvs: {},
   errors: {},
   groups: {},
   botIteration: 1,
