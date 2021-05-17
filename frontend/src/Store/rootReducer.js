@@ -150,8 +150,14 @@ const updateBot = (state, data) => ({
   ...data,
 });
 
-const loadCsv = (state, data) => {
-  const tState = { ...state };
+const updateCsv = (state, { csvId, ...data }) => {
+  const tState = { ...state, saved: false };
+  tState.csvs[csvId] = { ...data };
+  return tState;
+};
+
+const addCsv = (state, data) => {
+  const tState = { ...state, saved: false };
   tState.csvs[nanoid()] = { ...data };
   return tState;
 };
@@ -533,8 +539,10 @@ const rootReducer = (state = initState, action) => {
     case "NEW_BOT":
       return newBot(state, action.botName);
 
-    case "LOAD_CSV":
-      return loadCsv(state, action.payload);
+    case "ADD_CSV":
+      return addCsv(state, action.payload);
+    case "UPDATE_CSV":
+      return updateCsv(state, action.payload);
 
     case "UNLINK_CSV":
       return unlinkCsv(state, action.csv);

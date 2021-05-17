@@ -103,7 +103,7 @@ export default (props) => {
     const {
       headers = [],
       variables = [],
-      csvInfo = null,
+      csvs = null,
       botIteration = 1,
       groups = {},
       socket = "",
@@ -117,7 +117,7 @@ export default (props) => {
         headers,
         variables,
         botName,
-        csvInfo,
+        csvs,
         botIteration,
         groups,
         socket,

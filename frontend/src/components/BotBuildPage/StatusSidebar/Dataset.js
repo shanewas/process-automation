@@ -18,11 +18,12 @@ import csvSelected from "../../../images/csv_colored.png";
 import {
   ExpandMore as ExpandMoreIcon,
   LinkOff as UnlinkIcon,
+  Edit as EditIcon,
 } from "@material-ui/icons";
 import { useSelector } from "react-redux";
 
 import * as electron from "../../../electronScript";
-import { loadCsv } from "../../../Store/actions";
+
 import { ModalContext } from "../../../context/ModalContext";
 
 const useStyles = makeStyles((theme) => ({
@@ -44,9 +45,21 @@ export default (props) => {
     csvs,
   }));
 
-  // const { setCurrentToastr } = useContext(ModalContext);
+  console.log(csvs);
 
-  const handleLoadCsv = async (file) => {
+  const handleEditCsv = (csvId) => {
+    const { totalRows, ...csv } = csvs[csvId];
+    setCurrentModal({
+      name: "EditCsvModal",
+      props: {
+        csvId,
+        csv,
+        totalRows,
+      },
+    });
+  };
+
+  const handleAddCsv = async (file) => {
     const headers = await electron.ipcRenderer.sendSync(
       "csv-get-header",
       file.path,
@@ -58,13 +71,13 @@ export default (props) => {
       5
     );
     const csv = {
-      headers: headers,
+      allHeaders: headers,
       filePath: file.path,
-      fileName: file.name.replace(".csv", ""),
+      name: file.name.replace(".csv", ""),
     };
 
     setCurrentModal({
-      name: "AddCsvModal",
+      name: "EditCsvModal",
       props: {
         csv,
         totalRows,
@@ -72,7 +85,7 @@ export default (props) => {
     });
   };
 
-  // const handleLoadCsv = async (file) => {
+  // const handleAddCsv = async (file) => {
   //   console.log(file.path);
   //   const header = await electron.ipcRenderer.sendSync(
   //     "csv-get-header",
@@ -102,7 +115,7 @@ export default (props) => {
     <>
       <Box mb={4}>
         <input
-          onChange={(e) => handleLoadCsv(e.target.files[0])}
+          onChange={(e) => handleAddCsv(e.target.files[0])}
           style={{ display: "none" }}
           type="file"
           id="csv-file"
@@ -121,29 +134,34 @@ export default (props) => {
         <Accordion key={csvId}>
           <AccordionSummary
             classes={{ content: classes.csvHeader }}
-            expandIcon={<ExpandMoreIcon />}
+            // expandIcon={<ExpandMoreIcon />}
           >
-            <Tooltip title={csvs[csvId].filePath}>
-              <Box display="flex" alignItems="center">
-                <img
-                  src={csvSelected}
-                  alt={csvs[csvId].name}
-                  className={classes.csvImg}
-                />
-                <Box maxWidth="72%">
+            <Box mr="auto" display="flex" alignItems="center">
+              <img
+                src={csvSelected}
+                alt={csvs[csvId].name}
+                className={classes.csvImg}
+              />
+              <Tooltip title={csvs[csvId].filePath}>
+                <Box maxWidth="100px">
                   <Typography noWrap variant="subtitle1">
                     {csvs[csvId].name}
                   </Typography>
                 </Box>
-              </Box>
-            </Tooltip>
+              </Tooltip>
+            </Box>
+            <Box mr={2}>
+              <IconButton onClick={() => handleEditCsv(csvId)} size="small">
+                <EditIcon />
+              </IconButton>
+            </Box>
             <IconButton size="small">
               <UnlinkIcon />
             </IconButton>
           </AccordionSummary>
           <AccordionDetails>
             <List disablePadding style={{ width: "100%" }}>
-              {csvs[csvId].headers.map((header) => (
+              {csvs[csvId].selectedHeaders.map((header) => (
                 <ListItem key={header}>
                   <ListItemText primary={header} />
                 </ListItem>
