@@ -43,8 +43,11 @@ export const updateBot = (data) => {
 export const newBot = (botName) => {
   return { type: "NEW_BOT", botName };
 };
-export const loadCsv = (csv) => {
-  return { type: "LOAD_CSV", payload: csv };
+export const updateCsv = (csv) => {
+  return { type: "UPDATE_CSV", payload: csv };
+};
+export const addCsv = (csv) => {
+  return { type: "ADD_CSV", payload: csv };
 };
 
 export const unlinkCsv = () => {
