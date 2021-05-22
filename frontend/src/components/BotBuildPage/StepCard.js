@@ -11,6 +11,7 @@ import {
   ErrorOutlineOutlined as ErrorIcon,
 } from "@material-ui/icons";
 import processTypes from "./utils/processTypes";
+import ColoredCheckbox from "../layout/input/ColoredCheckbox";
 
 const useStyles = makeStyles((theme) => ({
   stepWrapper: (props) => ({
@@ -174,7 +175,13 @@ export default forwardRef((props, ref) => {
         opacity: props.beingDragged ? 0.6 : 1,
       }}
     >
-      <Box className={`${classes.stepWrapper}-indicator`}> </Box>
+      {/* <Box className={`${classes.stepWrapper}-indicator`}> </Box> */}
+      <ColoredCheckbox
+        checked={props.selectedForGroup}
+        onChange={props.handleCheckbox}
+        color={color}
+      />
+
       <Box
         style={props.beingDragged ? { border: "1px solid #eee" } : {}}
         onClick={() => props.selectSteps((o) => [...o, props.id])}

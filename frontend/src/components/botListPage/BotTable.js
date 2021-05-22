@@ -103,7 +103,7 @@ export default (props) => {
     const {
       headers = [],
       variables = [],
-      csvInfo = null,
+      csvs = {},
       botIteration = 1,
       groups = {},
     } = await electron.ipcRenderer.invoke("bot-name", botName);

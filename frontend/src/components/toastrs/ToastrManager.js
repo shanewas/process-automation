@@ -4,7 +4,7 @@ import { Snackbar, makeStyles } from "@material-ui/core";
 
 const useStyles = makeStyles({
   snackbar: {
-    backgroundColor: (props) => (props.success ? "#3AAF9E" : "#EA8103"),
+    backgroundColor: (props) => (props.success ? "#61BD4F" : "#EA8103"),
     color: "#fff",
     fontSize: "16px",
     fontWeight: 700,
