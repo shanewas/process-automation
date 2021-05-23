@@ -105,10 +105,17 @@ const ProcessGroupModal = (props) => {
       name: grpName.toLowerCase(),
       color: group.color,
       iteration: group.iteration,
+      processes: props.processes,
     };
     dispatch(groupToEdit ? editGroup(toSave) : createGroup(toSave));
     setCurrentToastr({
-      msg: `Group ${groupToEdit ? "Updated" : "Created"}`,
+      msg: `${
+        !!toSave.processes?.length
+          ? "Processes added to the new group"
+          : groupToEdit
+          ? "Group  Updated"
+          : "Group Created"
+      }`,
       success: true,
       anchorOrigin: {
         vertical: "top",
@@ -116,6 +123,7 @@ const ProcessGroupModal = (props) => {
       },
     });
     props.handleClose();
+    props.processes?.length && props.clearUp();
   };
 
   const handleDelete = () => {

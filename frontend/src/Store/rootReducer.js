@@ -52,24 +52,24 @@ const editGroup = (state, { name, ...other }) => ({
   saved: false,
 });
 
-const createGroup = (state, { name, ...other }) => ({
+const createGroup = (state, { name, processes = [], ...other }) => ({
   ...state,
   groups: {
     ...state.groups,
     [name]: {
       ...other,
-      processes: [],
+      processes,
     },
   },
   saved: false,
 });
-const addToGroup = (state, { groupName, processId }) => ({
+const addToGroup = (state, { groupName, toAdd }) => ({
   ...state,
   groups: {
     ...state.groups,
     [groupName]: {
       ...state.groups[groupName],
-      processes: [...state.groups[groupName].processes, processId],
+      processes: [...state.groups[groupName].processes, ...toAdd],
     },
   },
   saved: false,
