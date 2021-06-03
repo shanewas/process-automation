@@ -101,9 +101,9 @@ export function loadDatasetProperties(properties) {
   return { type: "LOADED_DATASET_PROPERTIES", properties };
 }
 
-export const createVariable = (name) => ({
+export const createVariable = (payload) => ({
   type: "CREATE_VARIABLE",
-  name,
+  payload,
 });
 export const removeVariable = (name) => ({
   type: "REMOVE_VARIABLE",

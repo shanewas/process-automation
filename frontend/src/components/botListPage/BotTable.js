@@ -126,6 +126,8 @@ export default (props) => {
         browserAgent,
       })
     );
+
+    console.log({ headers });
     history.push("/build");
   };
 
