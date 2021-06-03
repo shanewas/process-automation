@@ -1,6 +1,7 @@
 const { app, Menu, ipcMain, dialog } = require("electron");
 const PIE = require("puppeteer-in-electron");
 const PUPPETEER = require("puppeteer-core");
+const path = require("path");
 const fs = require("fs");
 
 class BOT_PARAMS {
