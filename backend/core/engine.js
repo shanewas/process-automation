@@ -68,14 +68,23 @@ async function start_bot(e, botName, mainWindow, PARAMS) {
   await GetBot(botName)
     .then((docs) => {
       PARAMS.BOTS = docs;
+      // console.log("**********************");
+      // console.log(PARAMS.BOTS["groups"]);
+      // console.log(PARAMS.BOTS["groups"]["a"]);
+      // console.log(PARAMS.BOTS.groups["a"]);
+      // console.log("**********************");
+      // if (
+      //   Object.keys(PARAMS.BOTS.groups).length !== 0 &&
+      //   PARAMS.BOTS.groups.constructor !== Object
+      // ) {
       for (var property in PARAMS.BOTS.groups) {
-        PARAMS.BOT_PROCESS_GROUPS.push(property);
         for (i = 0; i < PARAMS.BOTS.groups[property]["iteration"]; i++) {
           PARAMS.GROUP_PROCESS_INDEX = PARAMS.GROUP_PROCESS_INDEX.concat(
             PARAMS.BOTS.groups[property]["processesIdx"]
           );
         }
       }
+      // }
     })
     .then(async () => {
       botsReady = true;
@@ -89,6 +98,7 @@ async function start_bot(e, botName, mainWindow, PARAMS) {
     });
 
   if (PARAMS.BOTS.csvs) {
+    fileReady = true;
     tempDataHolder = [];
     Object.entries(PARAMS.BOTS.csvs).map((csvs) => {
       console.log(csvs[1]);
@@ -112,8 +122,7 @@ async function start_bot(e, botName, mainWindow, PARAMS) {
         }
         line++;
       });
-      csvStream.on("end", function () {
-        fileReady = true;
+      csvStream.on("end", async function () {
         console.log("Parsed: " + line + " lines.");
         PARAMS.DATA[csvs[0]] = tempDataHolder;
         let notification = await setNotification(
@@ -133,6 +142,13 @@ async function start_bot(e, botName, mainWindow, PARAMS) {
       PARAMS.BOTPROCESS = docs;
       // PARAMS.PROCESSLENGTH = PARAMS.BOTPROCESS.processSequence.length;
       PARAMS.PROCESSLENGTH = PARAMS.GROUP_PROCESS_INDEX.length - 1;
+      // for (var i = 0; i < PARAMS.BOTPROCESS.processSequence.length; i++) {
+      //   console.log(i);
+      //   if (!PARAMS.GROUP_PROCESS_INDEX.includes(i)) {
+      //     console.log("includes");
+      //     PARAMS.GROUP_PROCESS_INDEX.push(i);
+      //   }
+      // }
     })
     .then(async () => {
       procSeqReady = true;
@@ -225,10 +241,6 @@ async function run_bot(e, BROWSER, mainWindow, PARAMS) {
       // );
 
       try {
-        // console.log(PARAMS.BOTS);
-        // console.log(PARAMS.BOTS["groups"]);
-        // console.log(PARAMS.BOTS["groups"]["a"]);
-        // console.log(PARAMS.BOTS.groups["a"]);
         switch (element._type) {
           case "LoadData":
             switch (element.entryType) {

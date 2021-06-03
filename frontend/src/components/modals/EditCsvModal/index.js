@@ -16,7 +16,7 @@ import {
 import { Close as CloseIcon, SettingsPowerRounded } from "@material-ui/icons";
 import { useDispatch } from "react-redux";
 import csvImg from "../../../images/csv_colored.png";
-import { loadCsv } from "../../../Store/actions";
+import { addCsv, updateCsv } from "../../../Store/actions";
 
 const useStyles = makeStyles((theme) => ({
   wrapper: {
@@ -26,14 +26,15 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const AddCsvModal = ({ csv, totalRows, ...props }) => {
+// EditCsvmodal handles both adding and editing of csvs instances
+const EditCsvModal = ({ csv, totalRows, csvId = null, ...props }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [error, setError] = useState("");
   const [csvInfo, setCsvInfo] = useState({
-    name: csv.fileName,
-    range: [2, totalRows],
-    headers: csv.headers,
+    name: csv.name,
+    range: csvId ? csv.range : [2, totalRows],
+    selectedHeaders: csvId ? csv.selectedHeaders : csv.allHeaders,
   });
 
   const handleRangeChange = (e, newValue) =>
@@ -47,29 +48,32 @@ const AddCsvModal = ({ csv, totalRows, ...props }) => {
   const handleSubmit = () => {
     if (!csvInfo.name.trim()) return setError("Please enter the csv name");
     const tCsv = {
-      name: csvInfo.name,
-      range: csvInfo.range,
-      headers: csvInfo.headers,
+      ...csvInfo,
+      allHeaders: csv.allHeaders,
       filePath: csv.filePath,
+      totalRows: totalRows,
     };
-    dispatch(loadCsv(tCsv));
+    dispatch(csvId ? updateCsv({ csvId, ...tCsv }) : addCsv(tCsv));
     props.handleClose();
   };
 
   const removeHeader = (header) =>
     setCsvInfo((o) => ({
       ...o,
-      headers: o.headers.filter((h) => h !== header),
+      selectedHeaders: o.selectedHeaders.filter((h) => h !== header),
     }));
 
   const addHeader = (header) =>
-    setCsvInfo((o) => ({ ...o, headers: [...o.headers, header] }));
+    setCsvInfo((o) => ({
+      ...o,
+      selectedHeaders: [...o.selectedHeaders, header],
+    }));
 
   return (
     <Dialog open={true} fullWidth>
       <DialogTitle>
         <Box display="flex" alignItems="center" justifyContent="space-between">
-          Add CSV
+          {csvId ? "Edit " : "Add "} CSV
           <IconButton size="small" onClick={props.handleClose}>
             <CloseIcon />
           </IconButton>
@@ -101,18 +105,24 @@ const AddCsvModal = ({ csv, totalRows, ...props }) => {
               <Typography variant="h6">Headers</Typography>
               <Typography variant="body2">(First row of the CSV)</Typography>
             </Box>
-            {csv.headers.map((header) => (
+            {csv.allHeaders.map((header) => (
               <Chip
                 variant={
-                  csvInfo.headers.includes(header) ? "default" : "outlined"
+                  csvInfo.selectedHeaders.includes(header)
+                    ? "default"
+                    : "outlined"
                 }
-                color={csvInfo.headers.includes(header) ? "primary" : "default"}
+                color={
+                  csvInfo.selectedHeaders.includes(header)
+                    ? "primary"
+                    : "default"
+                }
                 onDelete={
-                  csvInfo.headers.includes(header)
+                  csvInfo.selectedHeaders.includes(header)
                     ? () => removeHeader(header)
                     : undefined
                 }
-                clickable={!csvInfo.headers.includes(header)}
+                clickable={!csvInfo.selectedHeaders.includes(header)}
                 onClick={() => addHeader(header)}
                 style={{ margin: "5px 10px 5px 0" }}
                 key={header}
@@ -157,7 +167,7 @@ const AddCsvModal = ({ csv, totalRows, ...props }) => {
       <DialogActions>
         <Box mb={1}>
           <Button onClick={handleSubmit} variant="contained" color="primary">
-            Add CSV
+            {csvId ? "Update " : "Add "} CSV
           </Button>
         </Box>
       </DialogActions>
@@ -165,4 +175,4 @@ const AddCsvModal = ({ csv, totalRows, ...props }) => {
   );
 };
 
-export default AddCsvModal;
+export default EditCsvModal;

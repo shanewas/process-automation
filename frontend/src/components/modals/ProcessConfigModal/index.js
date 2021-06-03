@@ -136,7 +136,7 @@ export default ({ open, handleClose, stepIdx }) => {
   };
 
   const handleSubmit = () => {
-    editStep(step);
+    editStep();
     handleClose();
   };
 

@@ -120,7 +120,7 @@ export default (props) => {
             msg: `Cannot add the same process more than once`,
             anchorOrigin: { vertical: "top", horizontal: "center" },
           })
-        : dispatch(addToGroup(groupName, processId));
+        : dispatch(addToGroup(groupName, [processId]));
     }
   };
 
@@ -165,7 +165,7 @@ export default (props) => {
               Start
             </Button>
           </Box>
-          <Box position="relative">
+          <Box>
             <StepsFlowchart
               selectSteps={setSelectedSteps}
               selectedSteps={selectedSteps}
