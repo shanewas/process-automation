@@ -34,11 +34,10 @@ export default ({
       {value && (
         <Grid container>
           <SelectorInput
-            options={variables}
+            options={Object.keys(variables)}
             name="saveToVariable"
             value={saveToVariable}
             onChange={onChange}
-            optionsConfigure={{ id: "name", label: "name", value: "name" }}
             placeholder="Save to a variable"
           />
         </Grid>

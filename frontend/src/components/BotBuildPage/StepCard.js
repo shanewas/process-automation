@@ -9,9 +9,11 @@ import {
 import {
   MoreHoriz as MenuIcon,
   ErrorOutlineOutlined as ErrorIcon,
+  AddCircle as AddIcon,
 } from "@material-ui/icons";
 import processTypes from "./utils/processTypes";
 import ColoredCheckbox from "../layout/input/ColoredCheckbox";
+import AddStepDirectionIcon from "../../extras/AddStepDirectionIcon";
 
 const useStyles = makeStyles((theme) => ({
   stepWrapper: (props) => ({
@@ -28,6 +30,14 @@ const useStyles = makeStyles((theme) => ({
       transform: props.selected ? "scale(1.05)" : "scale(1)",
       position: "relative",
       overflow: "hidden",
+    },
+
+    "&-addIcon": {
+      width: "24px",
+      cursor: "pointer",
+      opacity: 0,
+      visibility: "hidden",
+      transition: ".2s",
     },
 
     "&-dataEntry": {
@@ -75,6 +85,11 @@ const useStyles = makeStyles((theme) => ({
     "&:hover &-indicator": {
       background: props.color,
       boxShadow: `0px 1px 10px ${props.color}`,
+    },
+
+    "&:hover &-addIcon": {
+      opacity: 1,
+      visibility: "visible",
     },
   }),
 
@@ -166,14 +181,14 @@ export default forwardRef((props, ref) => {
       justifyContent="space-around"
       {...props.draggableProps}
       {...props.dragHandleProps}
-      className={`${classes.stepWrapper} ${
-        props.selectedErrorStep ? "active" : ""
-      }
-      `}
       style={{
         ...props.draggableProps.style,
         opacity: props.beingDragged ? 0.6 : 1,
       }}
+      className={`${classes.stepWrapper} ${
+        props.selectedErrorStep ? "active" : ""
+      }
+      `}
     >
       {/* <Box className={`${classes.stepWrapper}-indicator`}> </Box> */}
       <ColoredCheckbox
@@ -238,9 +253,23 @@ export default forwardRef((props, ref) => {
           </Box>
         )}
       </Box>
-      <IconButton onClick={props.openMenu}>
-        <MenuIcon />
-      </IconButton>
+
+      <Box display="flex" flexDirection="column" alignItems="center">
+        <AddStepDirectionIcon
+          reverse={true}
+          className={`${classes.stepWrapper}-addIcon`}
+          color="white"
+          onClick={props.addStepBefore}
+        />
+        <IconButton onClick={props.openMenu}>
+          <MenuIcon />
+        </IconButton>
+        <AddStepDirectionIcon
+          className={`${classes.stepWrapper}-addIcon`}
+          color="white"
+          onClick={props.addStepAfter}
+        />
+      </Box>
     </Box>
   );
 });
