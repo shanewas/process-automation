@@ -12,6 +12,7 @@ import KeyboardShortcutsModal from "./KeyboardShortcutsModal";
 import NewBotModal from "./NewBotModal";
 import ProcessGroupModal from "./ProcessGroupModal";
 import EditCsvModal from "./EditCsvModal";
+import AddStepModal from "./AddStepModal.js";
 
 export const Modals = {
   DataConditionsModal,
@@ -26,6 +27,7 @@ export const Modals = {
   NewBotModal,
   ProcessGroupModal,
   EditCsvModal,
+  AddStepModal,
 };
 
 const ModalManager = (props) => {

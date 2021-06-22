@@ -163,6 +163,14 @@ export default (props) => {
     setStepMenu(initStepMenu);
   };
 
+  const addStep = (idx) =>
+    setCurrentModal({
+      name: "AddStepModal",
+      props: {
+        idx,
+      },
+    });
+
   return (
     <>
       {props.steps.length ? (
@@ -191,6 +199,8 @@ export default (props) => {
                         ref={provided.innerRef}
                         beingDragged={snapshot.isDragging}
                         idx={idx}
+                        addStepBefore={() => addStep(idx)}
+                        addStepAfter={() => addStep(idx + 1)}
                         {...step}
                       />
                     )}
