@@ -117,7 +117,7 @@
     "jimp": "^0.16.1",
     "jquery": "^3.5.1",
     "moment": "^2.29.1",
-    "nedb-promises": "^4.1.0",
+    "nedb-promises": "^5.0.0",
     "opencollective": "^1.0.3",
     "papaparse": "^5.3.0",
     "progress": "^2.0.3",
