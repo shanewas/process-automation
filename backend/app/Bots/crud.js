@@ -13,6 +13,14 @@ ipcMain.handle("add-bot", async (event, botName, botType) => {
   return await addBot(botName, botType);
 });
 
+ipcMain.on("add-step", async (event, botName, botType, index) => {
+  let result = await getProcessSequence(botName);
+  result.splice(index, 0, {
+    _type: botType,
+  });
+  await updateBotProcess(botName, result);
+});
+
 ipcMain.handle("bots", async (event) => {
   return await listAllBots();
 });
