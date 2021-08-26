@@ -1,0 +1,179 @@
+{
+  "name": "aiw-core",
+  "description": "Aiw Core",
+  "author": {
+    "name": "Ferntech Solutions Ltd.",
+    "email": "shanewas@ferntechsolutions.com",
+    "url": "https://ferntechsolutions.com"
+  },
+  "contributors": [
+    {
+      "name": "Shanewas Ahmed Nabil",
+      "email": "shanewasahmed@gmail.com",
+      "url": "https://github.com/shanewas"
+    },
+    {
+      "name": "Tanzeer Ahmed Hossain",
+      "url": "https://github.com/redviper2017"
+    },
+    {
+      "name": "Nadib Hussain",
+      "url": "https://github.com/NadibHussain"
+    },
+    {
+      "name": "Omar Hasan",
+      "url": "https://github.com/omar115"
+    },
+    {
+      "name": "Depender Sethi",
+      "url": "https://github.com/Depender-Sethi"
+    }
+  ],
+  "license": "MIT",
+  "version": "1.6.0",
+  "private": true,
+  "build": {
+    "productName": "AIW Core",
+    "appId": "com.ferntechsolutions.aiw_core",
+    "files": [
+      "node_modules/**/*",
+      "backend/**/*",
+      "core/**/*",
+      "frontend/build/**/*",
+      "frontend/node_modules/**/*",
+      "frontend/package.json",
+      "package.json",
+      "logo.png",
+      "icon.png"
+    ],
+    "extraResources": [
+      "bots.db",
+      "process.db"
+    ],
+    "extraFiles": [
+      "backend/data/bots.db",
+      "backend/data/process.db"
+    ],
+    "dmg": {
+      "contents": [
+        {
+          "x": 130,
+          "y": 220
+        },
+        {
+          "x": 410,
+          "y": 220,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
+    },
+    "win": {
+      "target": [
+        "nsis",
+        "msi"
+      ]
+    },
+    "linux": {
+      "target": [
+        "deb",
+        "rpm",
+        "AppImage"
+      ],
+      "category": "Development"
+    },
+    "directories": {
+      "buildResources": ".",
+      "output": "release"
+    },
+    "publish": {
+      "provider": "github",
+      "owner": "ferntechsolutions",
+      "repo": "aiwcore",
+      "private": true
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ferntechsolutions/aiwcore.git"
+  },
+  "main": "backend/app/main.js",
+  "homepage": "./",
+  "keywords": [
+    "RPA",
+    "Automation",
+    "AIWStudio"
+  ],
+  "peerDependencies": {},
+  "dependencies": {
+    "chart.js": "^2.9.4",
+    "css-selector-generator": "^3.0.1",
+    "csv-parser": "^2.3.4",
+    "d3": "^6.2.0",
+    "dotenv": "^8.2.0",
+    "electron-is-dev": "^1.2.0",
+    "electron-reload": "^1.5.0",
+    "fast-csv": "^4.3.6",
+    "jimp": "^0.16.1",
+    "jquery": "^3.5.1",
+    "moment": "^2.29.1",
+    "nedb-promises": "^4.1.0",
+    "opencollective": "^1.0.3",
+    "papaparse": "^5.3.0",
+    "progress": "^2.0.3",
+    "puppeteer-core": "^5.5.0",
+    "puppeteer-in-electron": "^3.0.3",
+    "react-beautiful-dnd": "^13.0.0",
+    "react-chartjs-2": "^2.11.1",
+    "react-syntax-highlighter": "^15.3.1",
+    "selenium-webdriver": "^4.0.0-alpha.7",
+    "show-toast": "^1.1.4",
+    "tesseract.js": "^2.1.4"
+  },
+  "devDependencies": {
+    "concurrently": "^5.3.0",
+    "cross-env": "^7.0.3",
+    "electron": "^11.0.3",
+    "electron-builder": "^22.9.1",
+    "electron-devtools-installer": "^3.1.1",
+    "spectron": "^13.0.0",
+    "wait-on": "^5.2.0"
+  },
+  "scripts": {
+    "install-all": "npm install && cd frontend && npm install",
+    "react-start": "npm start --prefix frontend",
+    "react-build": "cd frontend && npm run build",
+    "react-test": "react-scripts test --env=jsdom",
+    "react-eject": "react-scripts eject",
+    "backend-start": "cd backend && node server.js",
+    "electron-build": "cross-env NODE_ENV=prod electron-builder",
+    "release": "yarn react-build && electron-builder --publish=always",
+    "build": "yarn react-build && yarn electron-build",
+    "start": "concurrently \"cross-env NODE_ENV=dev BROWSER=none yarn react-start\" \"cross-env NODE_ENV=dev wait-on http://localhost:4000 && electron .\"",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "publish": "electron-forge publish",
+    "lint": "echo \"No linting configured\"",
+    "postinstall": "electron-builder install-app-deps && opencollective postinstall"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "collective": {
+    "type": "opencollective",
+    "url": "https://opencollective.com/aiw-core",
+    "logo": "https://opencollective.com/opencollective/logo.txt"
+  }
+}
