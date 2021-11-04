@@ -11,6 +11,7 @@ import {
   ErrorOutlineOutlined as ErrorIcon,
 } from "@material-ui/icons";
 import processTypes from "./utils/processTypes";
+import ColoredCheckbox from "../layout/input/ColoredCheckbox";
 
 const useStyles = makeStyles((theme) => ({
   stepWrapper: (props) => ({
@@ -145,9 +146,9 @@ export default forwardRef((props, ref) => {
     props.dataEntry === props.selectedVariable;
   const isSavingToVariable =
     props.saveToVariable && props.saveToVariable === props.selectedVariable;
-  const isUsingHeader =
-    props.entryType === "dataHeader" &&
-    props.dataEntry === props.selectedHeader;
+  // const isUsingHeader =
+  //   props.entryType === "dataHeader" &&
+  //   props.dataEntry === props.selectedHeader;
 
   const { color, bgcolor, Icon } = processTypes[props._type];
   const classes = useStyles({
@@ -166,7 +167,7 @@ export default forwardRef((props, ref) => {
       {...props.draggableProps}
       {...props.dragHandleProps}
       className={`${classes.stepWrapper} ${
-        isUsingHeader || props.selectedErrorStep ? "active" : ""
+        props.selectedErrorStep ? "active" : ""
       }
       `}
       style={{
@@ -174,7 +175,13 @@ export default forwardRef((props, ref) => {
         opacity: props.beingDragged ? 0.6 : 1,
       }}
     >
-      <Box className={`${classes.stepWrapper}-indicator`}> </Box>
+      {/* <Box className={`${classes.stepWrapper}-indicator`}> </Box> */}
+      <ColoredCheckbox
+        checked={props.selectedForGroup}
+        onChange={props.handleCheckbox}
+        color={color}
+      />
+
       <Box
         style={props.beingDragged ? { border: "1px solid #eee" } : {}}
         onClick={() => props.selectSteps((o) => [...o, props.id])}

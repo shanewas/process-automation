@@ -6,9 +6,9 @@ export const removeFromGroup = (groupName, processId) => ({
   type: "REMOVE_FROM_GROUP",
   payload: { groupName, processId },
 });
-export const addToGroup = (groupName, processId) => ({
+export const addToGroup = (groupName, toAdd) => ({
   type: "ADD_TO_GROUP",
-  payload: { groupName, processId },
+  payload: { groupName, toAdd },
 });
 export const createGroup = (group) => ({
   type: "CREATE_GROUP",
@@ -43,8 +43,11 @@ export const updateBot = (data) => {
 export const newBot = (botName) => {
   return { type: "NEW_BOT", botName };
 };
-export const loadCsv = (csv) => {
-  return { type: "LOAD_CSV", csv };
+export const updateCsv = (csv) => {
+  return { type: "UPDATE_CSV", payload: csv };
+};
+export const addCsv = (csv) => {
+  return { type: "ADD_CSV", payload: csv };
 };
 
 export const unlinkCsv = () => {
@@ -98,9 +101,9 @@ export function loadDatasetProperties(properties) {
   return { type: "LOADED_DATASET_PROPERTIES", properties };
 }
 
-export const createVariable = (name) => ({
+export const createVariable = (payload) => ({
   type: "CREATE_VARIABLE",
-  name,
+  payload,
 });
 export const removeVariable = (name) => ({
   type: "REMOVE_VARIABLE",

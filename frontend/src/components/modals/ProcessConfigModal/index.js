@@ -59,14 +59,15 @@ const resetFields = {
   socket: "",
   ip: "",
   port: "",
+  csvId: "",
 };
 
 export default ({ open, handleClose, stepIdx }) => {
-  const { currentStep, currentVariables, currentHeaders } = useSelector(
-    ({ process, variables, headers }) => ({
+  const { currentStep, currentVariables, csvs } = useSelector(
+    ({ process, variables, csvs }) => ({
       currentStep: process[stepIdx],
       currentVariables: variables,
-      currentHeaders: headers,
+      csvs: csvs,
     })
   );
   const [step, setStep] = useState({ ...initFields, ...currentStep });
@@ -121,13 +122,21 @@ export default ({ open, handleClose, stepIdx }) => {
       ...(e.target.typeChanged
         ? {
             dataEntry: "",
+            csvId: "",
           }
         : {}),
     }));
   };
 
+  const handleHeaderSelect = (e) => {
+    e.persist();
+    if (!e.target.value) return;
+    const [csvId, header] = e.target.value.split("-header-");
+    setStep((old) => ({ ...old, dataEntry: header, csvId }));
+  };
+
   const handleSubmit = () => {
-    editStep(step);
+    editStep();
     handleClose();
   };
 
@@ -153,6 +162,8 @@ export default ({ open, handleClose, stepIdx }) => {
     // console.log({ folderPath });
     folderPath && setStep((o) => ({ ...o, screenshotPath: folderPath }));
   };
+
+  console.log({ step });
 
   // const getOcrFolderPath = async () => {
   //   // change the electron func to fetch ocr instead
@@ -212,10 +223,11 @@ export default ({ open, handleClose, stepIdx }) => {
           <TypeLoadData
             onSwitch={handleSwitch}
             onClearHeaderData={handleClearDataHeader}
-            headers={currentHeaders}
+            csvs={csvs}
             variables={currentVariables}
             onChange={handleChange}
-            value={step}
+            onHeaderChange={handleHeaderSelect}
+            step={step}
             onSelectorChange={handleTypeChange("type")}
             inputTypes={inputTypes}
           />

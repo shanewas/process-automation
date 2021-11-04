@@ -4,6 +4,7 @@
 *.jpeg
 *.lock
 *.jpg
+*.csv
 .DS_Store
 .env
 .gclient_done

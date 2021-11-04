@@ -4,10 +4,7 @@ const fs = require("fs");
 const PIE = require("puppeteer-in-electron");
 const Tesseract = require("tesseract.js");
 const Jimp = require("jimp");
-const csv = require("csv-parser");
-const ProgressBar = require("progress");
-const https = require("https");
-const http = require("http");
+const csv = require("fast-csv");
 
 const { createWindow } = require("../app/WindowManagement/window");
 const {
@@ -45,9 +42,18 @@ async function start_bot(e, botName, mainWindow, PARAMS) {
       mainWindow,
       false,
       true,
-      true
+      true,
+      "/script/RunningBot.js"
     );
   }
+  // loadingWindow.webContents.session.setProxy({
+  //   proxyRules: PARAMS.BOTS.proxy,
+  // });
+  // loadingWindow.loadURL(
+  //   isDev
+  //     ? `http://localhost:${process.env.PORT}/loading.html`
+  //     : `file://${path.join(__dirname, "../../frontend/build/loading.html")}`
+  // );
   loadingWindow.setResizable(false);
   loadingWindow.on("close", (e) => {
     PARAMS.BOTALREADYOPENED = false;
@@ -62,14 +68,23 @@ async function start_bot(e, botName, mainWindow, PARAMS) {
   await GetBot(botName)
     .then((docs) => {
       PARAMS.BOTS = docs;
+      // console.log("**********************");
+      // console.log(PARAMS.BOTS["groups"]);
+      // console.log(PARAMS.BOTS["groups"]["a"]);
+      // console.log(PARAMS.BOTS.groups["a"]);
+      // console.log("**********************");
+      // if (
+      //   Object.keys(PARAMS.BOTS.groups).length !== 0 &&
+      //   PARAMS.BOTS.groups.constructor !== Object
+      // ) {
       for (var property in PARAMS.BOTS.groups) {
-        PARAMS.BOT_PROCESS_GROUPS.push(property);
         for (i = 0; i < PARAMS.BOTS.groups[property]["iteration"]; i++) {
           PARAMS.GROUP_PROCESS_INDEX = PARAMS.GROUP_PROCESS_INDEX.concat(
             PARAMS.BOTS.groups[property]["processesIdx"]
           );
         }
       }
+      // }
     })
     .then(async () => {
       botsReady = true;
@@ -81,17 +96,35 @@ async function start_bot(e, botName, mainWindow, PARAMS) {
       );
       mainWindow.webContents.send("notification-single", notification);
     });
-  if (PARAMS.BOTS.filepath) {
-    fs.createReadStream(PARAMS.BOTS.filepath, { bufferSize: 64 * 1024 })
-      .pipe(csv())
-      .on("data", (row) => {
-        PARAMS.DATA.push(row);
-      })
-      .on("end", async () => {
-        console.log("CSV file successfully processed");
-        //inital pop from datacsv to LOCALDATA
-        PARAMS.LOCALDATA = PARAMS.DATA.pop();
-        fileReady = true;
+
+  if (PARAMS.BOTS.csvs) {
+    fileReady = true;
+    tempDataHolder = [];
+    Object.entries(PARAMS.BOTS.csvs).map((csvs) => {
+      console.log(csvs[1]);
+
+      header = [];
+      var stream = fs.createReadStream(path.resolve(csvs[1]["filePath"]));
+      var csvStream = csv.parseStream(stream);
+      var line = 0;
+      console.log(csvs[1]["range"][0]);
+      console.log(csvs[1]["range"][1]);
+      csvStream.on("data", function (row) {
+        if (line === 0) {
+          header = row;
+        }
+        if (line > csvs[1]["range"][0] && line < csvs[1]["range"][1]) {
+          var result = row.reduce(function (result, field, index) {
+            result[header[index]] = field;
+            return result;
+          }, {});
+          tempDataHolder.push(result);
+        }
+        line++;
+      });
+      csvStream.on("end", async function () {
+        console.log("Parsed: " + line + " lines.");
+        PARAMS.DATA[csvs[0]] = tempDataHolder;
         let notification = await setNotification(
           botName,
           "log",
@@ -100,6 +133,7 @@ async function start_bot(e, botName, mainWindow, PARAMS) {
         );
         mainWindow.webContents.send("notification-single", notification);
       });
+    });
   } else {
     fileReady = true;
   }
@@ -108,6 +142,13 @@ async function start_bot(e, botName, mainWindow, PARAMS) {
       PARAMS.BOTPROCESS = docs;
       // PARAMS.PROCESSLENGTH = PARAMS.BOTPROCESS.processSequence.length;
       PARAMS.PROCESSLENGTH = PARAMS.GROUP_PROCESS_INDEX.length - 1;
+      // for (var i = 0; i < PARAMS.BOTPROCESS.processSequence.length; i++) {
+      //   console.log(i);
+      //   if (!PARAMS.GROUP_PROCESS_INDEX.includes(i)) {
+      //     console.log("includes");
+      //     PARAMS.GROUP_PROCESS_INDEX.push(i);
+      //   }
+      // }
     })
     .then(async () => {
       procSeqReady = true;
@@ -193,11 +234,13 @@ async function run_bot(e, BROWSER, mainWindow, PARAMS) {
       let elements,
         dat,
         conditionStatus = true;
+
+      // console.log("look for me " + PARAMS.BOT_VARIABLES);
+      // let variable_obj = PARAMS.BOT_VARIABLES.find(
+      //   (o) => o.name === PARAMS.BOT_VARIABLES.name
+      // );
+
       try {
-        // console.log(PARAMS.BOTS);
-        // console.log(PARAMS.BOTS["groups"]);
-        // console.log(PARAMS.BOTS["groups"]["a"]);
-        // console.log(PARAMS.BOTS.groups["a"]);
         switch (element._type) {
           case "LoadData":
             switch (element.entryType) {
@@ -206,11 +249,13 @@ async function run_bot(e, BROWSER, mainWindow, PARAMS) {
                 break;
               case "variable":
                 let variable_obj = PARAMS.BOT_VARIABLES.find(
-                  (o) => o.name === element.dataEntry
+                  (o) => o.name === PARAMS.BOT_VARIABLES.name
                 );
                 dat = variable_obj.value;
+                console.log(variable_obj);
                 break;
               case "dataHeader":
+                PARAMS.LOCALDATA = PARAMS.DATA[element.csvId].shift();
                 dat = PARAMS.LOCALDATA[element.dataEntry];
                 break;
               default:
@@ -457,12 +502,17 @@ async function run_bot(e, BROWSER, mainWindow, PARAMS) {
             await elements[0].press(`${element.value}`);
             break;
           case "Extract Data":
-            extracted_data = element[element.variableField];
-            let variable_obj = PARAMS.BOT_VARIABLES.find(
-              (o) => o.name === element.variableName
-            );
-            variable_obj.value = extracted_data;
-            console.log("Extracted Data " + extracted_data);
+            console.log(element);
+            console.log("1" + PARAMS.BOT_VARIABLES);
+            console.log("2" + element.variableName);
+            console.log("3" + element.variableField);
+
+            // extracted_data = element[element.variableField]; //value
+            // let variable_obj = PARAMS.BOT_VARIABLES.find(
+            //   (o) => o.name === element.variableName
+            // );
+            // variable_obj.value = extracted_data;
+            // console.log("Extracted Data " + extracted_data);
             break;
           case "ScreenShot":
             console.log(`Taking screenshot ...`);
@@ -546,7 +596,7 @@ async function run_bot(e, BROWSER, mainWindow, PARAMS) {
               });
             break;
           case "link":
-            console.log("loading url ... " + page.url());
+            console.log("loading url ... " + element.link);
             await page.goto(element.link);
             break;
           default:
@@ -576,7 +626,6 @@ async function run_bot(e, BROWSER, mainWindow, PARAMS) {
 
       if (PARAMS.PROCESSCOUNTER + 1 >= PARAMS.PROCESSLENGTH) {
         PARAMS.PROCESSCOUNTER = 0;
-        if (PARAMS.BOTS.filepath) PARAMS.LOCALDATA = PARAMS.DATA.pop();
         PARAMS.IDX++;
       } else {
         PARAMS.PROCESSCOUNTER++;

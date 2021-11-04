@@ -1,5 +1,12 @@
 import React, { useContext, useState } from "react";
-import { Box, Button, makeStyles, TextField, Tooltip } from "@material-ui/core";
+import {
+  Box,
+  Button,
+  Divider,
+  makeStyles,
+  TextField,
+  Tooltip,
+} from "@material-ui/core";
 import { useSelector, useDispatch } from "react-redux";
 import { createVariable, removeVariable } from "../../../Store/actions";
 import { Delete as DeletIcon } from "@material-ui/icons";
@@ -37,57 +44,54 @@ const useStyles = makeStyles((theme) => ({
   icon: {
     color: "#CFCFCF",
   },
-  associatedWith: {
-    width: "25px",
-    height: "auto",
-    backgroundColor: theme.palette.secondary.dark,
-    color: "white",
-    fontWeight: 700,
-    borderRadius: "4px",
-    textAlign: "center",
-  },
 }));
 
 export default (props) => {
   const classes = useStyles();
   const { setCurrentToastr } = useContext(ModalContext);
   const [variable, setVariable] = useState("");
+  const [value, setValue] = useState("");
   const variables = useSelector((state) => state.variables);
   const dispatch = useDispatch();
 
   const handleCreateVariable = () => {
-    dispatch(createVariable(variable));
+    dispatch(createVariable({ name: variable, value }));
     setVariable("");
+    setValue("");
   };
 
-  const handleRemoveVariable = (variableName) => {
-    const varToRemove = variables.find((v) => v.name === variableName);
-    if (varToRemove.associatedWith.length) {
-      return setCurrentToastr({
-        msg: "Cannot delete this variable as it is connected to step(s)",
-      });
-    }
+  const handleRemoveVariable = (variable) => {
+    // const varToRemove = variables.find((v) => v.name === variableName);
+    // if (varToRemove.associatedWith.length) {
+    //   return setCurrentToastr({
+    //     msg: "Cannot delete this variable as it is connected to step(s)",
+    //   });
+    // }
     // check if being used
-    dispatch(removeVariable(variableName));
+    dispatch(removeVariable(variable));
   };
   return (
     <Box>
-      <Box
-        mb={4}
-        display="flex"
-        alignItems="center"
-        justifyContent="space-between"
-      >
-        <Box mr={2} width="85%">
+      <Box>
+        <Box mb={2}>
           <TextField
+            style={{ marginBottom: "16px" }}
             value={variable}
             onChange={(e) => setVariable(e.target.value)}
             fullWidth
             variant="outlined"
             placeholder="Variable name"
           />
+          <TextField
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            fullWidth
+            variant="outlined"
+            placeholder="Initial Value (Optional)"
+          />
         </Box>
         <Button
+          fullWidth
           color="primary"
           variant="contained"
           onClick={handleCreateVariable}
@@ -95,31 +99,28 @@ export default (props) => {
           Create
         </Button>
       </Box>
-      {variables.map((variable) => (
+
+      <Box my={4}>
+        <Divider />
+      </Box>
+      {Object.entries(variables).map(([variable, value]) => (
         <Box
           onClick={() =>
             props.selectedVariable === variable.name
               ? props.selectVariable("")
               : props.selectVariable(variable.name)
           }
-          key={variable.name}
+          key={variable}
           className={`${classes.variable} ${
             props.selectedVariable === variable.name && "active"
           }`}
         >
           <Box className={classes.variableName}>
-            {"{{"} {variable.name} {"}}"}
+            {"{{"} {variable} {"}}"}
           </Box>
           <Box display="flex" alignItems="center">
-            <Tooltip
-              title={`Associated with ${variable.associatedWith.length} step(s)`}
-            >
-              <Box className={classes.associatedWith} mr={2}>
-                {variable.associatedWith.length}
-              </Box>
-            </Tooltip>
             <DeletIcon
-              onClick={() => handleRemoveVariable(variable.name)}
+              onClick={() => handleRemoveVariable(variable)}
               className={classes.icon}
             />
           </Box>

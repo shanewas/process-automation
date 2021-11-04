@@ -1,6 +1,7 @@
 const { app, Menu, ipcMain, dialog } = require("electron");
 const PIE = require("puppeteer-in-electron");
 const PUPPETEER = require("puppeteer-core");
+const path = require("path");
 const fs = require("fs");
 
 class BOT_PARAMS {
@@ -65,7 +66,7 @@ app
      */
     require("./Bots/botCreation").bot_create(
       mainWindow,
-      PARAMS.LINKALREADYOPENED, 
+      PARAMS.LINKALREADYOPENED
     );
     /**
      * BOT ITEM TYPE TAGGING
@@ -87,6 +88,11 @@ app
     ipcMain.on("need-process", (e) => {
       run_bot(e, BROWSER, mainWindow, PARAMS);
     });
+
+    /**
+     *csv handling
+     */
+    require("./ExternalConnectivity/csvHandling");
 
     /**
      * code generation

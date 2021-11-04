@@ -16,6 +16,7 @@ export const importBot = "import-bot";
 export const ocrEngine = "ocr-engine";
 export const getUploadFolderPath = "get-synchronous-upload-folder-path";
 export const getDownloadFolderPath = "get-synchronous-download-folder-path";
+export const csvGetHeader = "csv-get-header";
 
 export function send(teleport, content) {
   ipcRenderer.send(teleport, content);
